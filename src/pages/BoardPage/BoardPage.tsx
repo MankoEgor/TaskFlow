@@ -1,6 +1,8 @@
+import s from './BoardPage.module.css'
+
 function BoardPage() {
     return (
-        <p>Board Page</p>
+        <main>Board Page</main>
     )
 }
 

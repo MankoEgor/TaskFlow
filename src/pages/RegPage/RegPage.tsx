@@ -1,6 +1,6 @@
 import { useState } from "react";
 import AuthForm from "../../components/auth/AuthForm/AuthForm";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
 
 import s from './RegPage.module.css'
@@ -49,6 +49,8 @@ function RegPage(){
             onPasswordChange={setPassword}
             onSubmit={handleRegister}
         />
+
+        <Link to="/login">Already have account?</Link>
         </div>
         
     )

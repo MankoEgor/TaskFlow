@@ -1,7 +1,7 @@
 import s  from './AuthForm.module.css';
 
 interface AuthFormProps {
-    headerText: string;
+    headerText?: string;
     email: string;
     password: string;
     buttonText: string;
@@ -27,9 +27,9 @@ function AuthForm({
     return (
         
         <form className={s.form} onSubmit={onSubmit}>
-            <h1>{headerText}</h1>
+            <h1 className={s.title}>{headerText}</h1>
 
-            <label htmlFor="email">Email Address</label>
+            <label className={s.label} htmlFor="email">Email Address</label>
             <input className={s.input}
                 type="email" 
                 id="email" 
@@ -38,7 +38,7 @@ function AuthForm({
                 onChange={(e) => onEmailChange(e.target.value)}/>
             
             
-            <label htmlFor="password">Password</label>
+            <label className={s.label} htmlFor="password">Password</label>
             <input className={s.input}
                 type="password" 
                 id="password" 
@@ -49,7 +49,7 @@ function AuthForm({
 
             {errorMessage && <p>{errorMessage}</p>}
 
-            <button type="submit" disabled={isSubmitting}>
+            <button className={s.subButton} type="submit" disabled={isSubmitting}>
                 {buttonText}
             </button>
         </form>

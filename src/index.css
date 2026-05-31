@@ -1,6 +1,16 @@
+@font-face{
+    font-family: "Manrope";
+    src: url('./assets/fonts/static/Manrope-Regular.ttf');
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 #root{
     width: 100%;
-    align-items: center;
-    display: flex;
-    justify-content: center;
+    font-family: "Manrope";
+    color: #43474E
 }

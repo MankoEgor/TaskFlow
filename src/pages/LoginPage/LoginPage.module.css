@@ -5,3 +5,13 @@
     justify-content: center;
     flex-direction: column;
 }
+
+.regLink{
+    text-decoration: none;
+    color: #000;
+}
+
+.regLink:hover{
+    text-decoration: 2px solid black;
+    
+}

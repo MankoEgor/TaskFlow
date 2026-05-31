@@ -1,7 +1,9 @@
 import { useState } from "react";
 import AuthForm from "../../components/auth/AuthForm/AuthForm";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
+
+import s from './LoginPage.module.css'
 
 function LoginPage() {
     const [email, setEmail] = useState<string>("");
@@ -35,7 +37,8 @@ function LoginPage() {
     }
 
     return(
-        <AuthForm
+        <div className={s.main}>
+            <AuthForm
             buttonText="Sign In"
             email={email}
             password={password}
@@ -46,6 +49,10 @@ function LoginPage() {
             onPasswordChange={setPassword}
             onSubmit={handleLogin}
         />
+
+        <Link className={s.regLink} to="/register">Create account</Link>
+        </div>
+        
     )
 };
 

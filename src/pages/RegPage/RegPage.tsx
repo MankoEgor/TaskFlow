@@ -3,6 +3,8 @@ import AuthForm from "../../components/auth/AuthForm/AuthForm";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
 
+import s from './RegPage.module.css'
+
 function RegPage(){
 
         const [email, setEmail] = useState<string>("");
@@ -35,7 +37,8 @@ function RegPage(){
         }
 
     return(
-        <AuthForm 
+        <div className={s.main}>
+            <AuthForm 
             buttonText="Sign Up"
             headerText="Create Your Account"
             email={email}
@@ -46,6 +49,8 @@ function RegPage(){
             onPasswordChange={setPassword}
             onSubmit={handleRegister}
         />
+        </div>
+        
     )
 }
 

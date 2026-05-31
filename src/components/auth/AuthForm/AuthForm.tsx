@@ -1,3 +1,5 @@
+import s  from './AuthForm.module.css';
+
 interface AuthFormProps {
     headerText: string;
     email: string;
@@ -24,11 +26,11 @@ function AuthForm({
 
     return (
         
-        <form onSubmit={onSubmit}>
+        <form className={s.form} onSubmit={onSubmit}>
             <h1>{headerText}</h1>
 
             <label htmlFor="email">Email Address</label>
-            <input 
+            <input className={s.input}
                 type="email" 
                 id="email" 
                 value={email}
@@ -37,7 +39,7 @@ function AuthForm({
             
             
             <label htmlFor="password">Password</label>
-            <input 
+            <input className={s.input}
                 type="password" 
                 id="password" 
                 value={password}

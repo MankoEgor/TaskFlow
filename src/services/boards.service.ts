@@ -7,7 +7,7 @@ export async function getMyBoards(id?: string ): Promise<Board[]>{
     const {data, error} = await supabase
         .from('boards')
         .select('*')
-        .eq('user_id', id);
+        .eq('owner_id', id);
 
 
     if(error){
@@ -19,12 +19,13 @@ export async function getMyBoards(id?: string ): Promise<Board[]>{
 }
 
 
-export async function createNewBoard({title, user_id}: createBoardInput): Promise<Board> {
+export async function createNewBoard({title, userId}: createBoardInput): Promise<Board> {
+    
     const { data: board, error: boardError } = await supabase
         .from('boards')
             .insert({
             title,
-            owner_id: user_id,
+            owner_id: userId,
         })
         .select()
         .single()
@@ -39,7 +40,7 @@ export async function createNewBoard({title, user_id}: createBoardInput): Promis
         .from('board_members')
         .insert({
             board_id: board.id,
-            user_id: user_id,
+            user_id: userId,
             role: 'owner'
         });
 
@@ -49,7 +50,7 @@ export async function createNewBoard({title, user_id}: createBoardInput): Promis
 
 
     const {error: columnError} = await supabase
-        .from('')
+        .from('columns')
         .insert([{
             board_id: board.id,
             title: 'To Do',

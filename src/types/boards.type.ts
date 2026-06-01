@@ -7,5 +7,5 @@ export type Board = {
 
 export type createBoardInput = {
     title: string;
-    user_id: string;
+    userId: string;
 }

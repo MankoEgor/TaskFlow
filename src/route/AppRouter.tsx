@@ -4,6 +4,7 @@ import LoginPage from "../pages/LoginPage/LoginPage.tsx";
 import RegPage from "../pages/RegPage/RegPage.tsx";
 import BoardPage from "../pages/BoardPage/BoardPage.tsx";
 import type React from "react";
+import Header from "../components/Header/Header.tsx";
 
 
 function ProtectedRoute({ children} : { children: React.ReactNode }) {
@@ -56,6 +57,7 @@ export function AppRouter() {
 
             <Route path="/board" element={
                 <ProtectedRoute>
+                    <Header/>
                     <BoardPage />
                 </ProtectedRoute>
                 } />
@@ -76,6 +78,7 @@ export function AppRouter() {
                 element={
                     <>
                         <ProtectedRoute>
+                            <Header/>
                             <BoardPage />
                         </ProtectedRoute>
                     </>

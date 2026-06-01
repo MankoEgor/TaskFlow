@@ -29,7 +29,7 @@ function BoardPage() {
 
         await createBoard({
             title: title.trim(),
-            user_id: user?.id
+            userId: user?.id
         })
 
         setTitle('');
@@ -42,9 +42,20 @@ function BoardPage() {
 
     return (
         <>
-            {isLoading && <p>Loading...</p>}
-
             <main>
+                <p>{user?.email}</p>
+                <form onSubmit={heandleCreateBoards}>
+                    <input
+                        type="text"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        placeholder="Enter board title"
+                    />
+                    <button type="submit" disabled={isCreating}>
+                        {isCreating ? 'Creating...' : 'Create Board'}
+                    </button>
+                </form>
+
                 {boards.map( (b: any) => (
                     <div key={b.id} className={s.card}>
                         <h1> {b.title} </h1>

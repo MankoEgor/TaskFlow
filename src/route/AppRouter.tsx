@@ -70,12 +70,16 @@ export function AppRouter() {
                 } />
 
 
+
             <Route 
                 path="/boards"
                 element={
-                    <ProtectedRoute>
-                        <BoardPage />
-                    </ProtectedRoute>
+                    <>
+                        <ProtectedRoute>
+                            <BoardPage />
+                        </ProtectedRoute>
+                    </>
+                    
                 } />
         </Routes>
     );

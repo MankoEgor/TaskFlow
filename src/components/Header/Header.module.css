@@ -1,0 +1,14 @@
+.header{
+    display: flex;
+    flex-direction: row;
+}
+
+.logo{
+    font-size: 32px;
+    font-weight: bold;
+    color: #244771;
+    letter-spacing: -0.8px;
+    line-break: 40px;
+    margin: 12px 0;
+    margin-left: 24px;
+}

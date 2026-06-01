@@ -1,41 +1,48 @@
 import s from './BoardPage.module.css'
-import { useState, useEffect } from 'react';
-import { supabase } from '../../lib/supabase';
+import { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth.ts';
+import { useBoards } from '../../hooks/useBoard.ts';
+
 
 function BoardPage() {
 
-    const [boards, setBoards] = useState<any>([])
-    const [loading, setLoading] = useState<boolean>(false)
+    const { user, signOut } = useAuth();
+
+    const {
+        boards,
+        isLoading,
+        error,
+        createBoard,
+        isCreating,
+        deleteBoard,
+        isDeleting
+    } = useBoards(user?.id)
+
+    const [title, setTitle] = useState<string>('');
 
 
+    const heandleCreateBoards = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
 
-    useEffect(() => {
-        const getData = async () => {
+        if(!user) return;
+        if(!title.trim()) return; 
 
-            const { user } = useAuth();
-            const {data, error} = await supabase
-                                        .from('boards')
-                                        .select('*')
-                                        .eq('user_id', user?.id);
+        await createBoard({
+            title: title.trim(),
+            user_id: user?.id
+        })
 
-            if(error){
-                console.log('Error fetching', error)
-            }
-            else {
-                setBoards(data);
-                setLoading(false);
-            }
-        }
+        setTitle('');
+    }
 
-        setLoading(true)
 
-        getData();
-    }, [])
+    const heandleDeleteBoard = async (board_Id: string) => {
+        await deleteBoard(board_Id)
+    }
 
     return (
         <>
-            {loading && <p>Loading...</p>}
+            {isLoading && <p>Loading...</p>}
 
             <main>
                 {boards.map( (b: any) => (

@@ -3,8 +3,6 @@ import { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth.ts';
 import { useBoards } from '../../hooks/useBoard.ts';
 
-import type { Board } from '../../types/boards.type.ts';
-
 import BoardCard from '../../components/BoardCard/BoardCard.tsx';
 import addButton from '../../assets/add.svg';
 import CreateBoardModalWindow from '../../components/CreatBoarderModelWindow/CreateBoarderModalWindow.tsx';
@@ -32,6 +30,7 @@ function BoardPage() {
 
         if(!user) return;
         if(!title.trim()) return; 
+
 
         await createBoard({
             title: title.trim(),
@@ -90,8 +89,9 @@ function BoardPage() {
                     {isClicked && <CreateBoardModalWindow
                                             title={title}
                                             setTitle={setTitle}
+                                            setIsClicked={setIsClicked}
                                             isCreating={isCreating}
-                                            heandleCreateBoards={() => heandleCreateBoards}/>}
+                                            heandleCreateBoards={heandleCreateBoards}/>}
 
 
                     {boards.map( (b: any) => (

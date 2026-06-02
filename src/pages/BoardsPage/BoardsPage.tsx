@@ -1,4 +1,4 @@
-import s from './BoardPage.module.css'
+import s from './BoardsPage.module.css'
 import { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth.ts';
 import { useBoards } from '../../hooks/useBoard.ts';
@@ -19,7 +19,6 @@ function BoardPage() {
         createBoard,
         isCreating,
         deleteBoard,
-        isDeleting
     } = useBoards(user?.id)
 
     const [title, setTitle] = useState<string>('');
@@ -65,9 +64,10 @@ function BoardPage() {
         return `${duration} seconds ago`;
     }
     return (
-        <>
+
+        <div className={s.container}>
             <main>
-                
+  
                 <div className={s.boardsContainer}>
                     <h1 className={s.boardsTitle}>My Projects</h1>
                     <p className={s.boardsDescription}>Manage and monitor your active boards across the organization.</p>
@@ -93,14 +93,18 @@ function BoardPage() {
                     {boards.map( (b: any) => (
                     <BoardCard
                         key={b.id}
+                        id={b.id}
                         title={b.title}
                         createAt={b.created_at}
                         createAtFunction={() => getDuration(b.created_at)}
+                        deleteFunction={heandleDeleteBoard}
                     />
                     ))}
                 </div>
             </main>
-        </>
+        </div>
+
+            
     )
 }
 

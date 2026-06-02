@@ -1,13 +1,11 @@
 body{
     background: rgba(195, 198, 208, 0.2);
 }
+
 main{
     width: 100%;
-    align-items: center;
     display: flex;
-    justify-content: center;
     flex-direction: column;
-    height: 100%;
 }
 
 .card{

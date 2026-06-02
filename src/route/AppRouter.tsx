@@ -3,11 +3,10 @@ import { useAuth } from "../hooks/useAuth.ts";
 
 import LoginPage from "../pages/LoginPage/LoginPage.tsx";
 import RegPage from "../pages/RegPage/RegPage.tsx";
-import BoardPage from "../pages/BoardPage/BoardPage.tsx";
+import BoardPage from "../pages/BoardsPage/BoardsPage.tsx";
 import type React from "react";
 
-import Footer from "../components/Footer/Footer.tsx";
-import Header from "../components/Header/Header.tsx";
+import MainLayout from "../layout/MainLayout.tsx";
 
 
 function ProtectedRoute({ children} : { children: React.ReactNode }) {
@@ -46,49 +45,34 @@ export function AppRouter() {
         <Routes>
             <Route path="/" element={<Navigate to="/board" replace />} />
 
-            <Route path="/login" element={
+            <Route
+            path="/login"
+            element={
                 <PublicOnlyRoute>
-                    <LoginPage />
+                <LoginPage />
                 </PublicOnlyRoute>
-                } />
+            }
+            />
 
-            <Route path="/register" element={
+            <Route
+            path="/register"
+            element={
                 <PublicOnlyRoute>
-                    <RegPage />
+                <RegPage />
                 </PublicOnlyRoute>
-                } />
+            }
+            />
 
-            <Route path="/board" element={
+            <Route
+            element={
                 <ProtectedRoute>
-                    <Header/>
-                    <BoardPage />
-                    <Footer/>
+                <MainLayout />
                 </ProtectedRoute>
-                } />
-
-
-            <Route 
-                path="/register" 
-                element={
-                    <PublicOnlyRoute>
-                        <RegPage />
-                    </PublicOnlyRoute>
-                } />
-
-
-
-            <Route 
-                path="/boards"
-                element={
-                    <>
-                        <ProtectedRoute>
-                            <Header/>
-                            <BoardPage />
-                            <Footer/>
-                        </ProtectedRoute>
-                    </>
-                    
-                } />
+            }
+            >
+            <Route path="/board" element={<BoardPage />} />
+            <Route path="/board/:id" element={<BoardPage />} />
+            </Route>
         </Routes>
-    );
+    )
 }

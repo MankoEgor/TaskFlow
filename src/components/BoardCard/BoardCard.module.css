@@ -10,6 +10,16 @@
     cursor: pointer;
 }
 
+.deleteButton{
+    display: flex;
+    justify-content: end;
+}
+
+.deleteIcon{
+    width: 16px;
+    height: 16px;
+}
+
 .boardCard:hover{
     transform: scale(1.03);
     box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1);

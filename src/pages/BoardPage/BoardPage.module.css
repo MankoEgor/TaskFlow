@@ -4,10 +4,63 @@ main{
     display: flex;
     justify-content: center;
     flex-direction: column;
+    background: #C3C6D0;
 }
 
 .card{
     display: flex;
     flex-direction: column;
+}
+
+.boardList{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    grid-auto-flow: column;
+    width: 100%;
+    padding: 20px;
+    padding-top: 12px;
+    
+}
+
+.boardsTitle{
+    width: 100%;
+    font-size: 32px;
+    color: #191C1E;
+    text-align: left;
+    font-weight: bold;   
+    letter-spacing: -0.64px; 
+    line-height: 40px;
+    
+}
+
+.boardsDescription{
+    font-size: 16px;
+    font-weight: regular;
+}
+
+.boardsContainer{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    color: #43474E;
+}
+
+.addButton{
+    border: 1px solid #000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: #fff;
+    border-radius: 8px;
+    gap: 16px;
+}
+
+.addBoardTitle{
+    font-size: 18px;
+    font-weight: semi-bold;
+    color: #43474E;
 }
 

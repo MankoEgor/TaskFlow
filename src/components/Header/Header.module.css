@@ -1,14 +1,35 @@
 .header{
     display: flex;
     flex-direction: row;
+    align-items: center;
+    padding: 12px 0;
 }
 
 .logo{
-    font-size: 32px;
+    font-size: 18px;
     font-weight: bold;
     color: #244771;
     letter-spacing: -0.8px;
     line-break: 40px;
-    margin: 12px 0;
+}
+
+.logoContainer{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content:space-around;
     margin-left: 24px;
+    margin-right: 32px;
+    gap: 8px;
+}
+
+.search{
+    height: max(35px);
+    width: max(448px);
+    border-radius: 8px;
+    border: none;
+    background: #ECEEF0;
+    padding-left: 40px;
+    font-size: 14px;
+    color: #6B7280;
 }

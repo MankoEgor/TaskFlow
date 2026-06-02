@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 import s from './Header.module.css'
+import icon from '../../assets/icon.svg'
 
 
 function Header(){
@@ -13,9 +14,12 @@ function Header(){
 
     return (
         <header className={s.header}>
-            <h1 className={s.logo}>TaskFlow</h1>
+            <div className={s.logoContainer}>
+                <img src={icon} alt="icon" />
+                <h1 className={s.logo}>TaskFlow</h1>
+            </div>
 
-            <input 
+            <input className={s.search}
                 type="text" 
                 name="" 
                 id="" 

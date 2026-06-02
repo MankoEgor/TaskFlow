@@ -3,6 +3,12 @@ import { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth.ts';
 import { useBoards } from '../../hooks/useBoard.ts';
 
+import type { Board } from '../../types/boards.type.ts';
+
+import BoardCard from '../../components/BoardCard/BoardCard.tsx';
+import addButton from '../../assets/add.svg';
+import CreateBoardModalWindow from '../../components/CreatBoarderModelWindow/CreateBoarderModalWindow.tsx';
+
 
 function BoardPage() {
 
@@ -19,7 +25,7 @@ function BoardPage() {
     } = useBoards(user?.id)
 
     const [title, setTitle] = useState<string>('');
-
+    const [isClicked, setIsClicked] = useState<boolean>(false);
 
     const heandleCreateBoards = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -33,6 +39,7 @@ function BoardPage() {
         })
 
         setTitle('');
+        setIsClicked(false);
     }
 
 
@@ -40,28 +47,62 @@ function BoardPage() {
         await deleteBoard(board_Id)
     }
 
+    const handleSignOut = async () => {
+        await signOut();
+    }
+
+    const getDuration = (createdAt: string) : string => {
+        const createdDate = new Date(createdAt);
+        const now = new Date();
+        const duration = Math.floor((now.getTime() - createdDate.getTime()) / 1000); // Duration in seconds`
+        if(duration < 60){
+            return `${duration} seconds ago`;
+        }
+        else if(duration < 3600){
+            const minutes = Math.floor(duration / 60);
+            return `${minutes} minutes ago`;
+        }
+        else if(duration < 86400){
+            const hours = Math.floor(duration / 3600);
+            return `${hours} hours ago`;
+        }
+
+        return `${duration} seconds ago`;
+    }
     return (
         <>
             <main>
-                <p>{user?.email}</p>
-                <form onSubmit={heandleCreateBoards}>
-                    <input
-                        type="text"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        placeholder="Enter board title"
-                    />
-                    <button type="submit" disabled={isCreating}>
-                        {isCreating ? 'Creating...' : 'Create Board'}
-                    </button>
-                </form>
+                
+                <div className={s.boardsContainer}>
+                    <h1 className={s.boardsTitle}>My Projects</h1>
+                    <p className={s.boardsDescription}>Manage and monitor your active boards across the organization.</p>
+                </div>
 
-                {boards.map( (b: any) => (
-                    <div key={b.id} className={s.card}>
-                        <h1> {b.title} </h1>
-                        <p> {b.createAt} </p>
+                <div className={s.boardList}>
+
+                    <div 
+                        className={s.addButton}
+                        onClick={() => setIsClicked(true)}>
+                        <img src={addButton} alt="Add Board" />
+                        <h1 className={s.addBoardTitle}>Create new board</h1>
                     </div>
-                ))}
+
+                    {isClicked && <CreateBoardModalWindow
+                                            title={title}
+                                            setTitle={setTitle}
+                                            isCreating={isCreating}
+                                            heandleCreateBoards={() => heandleCreateBoards}/>}
+
+
+                    {boards.map( (b: any) => (
+                    <BoardCard
+                        key={b.id}
+                        title={b.title}
+                        createAt={b.created_at}
+                        createAtFunction={() => getDuration(b.created_at)}
+                    />
+                    ))}
+                </div>
             </main>
         </>
     )

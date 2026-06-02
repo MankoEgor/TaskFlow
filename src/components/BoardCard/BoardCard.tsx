@@ -12,7 +12,7 @@ function BoardCard({ title, createAt, createAtFunction }: BoardCardProps) {
     return (
         <div className={s.boardCard}>
             <h3 className={s.boardTitle}>{title}</h3>
-            <p>Created: {time}</p>
+            <p className={s.time}>Created: {time}</p>
         </div>
     );
 }

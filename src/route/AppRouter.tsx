@@ -1,9 +1,12 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth.ts";
+
 import LoginPage from "../pages/LoginPage/LoginPage.tsx";
 import RegPage from "../pages/RegPage/RegPage.tsx";
 import BoardPage from "../pages/BoardPage/BoardPage.tsx";
 import type React from "react";
+
+import Footer from "../components/Footer/Footer.tsx";
 import Header from "../components/Header/Header.tsx";
 
 
@@ -59,6 +62,7 @@ export function AppRouter() {
                 <ProtectedRoute>
                     <Header/>
                     <BoardPage />
+                    <Footer/>
                 </ProtectedRoute>
                 } />
 
@@ -80,6 +84,7 @@ export function AppRouter() {
                         <ProtectedRoute>
                             <Header/>
                             <BoardPage />
+                            <Footer/>
                         </ProtectedRoute>
                     </>
                     

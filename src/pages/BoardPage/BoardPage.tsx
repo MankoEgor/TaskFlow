@@ -10,7 +10,7 @@ import CreateBoardModalWindow from '../../components/CreatBoarderModelWindow/Cre
 
 function BoardPage() {
 
-    const { user, signOut } = useAuth();
+    const { user } = useAuth();
 
     const {
         boards,
@@ -44,10 +44,6 @@ function BoardPage() {
 
     const heandleDeleteBoard = async (board_Id: string) => {
         await deleteBoard(board_Id)
-    }
-
-    const handleSignOut = async () => {
-        await signOut();
     }
 
     const getDuration = (createdAt: string) : string => {

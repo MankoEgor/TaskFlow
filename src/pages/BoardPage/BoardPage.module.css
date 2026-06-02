@@ -1,10 +1,12 @@
+body{
+    background: rgba(195, 198, 208, 0.2);
+}
 main{
     width: 100%;
     align-items: center;
     display: flex;
     justify-content: center;
     flex-direction: column;
-    background: #C3C6D0;
     height: 100%;
 }
 
@@ -49,7 +51,7 @@ main{
 }
 
 .addButton{
-    border: 1px solid #000;
+    border: 1px solid #C3C6D0;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -57,11 +59,21 @@ main{
     background: #fff;
     border-radius: 8px;
     gap: 16px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
 }
+
+.addButton:hover{
+    border: 1px solid #191C1E;
+    transform: scale(0.98);
+}
+
 
 .addBoardTitle{
     font-size: 18px;
-    font-weight: semi-bold;
+    font-weight: 800px;
     color: #43474E;
+    letter-spacing: 0px;
+
 }
 

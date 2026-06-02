@@ -1,8 +1,22 @@
 .boardCard{
     display: flex;
     flex-direction: column;
-    border: 1px solid #000;
+    border: 1px solid #C3C6D0;
     padding: 60px 20px;
     background: #fff;
     border-radius: 8px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+    cursor: pointer;
 }
+
+.boardCard:hover{
+    transform: scale(1.03);
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.time{
+    font-size: 14px;
+    color: #43474E;
+}
+

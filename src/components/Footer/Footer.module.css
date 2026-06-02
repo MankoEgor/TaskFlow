@@ -1,0 +1,14 @@
+footer{
+    position: relative;
+    bottom: 0;
+    padding: 32px 24px;
+    border: 1px solid #C3C6D0;
+}
+
+.footerText{
+    text-align: center;
+    font-size: 14px;
+    font-weight: regular;
+    color: #43474E;
+    line-height: 20px;
+}

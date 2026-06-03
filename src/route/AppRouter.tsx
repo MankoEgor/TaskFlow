@@ -3,7 +3,8 @@ import { useAuth } from "../hooks/useAuth.ts";
 
 import LoginPage from "../pages/LoginPage/LoginPage.tsx";
 import RegPage from "../pages/RegPage/RegPage.tsx";
-import BoardPage from "../pages/BoardsPage/BoardsPage.tsx";
+import BoardsPage from "../pages/BoardsPage/BoardsPage.tsx";
+import BoardPage from "../pages/BoardPage/BoardPage.tsx";
 import type React from "react";
 
 import MainLayout from "../layout/MainLayout.tsx";
@@ -70,7 +71,7 @@ export function AppRouter() {
                 </ProtectedRoute>
             }
             >
-            <Route path="/board" element={<BoardPage />} />
+            <Route path="/board" element={<BoardsPage />} />
             <Route path="/board/:id" element={<BoardPage />} />
             </Route>
         </Routes>

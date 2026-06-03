@@ -8,7 +8,7 @@ import addButton from '../../assets/add.svg';
 import CreateBoardModalWindow from '../../components/CreatBoarderModelWindow/CreateBoarderModalWindow.tsx';
 
 
-function BoardPage() {
+function BoardsPage() {
 
     const { user } = useAuth();
 
@@ -108,4 +108,4 @@ function BoardPage() {
     )
 }
 
-export default BoardPage;
+export default BoardsPage;

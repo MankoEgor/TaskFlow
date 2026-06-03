@@ -2,7 +2,7 @@ export type Board = {
     id: string;
     title: string;
     owner_id: string;
-    createAt: string;
+    created_at: string;
 }
 
 export type createBoardInput = {

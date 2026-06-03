@@ -1,6 +1,6 @@
 import s from './BoardCard.module.css';
 
-import del from '../../assets/delete.svg';
+import del from '../../../assets/delete.svg';
 
 import { useNavigate } from 'react-router-dom';
 

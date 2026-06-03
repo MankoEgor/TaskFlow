@@ -20,8 +20,6 @@ export async function getMyBoards(id?: string ): Promise<Board[]>{
 
 
 export async function createNewBoard({title, userId}: createBoardInput): Promise<Board> {
-
-    console.log(title)
     
     const { data: board, error: boardError } = await supabase
         .from('boards')

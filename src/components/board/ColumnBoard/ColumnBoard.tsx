@@ -1,10 +1,11 @@
 import { useDroppable } from '@dnd-kit/react';
 import { useTask } from '../../../hooks/useTask';
+import type { Task } from '../../../types/tasks.type';
 
 import TaskCard from '../TaskCard/TaskCard';
 
 import s from './ColumnBoard.module.css'
-import addIcon from '../../assets/addTask.svg'
+import addIcon from '../../../assets/addTask.svg'
 
 
 
@@ -20,11 +21,15 @@ function ColumnBoard({id, title}: any){
                 <h1 className={s.title}>{title}</h1>
             </div>
             <div className={s.content}>
-                {tasks.map((t: any) => (
+                {tasks.map((t: Task) => (
                     <TaskCard
-                        key={t.id}
-                        id={t.id}/>
+                        id={t.id}
+                        title={t.title}
+                        description={t.description}
+                        priority={t.priority}
+                        />
                 ))}
+                    
             </div>
             <button className={s.addButton}>
                 <img className={s.buttonIcon} src={addIcon} alt="" />

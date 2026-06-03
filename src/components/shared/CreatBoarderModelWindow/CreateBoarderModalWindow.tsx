@@ -1,6 +1,6 @@
 import s from './CreateBoarderModalWindow.module.css'
-import cross from '../../assets/cross.svg';
-import create from '../../assets/createButton.svg'
+import cross from '../../../assets/cross.svg';
+import create from '../../../assets/createButton.svg'
 
 interface CreateBoardModalWindowProps {
     title: string;

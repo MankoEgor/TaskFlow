@@ -34,6 +34,14 @@
     margin-top: 12px;
 }
 
+.addButton:hover .buttonText{
+    color: #191C1E
+}
+
+.addButton:hover{
+    border: 1px #191C1E solid;
+}
+
 .buttonText{
     color: #73777F;
 }

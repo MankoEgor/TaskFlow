@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth.ts';
 import { useBoards } from '../../hooks/useBoard.ts';
 
+import type { Board } from '../../types/boards.type.ts';
+
 import BoardCard from '../../components/board/BoardCard/BoardCard.tsx';
 import addButton from '../../assets/add.svg';
 import CreateBoardModalWindow from '../../components/shared/CreatBoarderModelWindow/CreateBoarderModalWindow.tsx';
@@ -90,7 +92,7 @@ function BoardsPage() {
                                             heandleCreateBoards={heandleCreateBoards}/>}
 
 
-                    {boards.map( (b: any) => (
+                    {boards.map( (b: Board) => (
                     <BoardCard
                         key={b.id}
                         id={b.id}

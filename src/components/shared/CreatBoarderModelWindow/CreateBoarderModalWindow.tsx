@@ -66,8 +66,6 @@ function CreateBoardModalWindow({ title, setTitle, setIsClicked, isCreating, hea
                                     Cancel
                                 </button>
                             </div>
-                            
-
                         </form>
                     </div>
                 </div>

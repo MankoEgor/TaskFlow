@@ -16,6 +16,22 @@ export async function getAllColumnTasks(columnId: string): Promise<Task[]>{
 }
 
 export async function createNewTask(input : CreateTaskInput): Promise<Task> {
+    const { data: position, error: positionError } = await supabase
+        .from('tasks')
+        .select('position')
+        .eq('column_id', input.column_id)
+        .order('position', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+
+    if(positionError){
+        throw new Error(positionError.message)
+    }
+
+    const newPosition: number = Number(position) + 1;
+
+
+
     const {data: task, error: taskError} = await supabase
         .from('tasks')
         .insert({column_id: input.column_id,
@@ -24,7 +40,7 @@ export async function createNewTask(input : CreateTaskInput): Promise<Task> {
                 priority: input.priority ?? 'medium',
                 due_date: input.due_date ?? null,
                 assignee_id: input.assignee_id ?? null,
-                position: input.position,
+                position: newPosition,
                 created_by: input.created_by,})
         .select()
         .single()
@@ -34,4 +50,16 @@ export async function createNewTask(input : CreateTaskInput): Promise<Task> {
     }
 
     return task;
+}
+
+
+export async function deleteTask(taskId: string): Promise<void>{
+    const {error} = await supabase
+        .from('tasks')
+        .delete()
+        .eq('id', taskId)
+
+    if(error){
+        throw new Error(error.message)
+    }
 }

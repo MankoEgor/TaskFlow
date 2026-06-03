@@ -1,0 +1,179 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.header{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    padding: 32px;
+    padding-bottom: 16px;
+
+}
+
+.headerText{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+
+.closeButton img{
+    width: 14px;
+    height: 14px;
+}
+
+.modal{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    max-width: fit-content;
+    border-radius: 8px;
+}
+
+.modalLabel{
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.form{
+    display: flex;
+    flex-direction: column;
+    padding: 24px 32px;
+    gap: 24px;
+}
+
+
+.headerTitle{
+    font-size: 24px;
+    font-weight: semi-bold;
+    color: #191C1E;
+}
+
+
+.inputDiv{
+    display: flex;
+    flex-direction: column;
+    gap: 8.5px;
+    margin: 16px 32px;
+}
+
+.buttonDiv{
+    padding: 24px 32px;
+    background: #F2F4F6;
+    display: flex;
+    flex-direction: row-reverse;
+    border-radius: 8px;
+    gap: 12px
+}
+
+.createButton{
+    background: #244771;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    color: #fff;
+    padding: 10px 31.7px 10px 32px;
+    border-radius: 8px;
+    border: none;
+    align-items: center;
+    font-size: 16px;
+}
+
+.cancelButton{
+    padding: 10px 24px;
+    border-radius: 8px;
+    border: 1px #C3C6D0 solid;
+    font-size: 16px;
+}
+
+.specialInfoDiv{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 24px;
+}
+
+.priorityInputDiv{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.priorityDiv{
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+}
+
+.priorityType{
+    font-size: 14px;
+}
+
+
+.priority, .active{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    border: 1px #C3C6D0 solid;
+    padding: 8px 12px;
+    gap: 8px;
+    cursor: pointer;
+}
+
+#lowCircle, #medCircle, #highCircle{
+    width: 12px;
+    height: 12px;
+    border-radius: 100%;
+}
+
+#lowCircle{
+    background: #6BD8CB;
+    border: 1px #004F48 solid;
+}
+
+#medCircle{
+    background: #3E5F8A;
+}
+
+#highCircle{
+    background: #BA1A1A ;
+}
+
+.dateInput{
+    padding: 10px 16px;
+    padding-left: 40px;
+    width: max(243px);
+    height: max(42px);
+}
+

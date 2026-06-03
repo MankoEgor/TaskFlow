@@ -17,7 +17,6 @@ export type TaskPriority = 'low' | 'medium' | 'high';
 export type CreateTaskInput = {
   column_id: string;
   title: string;
-  position: number;
   created_by: string;
   description?: string | null;
   priority?: TaskPriority;

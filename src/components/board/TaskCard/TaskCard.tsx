@@ -11,7 +11,7 @@ interface TaskCardProps {
 
 function TaskCard({id, title, description, priority}: TaskCardProps){
 
-    const {ref} = useDraggable({id});
+    const {ref} = useDraggable({id: id});
 
     return (
         <div className={s.taskContainer} ref={ref}>

@@ -16,8 +16,6 @@ function BoardsPage() {
 
     const {
         boards,
-        isLoading,
-        error,
         createBoard,
         isCreating,
         deleteBoard,

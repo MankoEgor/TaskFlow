@@ -17,7 +17,6 @@ function BoardPage(){
             <ColumnBoard 
                 key={c.id}
                 id={c.id}
-                board_id={c.board_id}
                 title={c.title}/>
             ))}
         </div>

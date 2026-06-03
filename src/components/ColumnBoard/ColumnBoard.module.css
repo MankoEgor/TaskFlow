@@ -7,3 +7,38 @@
     border-radius: 8px;
     padding: 17px;
 }
+
+.header{
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 24px;
+
+}
+
+.title{
+    font-size: 18px;
+    color: #191C1E;
+    font-weight: 700px;
+}
+
+.addButton{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 0;
+    border-radius: 8px;
+    border: 1px #C3C6D0 dashed;
+    cursor: pointer;
+    margin-top: 12px;
+}
+
+.buttonText{
+    color: #73777F;
+}
+
+.buttonIcon{
+    width: 11px;
+    height: 11px;
+}

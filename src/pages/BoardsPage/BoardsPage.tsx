@@ -3,9 +3,9 @@ import { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth.ts';
 import { useBoards } from '../../hooks/useBoard.ts';
 
-import BoardCard from '../../components/BoardCard/BoardCard.tsx';
+import BoardCard from '../../components/board/BoardCard/BoardCard.tsx';
 import addButton from '../../assets/add.svg';
-import CreateBoardModalWindow from '../../components/CreatBoarderModelWindow/CreateBoarderModalWindow.tsx';
+import CreateBoardModalWindow from '../../components/shared/CreatBoarderModelWindow/CreateBoarderModalWindow.tsx';
 
 
 function BoardsPage() {

@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useColumn } from "../../hooks/useColumn";
 
-import ColumnBoard from "../../components/ColumnBoard/ColumnBoard";
+import ColumnBoard from "../../components/board/ColumnBoard/ColumnBoard";
 
 import s from './BoardPage.module.css'
 

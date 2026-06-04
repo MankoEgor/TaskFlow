@@ -60,7 +60,7 @@ function ColumnBoard({id, title}: ColumnBoardProps){
         setIsClicked(false);
     }
 
-    const {ref} = useDroppable({id: id})
+    const {isDropTarget, ref} = useDroppable({id: id})
 
 
     return(
@@ -68,6 +68,7 @@ function ColumnBoard({id, title}: ColumnBoardProps){
             <div className={s.header}>
                 <h1 className={s.title}>{title}</h1>
             </div>
+            {isDropTarget && <p>Drop item to me</p>}
             <div className={s.content}>
                 {tasks.map((t: Task) => (
                     <TaskCard
@@ -82,6 +83,8 @@ function ColumnBoard({id, title}: ColumnBoardProps){
                 <img className={s.buttonIcon} src={addIcon} alt="" />
                 <p className={s.buttonText}>Add Task</p>
             </button>
+
+
 
             {isClicked && <CreateTaskModalWindow
                                 title={taskTitle}

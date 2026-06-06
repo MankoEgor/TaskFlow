@@ -27,7 +27,7 @@ function TaskCard({id, title, description, priority, index, columnId}: TaskCardP
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1
+    zindex: isDragging ? 999 : 'auto'
   }
 
     return (

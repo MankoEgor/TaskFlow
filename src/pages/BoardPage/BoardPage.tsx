@@ -2,18 +2,19 @@ import { useParams } from "react-router-dom";
 import { useColumn } from "../../hooks/useColumn";
 import { useBoardTask } from "../../hooks/useColumnTask";
 import { useTask } from "../../hooks/useTask";
-import { DndContext, pointerWithin } from "@dnd-kit/core";
+import { DndContext, pointerWithin} from "@dnd-kit/core";
 
 import ColumnBoard from "../../components/board/ColumnBoard/ColumnBoard";
 
 import s from './BoardPage.module.css'
-import type { DragEndEvent } from "@dnd-kit/core";
+import type { DragEndEvent} from "@dnd-kit/core";
 import type { Task } from "../../types/tasks.type";
 
 function BoardPage(){
+
     const {id} = useParams()
 
-    const {tasks, error, isLoading, isError} = useBoardTask(id);
+    const {tasks, error, isLoading} = useBoardTask(id);
     const {columns} = useColumn(id);
     const {moveTask} = useTask(id)
 
@@ -26,6 +27,7 @@ function BoardPage(){
 
         return acc;
     }, {})
+
  
 
     // const navigate = useNavigate()
@@ -80,9 +82,9 @@ function BoardPage(){
         });
 
         await moveTask({
-            taskId, 
-            targetColumnId
-        })
+            taskId,
+            targetColumnId,
+    });
     // здесь позже будет updateTaskColumn(taskId, targetColumnId)
     };
 

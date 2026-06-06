@@ -80,7 +80,7 @@ export async function deleteTask(taskId: string): Promise<void>{
     }
 }
 
-export async function updateTaskPosition(targetColumnId: string, taskId: string){
+export async function updateTaskPosition(taskId: string, targetColumnId: string,){
 
     const maxPosition: number = await getMaxPosition(targetColumnId);
     const nextPosition = maxPosition + 1;
@@ -96,7 +96,4 @@ export async function updateTaskPosition(targetColumnId: string, taskId: string)
     if(error){
         throw new Error(error.message);
     }
-
-
-
 }

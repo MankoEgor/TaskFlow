@@ -1,4 +1,4 @@
-import { useDroppable } from '@dnd-kit/core';
+import { useDroppable } from '@dnd-kit/react';
 import { useTask } from '../../../hooks/useTask';
 import { useAuth } from '../../../hooks/useAuth';
 import { useState } from 'react';
@@ -56,7 +56,7 @@ function ColumnBoard({column, tasks}: ColumnBoardProps){
         setIsClicked(false);
     }
 
-    const {setNodeRef} = useDroppable({
+    const {ref, isDropTarget} = useDroppable({
         id: column.id,
         data:{
             type: 'column',
@@ -75,7 +75,7 @@ function ColumnBoard({column, tasks}: ColumnBoardProps){
             <SortableContext 
                 items={tasks.map(task => task.id)} 
                 strategy={verticalListSortingStrategy}>
-                <div ref={setNodeRef} className={s.content}>
+                <div ref={ref} className={s.content}>
                 {tasks.map((t: Task, index: number) => (
                     <TaskCard
                         key={t.id}
@@ -86,7 +86,8 @@ function ColumnBoard({column, tasks}: ColumnBoardProps){
                         index={index}
                         columnId={t.column_id}/>
                 ))}
-                    
+
+                {isDropTarget && <div className={s.dropDiv}>DROP IT HERE</div>}
             </div>
             </SortableContext>
 

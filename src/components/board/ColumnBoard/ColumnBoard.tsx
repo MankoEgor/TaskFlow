@@ -21,7 +21,7 @@ interface ColumnBoardProps {
 function ColumnBoard({column, tasks}: ColumnBoardProps){
 
     const {user} = useAuth()
-    const {createTask, isCreated} = useTask(column.board_id)
+    const {createTask, isCreated,} = useTask(column.board_id)
 
     const [taskTitle, setTaskTitle] = useState<string>('');
     const [taskDescription, setTaskDescription] = useState<string | null>('');

@@ -4,14 +4,15 @@ import { getAllBoardTask } from "../services/tasks.service";
 export function useBoardTask(id?: string){
 
     const queryTask = useQuery({
-        queryKey: ['tasks', id],
-        queryFn: () => getAllBoardTask(id),
+        queryKey: ['board-tasks', id],
+        queryFn: () => getAllBoardTask(id!),
         enabled: Boolean(id)
     })
 
     return {
         tasks: queryTask.data ?? [], 
+        isError: queryTask.isError,
         error: queryTask.error,
-        isLoading: queryTask.isPending,
+        isLoading: queryTask.isLoading,
     }
 }

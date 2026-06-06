@@ -95,7 +95,6 @@ export async function updateTaskPosition(targetColumnId: string, taskId: string)
 
     if(error){
         throw new Error(error.message);
-        
     }
 
 

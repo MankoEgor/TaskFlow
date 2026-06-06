@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import {createNewTask, deleteTask } from "../services/tasks.service"
+import {createNewTask, deleteTask, updateTaskPosition } from "../services/tasks.service"
 
 export function useTask(boardId?: string){
     const queryClient = useQueryClient()
@@ -10,7 +10,7 @@ export function useTask(boardId?: string){
         mutationFn: createNewTask,
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: ['column-tasks', boardId]
+                queryKey: ['board-tasks', boardId]
             })
         }
     })
@@ -19,10 +19,24 @@ export function useTask(boardId?: string){
         mutationFn: deleteTask,
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: ['column-tasks', boardId]
+                queryKey: ['board-tasks', boardId]
             })
         }
     })
+
+    const moveTaskMutation = useMutation({
+        mutationFn: ({
+            taskId, 
+            targetColumnId
+        }:{
+            taskId: string,
+            targetColumnId: string
+        }) => updateTaskPosition(taskId, targetColumnId),
+        onSuccess:() => {
+            queryClient.invalidateQueries({
+                queryKey: ['board-tasks', boardId]
+            })}
+    });
 
     return {
 
@@ -30,7 +44,10 @@ export function useTask(boardId?: string){
         isCreated: createTaskMutation.isPending,
 
         deleteTask: deleteTaskMutation.mutateAsync,
-        isDeleted: deleteTaskMutation.isPending
+        isDeleted: deleteTaskMutation.isPending,
+
+        moveTask: moveTaskMutation.mutateAsync,
+        isMoving: moveTaskMutation.isPending,
 
     }
 }

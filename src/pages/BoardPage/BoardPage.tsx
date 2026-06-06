@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useColumn } from "../../hooks/useColumn";
 import { useBoardTask } from "../../hooks/useColumnTask";
-import { arrayMove } from "@dnd-kit/sortable";
+import { useTask } from "../../hooks/useTask";
 import { DndContext, pointerWithin } from "@dnd-kit/core";
 
 import ColumnBoard from "../../components/board/ColumnBoard/ColumnBoard";
@@ -9,13 +9,13 @@ import ColumnBoard from "../../components/board/ColumnBoard/ColumnBoard";
 import s from './BoardPage.module.css'
 import type { DragEndEvent } from "@dnd-kit/core";
 import type { Task } from "../../types/tasks.type";
-import { useQueryClient } from "@tanstack/react-query";
 
 function BoardPage(){
-    const {boardId} = useParams()
+    const {id} = useParams()
 
-    const {tasks, error, isLoading} = useBoardTask(boardId);
-    const {columns} = useColumn(boardId);
+    const {tasks, error, isLoading, isError} = useBoardTask(id);
+    const {columns} = useColumn(id);
+    const {moveTask} = useTask(id)
 
     const tasksByColumn = tasks.reduce<Record<string, Task[]>>((acc, task) => {
         if(!acc[task.column_id]){
@@ -30,7 +30,7 @@ function BoardPage(){
 
     // const navigate = useNavigate()
 
-    const handleDragEnd = (event: DragEndEvent) => {
+    const handleDragEnd = async (event: DragEndEvent) => {
         const { active, over } = event;
 
         console.log('active data:', active.data.current);
@@ -79,23 +79,23 @@ function BoardPage(){
             to: targetColumnId,
         });
 
-        const queryClient = useQueryClient()
-
-
-
+        await moveTask({
+            taskId, 
+            targetColumnId
+        })
     // здесь позже будет updateTaskColumn(taskId, targetColumnId)
     };
 
-   return (
+    if(isLoading)
+        return <p>Loading...</p>
 
-        
+    if(error)
+        return <p>Fail to load board, {error.message}</p>
+
+   return (
         <DndContext 
             collisionDetection={pointerWithin}
             onDragEnd={handleDragEnd}>
-
-            {error && <p>Fail to load board</p>}
-
-            {isLoading && <p>Loading...</p>}
 
             <div className={s.columnDiv}>
                 {columns.map((column) => (

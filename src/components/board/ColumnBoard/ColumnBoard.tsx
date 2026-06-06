@@ -13,16 +13,15 @@ import s from './ColumnBoard.module.css'
 import addIcon from '../../../assets/addTask.svg'
 
 interface ColumnBoardProps {
-    id: string,
     column: Column;
     tasks: Task[];
 }
 
 
-function ColumnBoard({id, column, tasks}: ColumnBoardProps){
+function ColumnBoard({column, tasks}: ColumnBoardProps){
 
     const {user} = useAuth()
-    const {createTask, isCreated} = useTask(column.id)
+    const {createTask, isCreated} = useTask(column.board_id)
 
     const [taskTitle, setTaskTitle] = useState<string>('');
     const [taskDescription, setTaskDescription] = useState<string | null>('');
@@ -34,13 +33,13 @@ function ColumnBoard({id, column, tasks}: ColumnBoardProps){
     const handleCreateTask = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        if(!id) return;
+        if(!column.id) return;
         if(!user) return;
         if(!taskTitle.trim()) return;
         if(!taskPriority) return;
 
         await createTask({
-            column_id: id,
+            column_id: column.board_id,
             title: taskTitle.trim(),
             description: taskDescription?.trim() || null,
             priority: taskPriority,
@@ -57,8 +56,8 @@ function ColumnBoard({id, column, tasks}: ColumnBoardProps){
         setIsClicked(false);
     }
 
-    const {setNodeRef, isOver} = useDroppable({
-        id,
+    const {setNodeRef} = useDroppable({
+        id: column.id,
         data:{
             type: 'column',
             columnId: column.id
@@ -67,7 +66,7 @@ function ColumnBoard({id, column, tasks}: ColumnBoardProps){
 
 
     return(
-        <div ref={setNodeRef} className={s.column}>
+        <div className={s.column}>
             <div className={s.header}>
                 <h1 className={s.title}>{column.title}</h1>
             </div>
@@ -76,7 +75,7 @@ function ColumnBoard({id, column, tasks}: ColumnBoardProps){
             <SortableContext 
                 items={tasks.map(task => task.id)} 
                 strategy={verticalListSortingStrategy}>
-                <div className={s.content}>
+                <div ref={setNodeRef} className={s.content}>
                 {tasks.map((t: Task, index: number) => (
                     <TaskCard
                         key={t.id}

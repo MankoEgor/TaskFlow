@@ -2,7 +2,8 @@ import { supabase } from "../lib/supabase";
 
 import type {Task, CreateTaskInput} from '../types/tasks.type'
 
-export async function getAllColumnTasks(boardId?: string): Promise<Task[]>{
+
+export async function getAllBoardTask(boardId?: string): Promise<Task[]> {
     const {data, error} = await supabase
         .from('tasks')
         .select(
@@ -22,12 +23,12 @@ export async function getAllColumnTasks(boardId?: string): Promise<Task[]>{
     return data ?? [];
 }
 
-async function getMaxPosition(input: CreateTaskInput): Promise<number>{
+async function getMaxPosition(columnId: string): Promise<number>{
 
     const { data, error} = await supabase
         .from('tasks')
         .select('position')
-        .eq('column_id', input.column_id)
+        .eq('column_id', columnId)
         .order('position', { ascending: false })
         .limit(1)
         .maybeSingle()
@@ -44,7 +45,7 @@ async function getMaxPosition(input: CreateTaskInput): Promise<number>{
 
 export async function createNewTask(input : CreateTaskInput): Promise<Task> {
 
-    const maxPosition: number = await getMaxPosition(input)
+    const maxPosition: number = await getMaxPosition(input.column_id)
     const newPosition: number = maxPosition + 1;
 
     const {data: task, error: taskError} = await supabase
@@ -77,4 +78,26 @@ export async function deleteTask(taskId: string): Promise<void>{
     if(error){
         throw new Error(error.message)
     }
+}
+
+export async function updateTaskPosition(targetColumnId: string, taskId: string){
+
+    const maxPosition: number = await getMaxPosition(targetColumnId);
+    const nextPosition = maxPosition + 1;
+
+    const {error} = await supabase
+        .from('tasks')
+        .update(({
+            column_id: targetColumnId,
+            position: nextPosition
+        }))
+        .eq('id', taskId)
+
+    if(error){
+        throw new Error(error.message);
+        
+    }
+
+
+
 }

@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { createNewTask, deleteTask } from "../services/tasks.service"
+import {createNewTask, deleteTask } from "../services/tasks.service"
 
-export function useTask(id?: string){
+export function useTask(boardId?: string){
     const queryClient = useQueryClient()
 
 
@@ -10,7 +10,7 @@ export function useTask(id?: string){
         mutationFn: createNewTask,
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: ['tasks', id]
+                queryKey: ['column-tasks', boardId]
             })
         }
     })
@@ -19,14 +19,18 @@ export function useTask(id?: string){
         mutationFn: deleteTask,
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: ['tasks', id]
+                queryKey: ['column-tasks', boardId]
             })
         }
     })
 
     return {
+
         createTask: createTaskMutation.mutateAsync,
         isCreated: createTaskMutation.isPending,
-        deleteTask: deleteTaskMutation.mutateAsync
+
+        deleteTask: deleteTaskMutation.mutateAsync,
+        isDeleted: deleteTaskMutation.isPending
+
     }
 }

@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAllColumnTasks } from "../services/tasks.service";
+import { getAllBoardTask } from "../services/tasks.service";
 
-export function useColumnTask(id?: string){
+export function useBoardTask(id?: string){
 
     const queryTask = useQuery({
         queryKey: ['tasks', id],
-        queryFn: () => getAllColumnTasks(id),
+        queryFn: () => getAllBoardTask(id),
         enabled: Boolean(id)
     })
 

@@ -6,6 +6,7 @@
     border: 1px #C3C6D0 solid;
     border-radius: 8px;
     padding: 17px;
+    height: fit-content;
 }
 
 .header{
@@ -49,4 +50,11 @@
 .buttonIcon{
     width: 11px;
     height: 11px;
+}
+
+.content{
+    display: flex;
+    min-height: 250px;
+    flex-direction: column;
+    gap: 8px;
 }

@@ -1,8 +1,10 @@
-import { useDroppable } from '@dnd-kit/react';
+import { useDroppable } from '@dnd-kit/core';
 import { useTask } from '../../../hooks/useTask';
 import { useAuth } from '../../../hooks/useAuth';
 import { useState } from 'react';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import type { Task, TaskPriority } from '../../../types/tasks.type';
+import type { Column } from '../../../types/column.type';
 
 import TaskCard from '../TaskCard/TaskCard';
 import CreateTaskModalWindow from '../../shared/CreateTaskModalWindow/CreateTaskModalWimdow';
@@ -12,20 +14,15 @@ import addIcon from '../../../assets/addTask.svg'
 
 interface ColumnBoardProps {
     id: string,
-    title: string;
+    column: Column;
+    tasks: Task[];
 }
 
 
-function ColumnBoard({id, title}: ColumnBoardProps){
-
-    const {
-        tasks,
-        error,
-        createTask,
-        isCreated,
-    } = useTask(id)
+function ColumnBoard({id, column, tasks}: ColumnBoardProps){
 
     const {user} = useAuth()
+    const {createTask, isCreated} = useTask(column.id)
 
     const [taskTitle, setTaskTitle] = useState<string>('');
     const [taskDescription, setTaskDescription] = useState<string | null>('');
@@ -60,31 +57,45 @@ function ColumnBoard({id, title}: ColumnBoardProps){
         setIsClicked(false);
     }
 
-    const {isDropTarget, ref} = useDroppable({id: id})
+    const {setNodeRef, isOver} = useDroppable({
+        id,
+        data:{
+            type: 'column',
+            columnId: column.id
+        },
+    })
 
 
     return(
-        <div ref={ref} className={s.column}>
+        <div ref={setNodeRef} className={s.column}>
             <div className={s.header}>
-                <h1 className={s.title}>{title}</h1>
+                <h1 className={s.title}>{column.title}</h1>
             </div>
-            {isDropTarget && <p>Drop item to me</p>}
-            <div className={s.content}>
-                {tasks.map((t: Task) => (
+
+
+            <SortableContext 
+                items={tasks.map(task => task.id)} 
+                strategy={verticalListSortingStrategy}>
+                <div className={s.content}>
+                {tasks.map((t: Task, index: number) => (
                     <TaskCard
+                        key={t.id}
                         id={t.id}
                         title={t.title}
                         description={t.description}
-                        priority={t.priority}/>
+                        priority={t.priority}
+                        index={index}
+                        columnId={t.column_id}/>
                 ))}
                     
             </div>
+            </SortableContext>
+
+
             <button className={s.addButton} onClick={() => setIsClicked(true)}>
                 <img className={s.buttonIcon} src={addIcon} alt="" />
                 <p className={s.buttonText}>Add Task</p>
             </button>
-
-
 
             {isClicked && <CreateTaskModalWindow
                                 title={taskTitle}

@@ -19,7 +19,7 @@ export type CreateTaskInput = {
   title: string;
   created_by: string;
   description?: string | null;
-  priority?: TaskPriority;
+  priority: TaskPriority;
   due_date?: string | null;
   assignee_id?: string | null;
 };

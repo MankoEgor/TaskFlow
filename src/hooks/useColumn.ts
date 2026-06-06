@@ -1,10 +1,8 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import {getAllColumns} from '../services/column.service'
 
-export function useColumn(id: string){
-
-    const queryClient = useQueryClient();
+export function useColumn(id?: string){
 
     const columnsQuery = useQuery({
         queryKey: ['columns', id],
@@ -12,6 +10,10 @@ export function useColumn(id: string){
         enabled: Boolean(id)
     })
 
-    return{ columns: columnsQuery.data ?? [] }
+    return{ 
+        columns: columnsQuery.data ?? [],
+        error: columnsQuery.error,
+        isLoading: columnsQuery.isPending,
+    }
 
 }

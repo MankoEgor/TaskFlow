@@ -1,8 +1,35 @@
 .taskContainer{
     display: flex;
+    flex-direction: column;
     padding: 16px;
     border-radius: 8px;
+    gap: 8px;
     border: none;
     background: #fff;
     box-shadow: 2px 2px rgba(0, 0, 0, 0.05);
+}
+
+.taskHeader{
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: space-between;
+}
+
+.taskPriority{
+    font-size: 10px;
+    font-weight: bold;
+    text-align: right;
+}
+
+.taskName{
+    text-align: left;
+    font-size: 16px;
+    font-weight: 600;
+    color: #191C1E;
+}
+
+.taskDescription{
+    font-size: 14px;
+    font-weight: normal;
+    color: #43474E;
 }

@@ -1,17 +1,14 @@
 import { useParams } from "react-router-dom";
 import { useColumn } from "../../hooks/useColumn";
 import { useBoardTask } from "../../hooks/useColumnTask";
-// import { useTask } from "../../hooks/useTask";
-
+import { useTask } from "../../hooks/useTask";
 import { DragDropProvider } from "@dnd-kit/react";
 
-
+import type { Task } from "../../types/tasks.type";
 
 import ColumnBoard from "../../components/board/ColumnBoard/ColumnBoard";
 
 import s from './BoardPage.module.css'
-import type { DragEndEvent} from "@dnd-kit/core";
-import type { Task } from "../../types/tasks.type";
 
 function BoardPage(){
 
@@ -19,7 +16,7 @@ function BoardPage(){
 
     const {tasks, error, isLoading} = useBoardTask(id);
     const {columns} = useColumn(id);
-    // const {moveTask} = useTask(id)
+    const {moveTask} = useTask(id)
 
     const tasksByColumn = tasks.reduce<Record<string, Task[]>>((acc, task) => {
         if(!acc[task.column_id]){
@@ -31,43 +28,30 @@ function BoardPage(){
         return acc;
     }, {})
 
- 
 
-    // const navigate = useNavigate()
+    const handleDragEnd = async (event: any) => {
+        const source = event.operation.source;
+        const target = event.operation.target;
 
-    const handleDragEnd = async (event: DragEndEvent) => {
-        const { active, over } = event;
+        if(!target) return;
 
-        console.log('active data:', active.data.current);
-        console.log('over data:', over?.data.current);
+        const sourceData = source.data;
+        const targetData = target.data;
 
-        if (!over) return;
-        if (active.id === over.id) return;
+        if (sourceData?.type !== 'task') return;
 
-        const activeType = active.data.current?.type;
-        const overType = over.data.current?.type;
-
-        if (activeType !== 'task') return;
-
-        const taskId = active.data.current?.taskId as string | undefined;
-        const sourceColumnId = active.data.current?.columnId as string | undefined;
+        const taskId = sourceData.taskId;
+        const sourceColumnId = sourceData.columnId;
 
         let targetColumnId: string | undefined;
 
-        if (overType === 'column') {
-            targetColumnId = over.data.current?.columnId as string | undefined;
+        if (targetData?.type === 'column') {
+            targetColumnId = targetData.columnId;
         }
 
-        if (overType === 'task') {
-            targetColumnId = over.data.current?.columnId as string | undefined;
+        if (targetData?.type === 'task') {
+            targetColumnId = targetData.columnId;
         }
-
-        console.log({
-            taskId,
-            sourceColumnId,
-            targetColumnId,
-            overType,
-        });
 
         if (!taskId) return;
         if (!sourceColumnId) return;
@@ -84,12 +68,13 @@ function BoardPage(){
             to: targetColumnId,
         });
 
-        // await moveTask({
-        //     taskId,
-        //     targetColumnId,
-        // });
-    // здесь позже будет updateTaskColumn(taskId, targetColumnId)
-    };
+        await moveTask({
+            taskId,
+            targetColumnId,
+        });
+
+
+    }
 
     if(isLoading)
         return <p>Loading...</p>
@@ -99,9 +84,7 @@ function BoardPage(){
 
    return (
         <DragDropProvider
-            onDragEnd={(event) => {
-                console.log('drag and event :', event)
-            }}>
+            onDragEnd={handleDragEnd}>
 
             <div className={s.columnDiv}>
                 {columns.map((column) => (

@@ -54,7 +54,7 @@
 
 .content{
     display: flex;
-    min-height: 250px;
+    min-height: 50px;
     flex-direction: column;
     gap: 8px;
 }

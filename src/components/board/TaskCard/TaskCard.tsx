@@ -1,7 +1,8 @@
-import { useSortable } from "@dnd-kit/sortable";
+import { useSortable } from "@dnd-kit/react/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
 import s from './TaskCard.module.css';
+import { use } from "react";
 
 interface TaskCardProps {
     id: string;
@@ -14,27 +15,18 @@ interface TaskCardProps {
 
 function TaskCard({id, title, description, priority, index, columnId}: TaskCardProps){
 
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({
+  const {ref, isDragging} = useSortable({
     id: id,
+    index,
     data: {
       type: 'task',
       taskId: id,
-      columnId: columnId,
-      index,
-    },
+      columnId: columnId
+    }
   })
 
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    zindex: isDragging ? 999 : 'auto'
-  }
-
     return (
-      <div ref={setNodeRef}
-          {...attributes}
-          {...listeners}
-          style={style}
+      <div ref={ref}
          className={s.taskContainer} >
           <div className={s.taskHeader}>
               <h3 className={s.taskName}>{title}</h3>

@@ -1,8 +1,11 @@
 import { useParams } from "react-router-dom";
 import { useColumn } from "../../hooks/useColumn";
 import { useBoardTask } from "../../hooks/useColumnTask";
-import { useTask } from "../../hooks/useTask";
-import { DndContext, pointerWithin} from "@dnd-kit/core";
+// import { useTask } from "../../hooks/useTask";
+
+import { DragDropProvider } from "@dnd-kit/react";
+
+
 
 import ColumnBoard from "../../components/board/ColumnBoard/ColumnBoard";
 
@@ -16,7 +19,7 @@ function BoardPage(){
 
     const {tasks, error, isLoading} = useBoardTask(id);
     const {columns} = useColumn(id);
-    const {moveTask} = useTask(id)
+    // const {moveTask} = useTask(id)
 
     const tasksByColumn = tasks.reduce<Record<string, Task[]>>((acc, task) => {
         if(!acc[task.column_id]){
@@ -81,10 +84,10 @@ function BoardPage(){
             to: targetColumnId,
         });
 
-        await moveTask({
-            taskId,
-            targetColumnId,
-    });
+        // await moveTask({
+        //     taskId,
+        //     targetColumnId,
+        // });
     // здесь позже будет updateTaskColumn(taskId, targetColumnId)
     };
 
@@ -95,9 +98,10 @@ function BoardPage(){
         return <p>Fail to load board, {error.message}</p>
 
    return (
-        <DndContext 
-            collisionDetection={pointerWithin}
-            onDragEnd={handleDragEnd}>
+        <DragDropProvider
+            onDragEnd={(event) => {
+                console.log('drag and event :', event)
+            }}>
 
             <div className={s.columnDiv}>
                 {columns.map((column) => (
@@ -108,7 +112,7 @@ function BoardPage(){
                     />
                 ))}
             </div>
-        </DndContext>
+        </DragDropProvider>
     );
 }
 

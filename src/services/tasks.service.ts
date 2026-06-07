@@ -45,8 +45,7 @@ async function getMaxPosition(columnId: string): Promise<number>{
 
 export async function createNewTask(input : CreateTaskInput): Promise<Task> {
 
-    const maxPosition: number = await getMaxPosition(input.column_id)
-    const newPosition: number = maxPosition + 1;
+    const newPosition: number = await getMaxPosition(input.column_id)
 
     const {data: task, error: taskError} = await supabase
         .from('tasks')
@@ -80,20 +79,37 @@ export async function deleteTask(taskId: string): Promise<void>{
     }
 }
 
-export async function updateTaskPosition(taskId: string, targetColumnId: string,){
+export async function updateTaskPosition(taskId: string, targetColumnId: string, targetPosition: number){
 
-    const maxPosition: number = await getMaxPosition(targetColumnId);
-    const nextPosition = maxPosition + 1;
 
     const {error} = await supabase
         .from('tasks')
         .update(({
             column_id: targetColumnId,
-            position: nextPosition
+            position: targetPosition
         }))
         .eq('id', taskId)
 
     if(error){
         throw new Error(error.message);
+    }
+}
+
+export async function updateTaskPositionInSameColumn(
+    tasks: {id: string, position: number}[]
+): Promise<void>{
+    const result = await Promise.all(
+        tasks.map((task) => 
+            supabase
+                .from('tasks')
+                .update({position: task.position})
+                .eq('id', task.id)
+        )
+    )
+
+    const failed = result.find((result) => result.error)
+
+    if(failed?.error){
+        throw new Error(failed.error.message)
     }
 }

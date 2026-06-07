@@ -59,6 +59,8 @@ function ColumnBoard({column, tasks}: ColumnBoardProps){
 
     const {ref, isDropTarget} = useDroppable({
         id: column.id,
+        type: 'column',
+        accept: 'task',
         data:{
             type: 'column',
             columnId: column.id
@@ -87,7 +89,7 @@ function ColumnBoard({column, tasks}: ColumnBoardProps){
                         />
                 ))}
 
-                {isDropTarget && <div className={s.dropDiv}>DROP IT HERE</div>}
+                {isDropTarget && tasks.length === 0 && <div className={s.dropDiv}>DROP IT HERE</div>}
             </div>
             </SortableContext>
 

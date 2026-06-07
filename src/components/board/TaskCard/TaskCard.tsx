@@ -11,11 +11,14 @@ interface TaskCardProps {
     isDeleted: boolean;
 }
 
-function TaskCard({task, index, deleteTask, isDeleted}: TaskCardProps){
+function TaskCard({task, index, deleteTask}: TaskCardProps){
 
   const {ref} = useSortable({
     id: task.id,
     index,
+    type: 'task',
+    accept: 'task',
+    group: task.column_id,
     data: {
       type: 'task',
       taskId: task.id,
@@ -26,14 +29,16 @@ function TaskCard({task, index, deleteTask, isDeleted}: TaskCardProps){
     return (
       <div ref={ref}
           className={s.taskContainer}>
-          <button className={s.actionButton}>
-            <img onClick={() => deleteTask(task.id)} 
+          <div className={s.actionDiv}>
+            <button className={s.actionButton} onClick={() => deleteTask(task.id)}>
+              <img className={s.actionIcon}
                   src={deleteIcon} alt="Delete" />
+            </button>
+            <p className={s.taskPriority}>{task.priority.toUpperCase()}</p>
             {/* <img src="" alt="" /> */}
-          </button>
+          </div>
           <div className={s.taskHeader}>
               <h3 className={s.taskName}>{task.title}</h3>
-              <p className={s.taskPriority}>{task.priority.toUpperCase()}</p>
           </div>
           <p className={s.taskDescription}>{task.description}</p>
       </div>

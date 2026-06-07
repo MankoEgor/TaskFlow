@@ -58,16 +58,9 @@ function BoardPage(){
         if (!targetColumnId) return;
 
         if (sourceColumnId === targetColumnId) {
-            console.log('Same column');
             return;
         }
-
-        console.log('Move task to another column:', {
-            taskId,
-            from: sourceColumnId,
-            to: targetColumnId,
-        });
-
+        
         await moveTask({
             taskId,
             targetColumnId,

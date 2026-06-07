@@ -5,7 +5,6 @@ import ModalInput from '../ModalInput/ModalInput';
 
 import cross from '../../../assets/cross.svg'
 import s from './CreateTaskModalWimdow.module.css'
-import { useState } from 'react';
 
 interface CreateBoardModalWindowProps {
     title: string;
@@ -32,9 +31,7 @@ function CreateTaskModalWindow(props : CreateBoardModalWindowProps) {
         description,
         setTitle,
         setDescription,
-        priority,
         setPriority,
-        dueDate,
         setDueDate,
         // assigneeId,
         // setAssigneeId,
@@ -121,7 +118,6 @@ function CreateTaskModalWindow(props : CreateBoardModalWindowProps) {
                                     type="submit"  
                                     disabled={isCreating}>
                                     {isCreating ? 'Creating...' : 'Create Task'}
-                                    <img src='' alt="" />
                                 </button>
                                 <button 
                                     className={s.cancelButton}

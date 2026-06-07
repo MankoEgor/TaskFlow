@@ -38,8 +38,19 @@ function ColumnBoard({column, tasks}: ColumnBoardProps){
         if(!taskTitle.trim()) return;
         if(!taskPriority) return;
 
+        console.log('CREATE TASK PAYLOAD:', {
+            column_id: column.id,
+            boardId: column.board_id,
+            title: taskTitle.trim(),
+            description: taskDescription?.trim() || null,
+            priority: taskPriority,
+            due_date: dueDate || null,
+            assignee_id: user.id,
+            created_by: user.id,
+        });
+
         await createTask({
-            column_id: column.board_id,
+            column_id: column.id,
             title: taskTitle.trim(),
             description: taskDescription?.trim() || null,
             priority: taskPriority,

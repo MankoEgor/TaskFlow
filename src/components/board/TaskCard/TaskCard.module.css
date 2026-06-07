@@ -33,3 +33,10 @@
     font-weight: normal;
     color: #43474E;
 }
+
+.actionButton{
+    display: flex;
+    border: none;
+    width: fit-content;
+    background: #fff;
+}

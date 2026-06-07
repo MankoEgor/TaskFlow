@@ -21,7 +21,7 @@ interface ColumnBoardProps {
 function ColumnBoard({column, tasks}: ColumnBoardProps){
 
     const {user} = useAuth()
-    const {createTask, isCreated,} = useTask(column.board_id)
+    const {createTask, isCreated, deleteTask, isDeleted} = useTask(column.board_id)
 
     const [taskTitle, setTaskTitle] = useState<string>('');
     const [taskDescription, setTaskDescription] = useState<string | null>('');
@@ -38,16 +38,6 @@ function ColumnBoard({column, tasks}: ColumnBoardProps){
         if(!taskTitle.trim()) return;
         if(!taskPriority) return;
 
-        console.log('CREATE TASK PAYLOAD:', {
-            column_id: column.id,
-            boardId: column.board_id,
-            title: taskTitle.trim(),
-            description: taskDescription?.trim() || null,
-            priority: taskPriority,
-            due_date: dueDate || null,
-            assignee_id: user.id,
-            created_by: user.id,
-        });
 
         await createTask({
             column_id: column.id,
@@ -87,15 +77,14 @@ function ColumnBoard({column, tasks}: ColumnBoardProps){
                 items={tasks.map(task => task.id)} 
                 strategy={verticalListSortingStrategy}>
                 <div ref={ref} className={s.content}>
-                {tasks.map((t: Task, index: number) => (
+                {tasks.map((task: Task, index: number) => (
                     <TaskCard
-                        key={t.id}
-                        id={t.id}
-                        title={t.title}
-                        description={t.description}
-                        priority={t.priority}
+                        key={task.id}
+                        task={task}
                         index={index}
-                        columnId={t.column_id}/>
+                        deleteTask={deleteTask}
+                        isDeleted={isDeleted}
+                        />
                 ))}
 
                 {isDropTarget && <div className={s.dropDiv}>DROP IT HERE</div>}

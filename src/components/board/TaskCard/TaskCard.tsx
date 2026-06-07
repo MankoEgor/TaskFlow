@@ -1,36 +1,41 @@
 import { useSortable } from "@dnd-kit/react/sortable";
+import type { Task } from "../../../types/tasks.type";
+import deleteIcon from '../../../assets/delete.svg'
 
 import s from './TaskCard.module.css';
 
 interface TaskCardProps {
-    id: string;
-    title: string;
-    description: string | null;
-    priority: string;
+    task: Task;
     index: number;
-    columnId: string;
+    deleteTask: (taskId: string) => void;
+    isDeleted: boolean;
 }
 
-function TaskCard({id, title, description, priority, index, columnId}: TaskCardProps){
+function TaskCard({task, index, deleteTask, isDeleted}: TaskCardProps){
 
   const {ref} = useSortable({
-    id: id,
+    id: task.id,
     index,
     data: {
       type: 'task',
-      taskId: id,
-      columnId: columnId
+      taskId: task.id,
+      columnId: task.column_id
     }
   })
 
     return (
       <div ref={ref}
-         className={s.taskContainer} >
+          className={s.taskContainer}>
+          <button className={s.actionButton}>
+            <img onClick={() => deleteTask(task.id)} 
+                  src={deleteIcon} alt="Delete" />
+            {/* <img src="" alt="" /> */}
+          </button>
           <div className={s.taskHeader}>
-              <h3 className={s.taskName}>{title}</h3>
-              <p className={s.taskPriority}>{priority.toUpperCase()}</p>
+              <h3 className={s.taskName}>{task.title}</h3>
+              <p className={s.taskPriority}>{task.priority.toUpperCase()}</p>
           </div>
-          <p className={s.taskDescription}>{description}</p>
+          <p className={s.taskDescription}>{task.description}</p>
       </div>
     )
 }

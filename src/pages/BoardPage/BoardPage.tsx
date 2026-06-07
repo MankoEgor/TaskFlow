@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { useColumn } from "../../hooks/useColumn";
-import { useBoardTask } from "../../hooks/useColumnTask";
+import { useBoardTask } from "../../hooks/useBoardTask";
 import { useTask } from "../../hooks/useTask";
 import { DragDropProvider } from "@dnd-kit/react";
 import { move } from "@dnd-kit/helpers";
@@ -9,6 +9,7 @@ import { move } from "@dnd-kit/helpers";
 import type { Task } from "../../types/tasks.type";
 
 import ColumnBoard from "../../components/board/ColumnBoard/ColumnBoard";
+import addColumnIcon from '../../assets/addColumn.svg'
 
 import s from './BoardPage.module.css'
 
@@ -20,8 +21,15 @@ function BoardPage(){
     const prevItems = useRef<Record<string, Task[]>>({})
 
     const {tasks, error, isLoading} = useBoardTask(id);
-    const {columns} = useColumn(id);
     const {moveTask, reorderTasks} = useTask(id)
+
+    const {
+        columns,
+        // createColumn,
+        // deleteColumn
+    } = useColumn(id);
+
+    
 
     useEffect(() => {
 
@@ -123,6 +131,11 @@ function BoardPage(){
                     tasks={items[column.id] ?? []}
                     />
                 ))}
+
+                <div className={s.addButton}>
+                    <img className={s.addButtonIcon} src={addColumnIcon} alt="" />
+                    <p className={s.addButtonText}>Add Column</p>
+                </div>
             </div>
         </DragDropProvider>
     );

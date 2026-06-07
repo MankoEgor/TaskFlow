@@ -5,3 +5,29 @@
     justify-content: center;
     padding: 24px;
 }
+
+.addButton{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: fit-content;
+    border: 1px #C3C6D0 dashed;
+    border-radius: 8px;
+    background: #F2F4F6;
+    padding: 19px 80px;
+    gap: 8px;
+}
+
+.addButtonIcon{
+    width: 20px;
+    height: 18px;
+}
+
+.addButtonText{
+    font-size: 16px;
+    color: #73777F;
+    text-align: center;
+    align-items: center;
+    width: fit-content;
+}

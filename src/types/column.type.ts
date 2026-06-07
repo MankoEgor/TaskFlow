@@ -4,3 +4,8 @@ export type Column = {
     title: string;
     position: number;
 }
+
+export type insertColumnProps = {
+    boardId: string;
+    title: string;
+}

@@ -15,84 +15,91 @@ import s from './BoardPage.module.css'
 
 function BoardPage(){
 
-    const {id} = useParams()
+    const {id} = useParams();
 
-    const [items, setItems] = useState<Record<string, Task[]>>({})
-    const prevItems = useRef<Record<string, Task[]>>({})
+    const [items, setItems] = useState<Record<string, Task[]>>({});
+    const prevItems = useRef<Record<string, Task[]>>({});
 
     const {tasks, error, isLoading} = useBoardTask(id);
     const {moveTask, reorderTasks} = useTask(id)
+    
 
     const {
         columns,
-        // createColumn,
-        // deleteColumn
+        createColumn,
+        deleteColumn
     } = useColumn(id);
 
     
 
     useEffect(() => {
+        const groupedTasks: Record<string, Task[]> = {};
 
-        const groupdeTasks = tasks.reduce<Record<string, Task[]>>((acc, task) => {
-            if(!acc[task.column_id]){
-                acc[task.column_id] = []
+        columns.forEach((column) => {
+            groupedTasks[column.id] = [];
+        });
+
+        tasks.forEach((task) => {
+            if (!groupedTasks[task.column_id]) {
+            groupedTasks[task.column_id] = [];
             }
 
-            acc[task.column_id].push(task);
+            groupedTasks[task.column_id].push(task);
+        });
 
-            return acc;
-        }, {});
-
-        for(const columnId in groupdeTasks){
-            groupdeTasks[columnId].sort((a, b) => a.position - b.position);
+        for (const columnId in groupedTasks) {
+            groupedTasks[columnId].sort((a, b) => a.position - b.position);
         }
 
-        setItems(groupdeTasks);
-    }, [tasks])
+        setItems((prevItems) => {
+            if (JSON.stringify(prevItems) === JSON.stringify(groupedTasks)) {
+            return prevItems;
+            }
+
+            return groupedTasks;
+        });
+    }, [tasks, columns]);
 
 
     const handleDragEnd = async (event: any) => {
-        const {source, target} = event.operation
+        const { source, target } = event.operation;
 
-        if(!source || !target) return;
-
+        if (!source || !target) return;
         if (source.type !== 'task') return;
 
         const taskId = source.data?.taskId as string | undefined;
         const sourceColumnId = source.data?.columnId as string | undefined;
-
-        const targetColumnId = target.data?.column_id as string | undefined;
-    
+        const targetColumnId = target.data?.columnId as string | undefined;
 
         if (!taskId || !sourceColumnId || !targetColumnId) return;
 
         const finalColumnTasks = items[targetColumnId] ?? [];
 
-        const targetPosition = finalColumnTasks.findIndex((task) => task.id === taskId)
+        let targetPosition = finalColumnTasks.findIndex(
+            (task) => task.id === taskId
+        );
 
-        if(targetPosition === -1) return;
+        if (targetPosition === -1) {
+            targetPosition = finalColumnTasks.length;
+        }
 
-
-        if(sourceColumnId !== targetColumnId){
-
+        if (sourceColumnId !== targetColumnId) {
             await moveTask({
-                taskId,
-                targetColumnId,
-                targetPosition
+            taskId,
+            targetColumnId,
+            targetPosition,
             });
 
             return;
         }
 
-
         await reorderTasks(
             finalColumnTasks.map((task, index) => ({
-                id: task.id,
-                position: index
+            id: task.id,
+            position: index,
             }))
-        )
-
-    }
+        );
+    };
 
     if(isLoading)
         return <p>Loading...</p>
@@ -131,12 +138,12 @@ function BoardPage(){
                     tasks={items[column.id] ?? []}
                     />
                 ))}
+            </div>
 
-                <div className={s.addButton}>
+            <div className={s.addButton}>
                     <img className={s.addButtonIcon} src={addColumnIcon} alt="" />
                     <p className={s.addButtonText}>Add Column</p>
                 </div>
-            </div>
         </DragDropProvider>
     );
 }

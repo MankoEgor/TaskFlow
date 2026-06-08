@@ -50,7 +50,7 @@ export function useTask(boardId?: string){
         mutationFn: updateTaskPositionInSameColumn,
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: ['board-task', boardId]
+                queryKey: ['board-tasks', boardId]
             })
         }
     }) 

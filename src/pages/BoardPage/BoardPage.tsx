@@ -10,8 +10,10 @@ import type { Task } from "../../types/tasks.type";
 
 import ColumnBoard from "../../components/board/ColumnBoard/ColumnBoard";
 import addColumnIcon from '../../assets/addColumn.svg'
+import CreateModalWindow from "../../components/shared/CreateModalWindow/CreateModalWindow";
 
 import s from './BoardPage.module.css'
+import { useAuth } from "../../hooks/useAuth";
 
 function BoardPage(){
 
@@ -20,6 +22,9 @@ function BoardPage(){
     const [items, setItems] = useState<Record<string, Task[]>>({});
     const prevItems = useRef<Record<string, Task[]>>({});
 
+    const [title, setTitle] = useState<string>('');
+    const [isClicked, setIsClicked] = useState<boolean>(false);
+
     const {tasks, error, isLoading} = useBoardTask(id);
     const {moveTask, reorderTasks} = useTask(id)
     
@@ -27,6 +32,7 @@ function BoardPage(){
     const {
         columns,
         createColumn,
+        isCreating,
         deleteColumn
     } = useColumn(id);
 
@@ -51,14 +57,22 @@ function BoardPage(){
             groupedTasks[columnId].sort((a, b) => a.position - b.position);
         }
 
-        setItems((prevItems) => {
-            if (JSON.stringify(prevItems) === JSON.stringify(groupedTasks)) {
-            return prevItems;
-            }
-
-            return groupedTasks;
-        });
+        setItems(groupedTasks);
     }, [tasks, columns]);
+
+    const handleCreateColumn = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault()
+
+        if(!title.trim()) return;
+
+        await createColumn({
+            boardId: id,
+            title: title
+        });
+
+        setTitle('');
+        setIsClicked(false);
+    }
 
 
     const handleDragEnd = async (event: any) => {
@@ -138,12 +152,21 @@ function BoardPage(){
                     tasks={items[column.id] ?? []}
                     />
                 ))}
-            </div>
-
-            <div className={s.addButton}>
+                <div onClick={() => setIsClicked(true)} className={s.addButton}>
                     <img className={s.addButtonIcon} src={addColumnIcon} alt="" />
                     <p className={s.addButtonText}>Add Column</p>
                 </div>
+            </div>
+
+            {isClicked && <CreateModalWindow
+                                headerTitle="Create New Column"
+                                labelText="COLUMN TITLE"
+                                isCreating={isCreating}
+                                setIsClicked={setIsClicked}
+                                setTitle={setTitle}
+                                title={title}
+                                heandleCreate={handleCreateColumn}/>}
+
         </DragDropProvider>
     );
 }

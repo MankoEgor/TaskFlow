@@ -7,7 +7,7 @@ import type { Board } from '../../types/boards.type.ts';
 
 import BoardCard from '../../components/board/BoardCard/BoardCard.tsx';
 import addButton from '../../assets/add.svg';
-import CreateBoardModalWindow from '../../components/shared/CreatBoarderModelWindow/CreateBoarderModalWindow.tsx';
+import CreateModalWindow from '../../components/shared/CreateModalWindow/CreateModalWindow.tsx';
 
 
 function BoardsPage() {
@@ -39,7 +39,6 @@ function BoardsPage() {
         setTitle('');
         setIsClicked(false);
     }
-
 
     const heandleDeleteBoard = async (board_Id: string) => {
         await deleteBoard(board_Id)
@@ -82,12 +81,15 @@ function BoardsPage() {
                         <h1 className={s.addBoardTitle}>Create new board</h1>
                     </div>
 
-                    {isClicked && <CreateBoardModalWindow
-                                            title={title}
-                                            setTitle={setTitle}
-                                            setIsClicked={setIsClicked}
-                                            isCreating={isCreating}
-                                            heandleCreateBoards={heandleCreateBoards}/>}
+                    {isClicked && <CreateModalWindow
+                                        headerTitle='Create New Board'
+                                        headerDiscription="Set up a new space for your team's workflow."
+                                        labelText='BOARD NAME'
+                                        title={title}
+                                        setTitle={setTitle}
+                                        setIsClicked={setIsClicked}
+                                        isCreating={isCreating}
+                                        heandleCreate={heandleCreateBoards}/>}
 
 
                     {boards.map( (b: Board) => (

@@ -6,6 +6,6 @@ export type Column = {
 }
 
 export type insertColumnProps = {
-    boardId: string;
+    boardId?: string;
     title: string;
 }

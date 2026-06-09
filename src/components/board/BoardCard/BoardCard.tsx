@@ -18,8 +18,7 @@ function BoardCard({ id, title, createAt, createAtFunction, deleteFunction }: Bo
 
     const time = createAtFunction(createAt);
     return (
-        <div className={s.boardCard}
-            onClick={() => navigate(`/board/${id}`)}>
+        <div className={s.boardCard}>
             <div className={s.deleteButton}>
                 <img className=
                 {s.deleteIcon} 
@@ -27,7 +26,7 @@ function BoardCard({ id, title, createAt, createAtFunction, deleteFunction }: Bo
                 onClick={() => deleteFunction(id)}
                 alt="delete" />
             </div>
-            <div className={s.boardInfo}>
+            <div onClick={() => navigate(`/board/${id}`)} className={s.boardInfo}>
                 <h3 className={s.boardTitle}>{title}</h3>
                 <p className={s.time}>Created: {time}</p>
             </div>

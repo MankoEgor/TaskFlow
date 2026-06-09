@@ -5,6 +5,7 @@ import LoginPage from "../pages/LoginPage/LoginPage.tsx";
 import RegPage from "../pages/RegPage/RegPage.tsx";
 import BoardsPage from "../pages/BoardsPage/BoardsPage.tsx";
 import BoardPage from "../pages/BoardPage/BoardPage.tsx";
+import NotFoundPage from "../pages/404Page/NotFoundPage.tsx";
 import type React from "react";
 
 import MainLayout from "../layout/MainLayout.tsx";
@@ -45,6 +46,8 @@ export function AppRouter() {
     return (
         <Routes>
             <Route path="/" element={<Navigate to="/board" replace />} />
+
+            <Route path="*" element={<NotFoundPage/>}/>
 
             <Route
             path="/login"

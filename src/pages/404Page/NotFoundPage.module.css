@@ -1,0 +1,58 @@
+.main{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.content{
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.textDiv{
+    padding-top: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 16px;
+}
+
+.header{
+    width: 100%;
+    text-align: center;
+}
+
+.description{
+    text-align: center;
+}
+
+.buttonDiv{
+    display: flex;
+    justify-content: center;
+}
+
+.navButton{
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    padding: 12px 32px;
+    border-radius: 8px;
+    border: none;
+    background: #244771;
+    width: fit-content;
+    align-items: center;
+}
+
+.buttonText{
+    color: #fff;
+    font-size: 18px;
+    line-height: 24px;
+}
+
+.buttonIcon{
+    width: 18px;
+    height: 18px;
+}
+

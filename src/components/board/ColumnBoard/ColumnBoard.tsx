@@ -8,6 +8,7 @@ import type { Column } from '../../../types/column.type';
 
 import TaskCard from '../TaskCard/TaskCard';
 import CreateTaskModalWindow from '../../shared/CreateTaskModalWindow/CreateTaskModalWimdow';
+import ErrorModalWindow from '../../shared/ErrorModalWindow/ErrorModalWindow';
 
 import s from './ColumnBoard.module.css'
 import addIcon from '../../../assets/addTask.svg'
@@ -29,6 +30,8 @@ function ColumnBoard({column, tasks, deleteColumn, updateColumn, isUpdated}: Col
     const {user} = useAuth();
     const {createTask, isCreated, deleteTask, isDeleted} = useTask(column.board_id);
 
+    const [localError, setLocalError] = useState<Error | null>(null);
+
     // states for updating column title
     const [updateColumnTitle, setUpdateColumnTitle] = useState<string>('');
     const [isColumnUpdateClicked, setColumnIsUpdateClicked] = useState<boolean>(false);
@@ -39,13 +42,17 @@ function ColumnBoard({column, tasks, deleteColumn, updateColumn, isUpdated}: Col
         if(!updateColumnTitle.trim()) return;
         if(!column.id) return;
 
-        await updateColumn({
-            columnId: column.id,
-            title: updateColumnTitle
-        })
+        try {
+            await updateColumn({
+                columnId: column.id,
+                title: updateColumnTitle
+            })
 
-        setUpdateColumnTitle('');
-        setColumnIsUpdateClicked(false);
+            setUpdateColumnTitle('');
+            setColumnIsUpdateClicked(false);
+        } catch (err: any) {
+            setLocalError(err instanceof Error ? err : new Error(String(err)));
+        }
     }
 
 
@@ -66,23 +73,34 @@ function ColumnBoard({column, tasks, deleteColumn, updateColumn, isUpdated}: Col
         if(!taskTitle.trim()) return;
         if(!taskPriority) return;
 
+        try {
+            await createTask({
+                column_id: column.id,
+                title: taskTitle.trim(),
+                description: taskDescription?.trim() || null,
+                priority: taskPriority,
+                due_date: dueDate || null,
+                assignee_id: user.id,
+                created_by: user.id,
+            });
 
-        await createTask({
-            column_id: column.id,
-            title: taskTitle.trim(),
-            description: taskDescription?.trim() || null,
-            priority: taskPriority,
-            due_date: dueDate || null,
-            assignee_id: user.id,
-            created_by: user.id,
-        });
+            setTaskTitle('');
+            setTaskDescription('');
+            setTaskPriority('medium');
+            setDueDate(null);
+            // setAssigneeId(null);
+            setIsClicked(false);
+        } catch (err: any) {
+            setLocalError(err instanceof Error ? err : new Error(String(err)));
+        }
+    }
 
-        setTaskTitle('');
-        setTaskDescription('');
-        setTaskPriority('medium');
-        setDueDate(null);
-        // setAssigneeId(null);
-        setIsClicked(false);
+    const handleDeleteTask = async (taskId: string) => {
+        try {
+            await deleteTask(taskId);
+        } catch (err: any) {
+            setLocalError(err instanceof Error ? err : new Error(String(err)));
+        }
     }
 
     const {ref, isDropTarget} = useDroppable({

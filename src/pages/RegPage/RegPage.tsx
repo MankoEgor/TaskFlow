@@ -2,6 +2,7 @@ import { useState } from "react";
 import AuthForm from "../../components/auth/AuthForm/AuthForm";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
+import ErrorModalWindow from "../../components/shared/ErrorModalWindow/ErrorModalWindow";
 
 import s from './RegPage.module.css'
 
@@ -9,7 +10,7 @@ function RegPage(){
 
         const [email, setEmail] = useState<string>("");
         const [password, setPassword] = useState<string>("");
-        const [errorMessage, setErrorMessage] = useState<string>("");
+        const [regError, setRegError] = useState<Error | null>(null);
         const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
         const navigate = useNavigate();
@@ -18,7 +19,7 @@ function RegPage(){
             e.preventDefault();
 
             setIsSubmitting(true);
-            setErrorMessage("");
+            setRegError(null);
 
 
             const { error } = await supabase.auth.signUp({
@@ -29,7 +30,7 @@ function RegPage(){
             setIsSubmitting(false);
 
             if(error){
-                setErrorMessage(error.message);
+                setRegError(new Error(error.message));
                 return;
             }
 
@@ -43,7 +44,6 @@ function RegPage(){
             headerText="Create Your Account"
             email={email}
             password={password}
-            errorMessage={errorMessage}
             isSubmitting={isSubmitting}
             onEmailChange={setEmail}
             onPasswordChange={setPassword}
@@ -51,6 +51,8 @@ function RegPage(){
         />
 
         <Link to="/login">Already have account?</Link>
+
+        {regError && <ErrorModalWindow error={regError} onClose={() => setRegError(null)} />}
         </div>
         
     )

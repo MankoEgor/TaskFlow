@@ -8,6 +8,8 @@ import type { Board } from '../../types/boards.type.ts';
 import BoardCard from '../../components/board/BoardCard/BoardCard.tsx';
 import addButton from '../../assets/add.svg';
 import CreateModalWindow from '../../components/shared/CreateModalWindow/CreateModalWindow.tsx';
+import ErrorModalWindow from '../../components/shared/ErrorModalWindow/ErrorModalWindow.tsx';
+import Loader from '../../components/shared/Loader/Loader.tsx';
 
 
 function BoardsPage() {
@@ -16,13 +18,16 @@ function BoardsPage() {
 
     const {
         boards,
+        isLoading,
         createBoard,
         isCreating,
         deleteBoard,
+        error: boardsError,
     } = useBoards(user?.id)
 
     const [title, setTitle] = useState<string>('');
     const [isClicked, setIsClicked] = useState<boolean>(false);
+    const [localError, setLocalError] = useState<Error | null>(null);
 
     const heandleCreateBoards = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -31,17 +36,24 @@ function BoardsPage() {
         if(!title.trim()) return; 
 
 
-        await createBoard({
-            title: title.trim(),
-            userId: user?.id
-        })
-
-        setTitle('');
-        setIsClicked(false);
+        try {
+            await createBoard({
+                title: title.trim(),
+                userId: user?.id
+            })
+            setTitle('');
+            setIsClicked(false);
+        } catch (err: any) {
+            setLocalError(err instanceof Error ? err : new Error(String(err)));
+        }
     }
 
     const heandleDeleteBoard = async (board_Id: string) => {
-        await deleteBoard(board_Id)
+        try {
+            await deleteBoard(board_Id)
+        } catch (err: any) {
+            setLocalError(err instanceof Error ? err : new Error(String(err)));
+        }
     }
 
     const getDuration = (createdAt: string) : string => {
@@ -62,11 +74,20 @@ function BoardsPage() {
 
         return `${duration} seconds ago`;
     }
+
+    if (boardsError) {
+        return <ErrorModalWindow error={boardsError} />;
+    }
+
+    if(isLoading){
+        return <Loader/>
+    }
+
     return (
 
         <div className={s.container}>
             <main>
-  
+   
                 <div className={s.boardsContainer}>
                     <h1 className={s.boardsTitle}>My Projects</h1>
                     <p className={s.boardsDescription}>Manage and monitor your active boards across the organization.</p>
@@ -88,7 +109,7 @@ function BoardsPage() {
                                         title={title}
                                         setTitle={setTitle}
                                         setIsClicked={setIsClicked}
-                                        isCreating={isCreating}
+                                        isDoneState={isCreating}
                                         heandleCreate={heandleCreateBoards}/>}
 
 
@@ -104,6 +125,7 @@ function BoardsPage() {
                     ))}
                 </div>
             </main>
+            {localError && <ErrorModalWindow error={localError} onClose={() => setLocalError(null)} />}
         </div>
 
             

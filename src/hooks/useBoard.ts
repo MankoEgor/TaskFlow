@@ -35,7 +35,7 @@ export function useBoards(id?: string){
 
     return {
         boards: boardsQuery.data ?? [],
-        isLoading: boardsQuery.isLoading,
+        isLoading: boardsQuery.isPending,
         error: boardsQuery.error,
         createBoard: createBoardMutation.mutateAsync,
         isCreating: createBoardMutation.isPending,

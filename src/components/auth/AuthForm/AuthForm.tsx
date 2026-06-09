@@ -3,9 +3,12 @@ import s  from './AuthForm.module.css';
 interface AuthFormProps {
     headerText?: string;
     email: string;
+    emailError: string
+    setEmailError: (value: string) => void;
     password: string;
+    passwordError: string;
+    setPasswordError: (value: string) => void;
     buttonText: string;
-    errorMessage?: string;
     isSubmitting: boolean;
     onEmailChange: (value: string) => void;
     onPasswordChange: (value: string) => void;
@@ -15,14 +18,41 @@ interface AuthFormProps {
 function AuthForm({ 
     headerText, 
     email, 
+    emailError,
+    setEmailError,
     password,
+    passwordError,
+    setPasswordError,
     buttonText, 
-    errorMessage,
     onEmailChange,
     onPasswordChange,
     isSubmitting,
     onSubmit
 }: AuthFormProps){
+
+    const handleEmail = (emailInput: string) => {
+        if(!emailInput.trim()){
+            setEmailError("Email can't be empty")
+        }
+
+        setEmailError('');
+        onEmailChange(emailInput);
+    }
+
+    const handlePassswor = (passwordInput: string) => {
+        const passwordInputTrim = passwordInput.trim()
+
+        if(!passwordInputTrim){
+            setPasswordError("Password can't be empty")
+        }
+
+        if(passwordInputTrim.length < 8){
+            setPasswordError("Password length less than 8 symbols");
+        }
+
+        setPasswordError('');
+        onPasswordChange(passwordInputTrim);
+    }
 
     return (
         
@@ -35,8 +65,8 @@ function AuthForm({
                 id="email" 
                 value={email}
                 placeholder="example@domain.com"  
-                onChange={(e) => onEmailChange(e.target.value)}/>
-            
+                onChange={(e) => handleEmail(e.target.value)}/>
+            {emailError && <p>{emailError}</p>}
             
             <label className={s.label} htmlFor="password">Password</label>
             <input className={s.input}
@@ -44,10 +74,9 @@ function AuthForm({
                 id="password" 
                 value={password}
                 placeholder="Minimum 8 characters" 
-                onChange={(e) => onPasswordChange(e.target.value)}/>
+                onChange={(e) => handlePassswor(e.target.value)}/>
+            {passwordError && <p>{passwordError}</p>}
 
-
-            {errorMessage && <p>{errorMessage}</p>}
 
             <button className={s.subButton} type="submit" disabled={isSubmitting}>
                 {buttonText}

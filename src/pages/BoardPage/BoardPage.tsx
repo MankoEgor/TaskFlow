@@ -9,8 +9,10 @@ import { move } from "@dnd-kit/helpers";
 import type { Task } from "../../types/tasks.type";
 
 import ColumnBoard from "../../components/board/ColumnBoard/ColumnBoard";
-import addColumnIcon from '../../assets/addColumn.svg'
 import CreateModalWindow from "../../components/shared/CreateModalWindow/CreateModalWindow";
+import ErrorModalWindow from "../../components/shared/ErrorModalWindow/ErrorModalWindow";
+import Loader from "../../components/shared/Loader/Loader";
+import addColumnIcon from '../../assets/addColumn.svg'
 
 import s from './BoardPage.module.css'
 
@@ -23,6 +25,7 @@ function BoardPage(){
 
     const [title, setTitle] = useState<string>('');
     const [isClicked, setIsClicked] = useState<boolean>(false);
+    const [localError, setLocalError] = useState<Error | null>(null);
 
     const {tasks, error, isLoading} = useBoardTask(id);
     const {moveTask, reorderTasks} = useTask(id)
@@ -34,7 +37,8 @@ function BoardPage(){
         isCreating,
         deleteColumn,
         updateColumnTitle,
-        isUpdated
+        isUpdated,
+        error: columnsError
     } = useColumn(id);
 
     
@@ -85,22 +89,26 @@ function BoardPage(){
             targetPosition = finalColumnTasks.length;
         }
 
-        if (sourceColumnId !== targetColumnId) {
-            await moveTask({
-            taskId,
-            targetColumnId,
-            targetPosition,
-            });
+        try {
+            if (sourceColumnId !== targetColumnId) {
+                await moveTask({
+                taskId,
+                targetColumnId,
+                targetPosition,
+                });
 
-            return;
+                return;
+            }
+
+            await reorderTasks(
+                finalColumnTasks.map((task, index) => ({
+                id: task.id,
+                position: index,
+                }))
+            );
+        } catch (err: any) {
+            setLocalError(err instanceof Error ? err : new Error(String(err)));
         }
-
-        await reorderTasks(
-            finalColumnTasks.map((task, index) => ({
-            id: task.id,
-            position: index,
-            }))
-        );
     };
 
 
@@ -110,20 +118,24 @@ function BoardPage(){
 
         if(!title.trim()) return;
 
-        await createColumn({
-            boardId: id,
-            title: title
-        });
+        try {
+            await createColumn({
+                boardId: id,
+                title: title
+            });
 
-        setTitle('');
-        setIsClicked(false);
+            setTitle('');
+            setIsClicked(false);
+        } catch (err: any) {
+            setLocalError(err instanceof Error ? err : new Error(String(err)));
+        }
     }
 
     if(isLoading)
-        return <p>Loading...</p>
+        return <Loader/>
 
-    if(error)
-        return <p>Fail to load board, {error.message}</p>
+    if(error || columnsError)
+        return <ErrorModalWindow error={error || columnsError!}/>;
 
    return (
         <DragDropProvider
@@ -156,9 +168,19 @@ function BoardPage(){
                         column={column}
                         tasks={items[column.id] ?? []}
                         isUpdated={isUpdated}
-                        deleteColumn={deleteColumn}
+                        deleteColumn={async (columnId) => {
+                            try {
+                                await deleteColumn(columnId);
+                            } catch (err: any) {
+                                setLocalError(err instanceof Error ? err : new Error(String(err)));
+                            }
+                        }}
                         updateColumn={async (input) => {
-                            await updateColumnTitle(input)
+                            try {
+                                await updateColumnTitle(input);
+                            } catch (err: any) {
+                                setLocalError(err instanceof Error ? err : new Error(String(err)));
+                            }
                         }}
                         />
                     ))}
@@ -179,7 +201,7 @@ function BoardPage(){
                                     heandleCreate={handleCreateColumn}/>}
             </div>
 
-            
+            {localError && <ErrorModalWindow error={localError} onClose={() => setLocalError(null)} />}
 
         </DragDropProvider>
     );

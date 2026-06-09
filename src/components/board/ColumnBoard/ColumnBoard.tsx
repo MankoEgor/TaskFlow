@@ -11,6 +11,8 @@ import CreateTaskModalWindow from '../../shared/CreateTaskModalWindow/CreateTask
 
 import s from './ColumnBoard.module.css'
 import addIcon from '../../../assets/addTask.svg'
+import deleteIcon from '../../../assets/delete.svg'
+import { useColumn } from '../../../hooks/useColumn';
 
 interface ColumnBoardProps {
     column: Column;
@@ -20,8 +22,9 @@ interface ColumnBoardProps {
 
 function ColumnBoard({column, tasks}: ColumnBoardProps){
 
-    const {user} = useAuth()
-    const {createTask, isCreated, deleteTask, isDeleted} = useTask(column.board_id)
+    const {user} = useAuth();
+    const {createTask, isCreated, deleteTask, isDeleted} = useTask(column.board_id);
+    const {deleteColumn} = useColumn(column.board_id)
 
     const [taskTitle, setTaskTitle] = useState<string>('');
     const [taskDescription, setTaskDescription] = useState<string | null>('');
@@ -69,9 +72,16 @@ function ColumnBoard({column, tasks}: ColumnBoardProps){
 
 
     return(
+        
         <div className={s.column}>
-            <div className={s.header}>
+            <div className={s.header}> 
                 <h1 className={s.title}>{column.title}</h1>
+                <div className={s.menuActionDiv}>
+                    <button className={s.actionButton} onClick={() => deleteColumn(column.id)}>
+                        <img src={deleteIcon} alt="Delete" />
+                    </button>
+                    {/* <button onClick={}>Rename</button> */}
+                </div>
             </div>
 
 

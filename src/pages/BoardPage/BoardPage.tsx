@@ -13,7 +13,6 @@ import addColumnIcon from '../../assets/addColumn.svg'
 import CreateModalWindow from "../../components/shared/CreateModalWindow/CreateModalWindow";
 
 import s from './BoardPage.module.css'
-import { useAuth } from "../../hooks/useAuth";
 
 function BoardPage(){
 
@@ -33,7 +32,6 @@ function BoardPage(){
         columns,
         createColumn,
         isCreating,
-        deleteColumn
     } = useColumn(id);
 
     
@@ -144,28 +142,33 @@ function BoardPage(){
                 await handleDragEnd(event)
             }}>
 
-            <div className={s.columnDiv}>
-                {columns.map((column) => (
-                <ColumnBoard 
-                    key={column.id}
-                    column={column}
-                    tasks={items[column.id] ?? []}
-                    />
-                ))}
-                <div onClick={() => setIsClicked(true)} className={s.addButton}>
-                    <img className={s.addButtonIcon} src={addColumnIcon} alt="" />
-                    <p className={s.addButtonText}>Add Column</p>
+            <div className={s.boardScroll}>
+                <div className={s.columnDiv}>
+                    {columns.map((column) => (
+                    <ColumnBoard 
+                        key={column.id}
+                        column={column}
+                        tasks={items[column.id] ?? []}
+                        />
+                    ))}
+
+                    <div onClick={() => setIsClicked(true)} className={s.addButton}>
+                        <img className={s.addButtonIcon} src={addColumnIcon} alt="" />
+                        <p className={s.addButtonText}>Add Column</p>
+                    </div>
                 </div>
+
+                {isClicked && <CreateModalWindow
+                                    headerTitle="Create New Column"
+                                    labelText="COLUMN TITLE"
+                                    isCreating={isCreating}
+                                    setIsClicked={setIsClicked}
+                                    setTitle={setTitle}
+                                    title={title}
+                                    heandleCreate={handleCreateColumn}/>}
             </div>
 
-            {isClicked && <CreateModalWindow
-                                headerTitle="Create New Column"
-                                labelText="COLUMN TITLE"
-                                isCreating={isCreating}
-                                setIsClicked={setIsClicked}
-                                setTitle={setTitle}
-                                title={title}
-                                heandleCreate={handleCreateColumn}/>}
+            
 
         </DragDropProvider>
     );

@@ -1,7 +1,7 @@
 .column{
     display: flex;
     flex-direction: column;
-    width: 320px;
+    width: max(320px);
     background: #F2F4F6;
     border: 1px #C3C6D0 solid;
     border-radius: 8px;
@@ -9,18 +9,32 @@
     height: fit-content;
 }
 
-.header{
+.header {
     display: flex;
     flex-direction: row;
     margin-bottom: 24px;
-
+    justify-content: space-between;
+    align-items: center;
 }
+
+.actionButton{
+    height: 14px;
+    width: 14px;
+    border: none;
+}
+
 
 .title{
     font-size: 18px;
     color: #191C1E;
     font-weight: 700px;
+    margin: 0;
 }
+
+.menuActionDiv{
+    display: flex;
+}
+
 
 .addButton{
     display: flex;

@@ -9,13 +9,24 @@ interface CreateModalWindowProps {
     title: string;
     setTitle: (title: string) => void;
     setIsClicked: (isClicked: boolean) => void;
-    isCreating: boolean;
+    isDoneState?: boolean;
     heandleCreate: (e: React.FormEvent<HTMLFormElement>) => void;
+    prevTitle?: string
 
 }
 
 
-function CreateModalWindow({headerTitle, headerDiscription, labelText, title, setTitle, setIsClicked, isCreating, heandleCreate}: CreateModalWindowProps) {
+function CreateModalWindow({
+    headerTitle, 
+    headerDiscription, 
+    labelText, 
+    title, 
+    setTitle, 
+    setIsClicked, 
+    isDoneState, 
+    heandleCreate,
+    prevTitle
+}: CreateModalWindowProps) {
 
    const heandleClose = () =>{
         setTitle('');
@@ -49,7 +60,7 @@ function CreateModalWindow({headerTitle, headerDiscription, labelText, title, se
                                     type="text"
                                     value={title}
                                     onChange={(e) => setTitle(e.target.value)}
-                                    placeholder="Enter title"
+                                    placeholder={prevTitle ? prevTitle : 'Enter title'}
                                 />
                             </div>
 
@@ -58,14 +69,14 @@ function CreateModalWindow({headerTitle, headerDiscription, labelText, title, se
                                 <button 
                                     className={s.createButton}
                                     type="submit"  
-                                    disabled={isCreating}>
-                                    {isCreating ? 'Creating...' : 'Create'}
+                                    disabled={isDoneState}>
+                                    {isDoneState ? 'Doing' : 'Do'}
                                     <img src={create} alt="" />
                                 </button>
                                 <button 
                                     className={s.cancelButton}
                                     type='submit' 
-                                    disabled={isCreating}>
+                                    disabled={isDoneState}>
                                     Cancel
                                 </button>
                             </div>

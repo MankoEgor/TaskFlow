@@ -27,6 +27,16 @@
     gap: 8px;
 }
 
+.addButton:hover{
+  border: 1px #191C1E solid;
+  cursor: pointer;
+}
+
+.addButton:hover .addButtonText{
+  color: #191C1E;
+}
+
+
 .addButtonIcon{
     width: 20px;
     height: 18px;
@@ -39,3 +49,4 @@
     align-items: center;
     width: fit-content;
 }
+

@@ -50,3 +50,7 @@
     height: 16px;
     cursor: pointer;
 }
+
+.actionIcon:hover{
+    border: 1px #C3C6D0 solid;
+}

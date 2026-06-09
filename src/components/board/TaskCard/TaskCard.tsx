@@ -35,7 +35,6 @@ function TaskCard({task, index, deleteTask}: TaskCardProps){
                   src={deleteIcon} alt="Delete" />
             </button>
             <p className={s.taskPriority}>{task.priority.toUpperCase()}</p>
-            {/* <img src="" alt="" /> */}
           </div>
           <div className={s.taskHeader}>
               <h3 className={s.taskName}>{task.title}</h3>

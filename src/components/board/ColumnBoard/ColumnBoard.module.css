@@ -14,13 +14,21 @@
     flex-direction: row;
     margin-bottom: 24px;
     justify-content: space-between;
-    align-items: center;
 }
 
 .actionButton{
-    height: 14px;
-    width: 14px;
     border: none;
+    background: #F2F4F6;
+}
+
+.btnIcon:hover{ 
+    border: 1px #C3C6D0 solid;
+    cursor: pointer;
+}
+
+.btnIcon{
+    width: 18px;
+    height: 18px;
 }
 
 
@@ -33,6 +41,8 @@
 
 .menuActionDiv{
     display: flex;
+    flex-direction: row;
+    gap: 8px;
 }
 
 

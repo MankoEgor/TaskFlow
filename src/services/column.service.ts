@@ -63,3 +63,18 @@ export async function deleteColumn(columnId: string): Promise<void>{
         throw new Error(error.message)
     }
 }
+
+export async function updateColumnTitle(columnId: string, title: string): Promise<Column>{
+    const {data, error} = await supabase
+        .from('columns')
+        .update({title})
+        .eq('id', columnId)
+        .select()
+        .single()
+
+        if(error){
+            throw new Error(error.message)
+        }
+
+        return data;
+}

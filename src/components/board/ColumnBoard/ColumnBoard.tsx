@@ -12,26 +12,51 @@ import CreateTaskModalWindow from '../../shared/CreateTaskModalWindow/CreateTask
 import s from './ColumnBoard.module.css'
 import addIcon from '../../../assets/addTask.svg'
 import deleteIcon from '../../../assets/delete.svg'
-import { useColumn } from '../../../hooks/useColumn';
+import editIcon from '../../../assets/edit.svg'
+import CreateModalWindow from '../../shared/CreateModalWindow/CreateModalWindow';
 
 interface ColumnBoardProps {
     column: Column;
     tasks: Task[];
+    isUpdated: boolean;
+    deleteColumn: (columnId: string) => void;
+    updateColumn: (input: {columnId: string, title: string}) => Promise<void>;
 }
 
 
-function ColumnBoard({column, tasks}: ColumnBoardProps){
+function ColumnBoard({column, tasks, deleteColumn, updateColumn, isUpdated}: ColumnBoardProps){
 
     const {user} = useAuth();
     const {createTask, isCreated, deleteTask, isDeleted} = useTask(column.board_id);
-    const {deleteColumn} = useColumn(column.board_id)
 
+    // states for updating column title
+    const [updateColumnTitle, setUpdateColumnTitle] = useState<string>('');
+    const [isColumnUpdateClicked, setColumnIsUpdateClicked] = useState<boolean>(false);
+
+    const handleUpdateColumnTitle = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        if(!updateColumnTitle.trim()) return;
+        if(!column.id) return;
+
+        await updateColumn({
+            columnId: column.id,
+            title: updateColumnTitle
+        })
+
+        setUpdateColumnTitle('');
+        setColumnIsUpdateClicked(false);
+    }
+
+
+    // states fot creating new task in this column
     const [taskTitle, setTaskTitle] = useState<string>('');
     const [taskDescription, setTaskDescription] = useState<string | null>('');
     const [taskPriority, setTaskPriority] = useState<TaskPriority>('medium');
     const [dueDate, setDueDate] = useState<any | null>(null);
     // const [assigneeId, setAssigneeId] = useState<string | null>(null);
     const [isClicked, setIsClicked] = useState<boolean>(false)
+
 
     const handleCreateTask = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -78,11 +103,23 @@ function ColumnBoard({column, tasks}: ColumnBoardProps){
                 <h1 className={s.title}>{column.title}</h1>
                 <div className={s.menuActionDiv}>
                     <button className={s.actionButton} onClick={() => deleteColumn(column.id)}>
-                        <img src={deleteIcon} alt="Delete" />
+                        <img className={s.btnIcon} src={deleteIcon} alt="Delete" />
                     </button>
-                    {/* <button onClick={}>Rename</button> */}
+                    <button className={s.actionButton} onClick={() => setColumnIsUpdateClicked(true)}>
+                        <img className={s.btnIcon} src={editIcon} alt="Rename" />
+                    </button>
                 </div>
             </div>
+
+            {isColumnUpdateClicked && <CreateModalWindow    
+                                            headerTitle="Update Column Title"
+                                            labelText="COLUMN TITLE"
+                                            setIsClicked={setColumnIsUpdateClicked}
+                                            setTitle={setUpdateColumnTitle}
+                                            title={updateColumnTitle}
+                                            isDoneState={isUpdated}
+                                            heandleCreate={handleUpdateColumnTitle}
+                                            prevTitle={column.title}/>}
 
 
             <SortableContext 

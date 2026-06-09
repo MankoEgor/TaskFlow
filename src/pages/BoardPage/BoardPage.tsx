@@ -32,6 +32,9 @@ function BoardPage(){
         columns,
         createColumn,
         isCreating,
+        deleteColumn,
+        updateColumnTitle,
+        isUpdated
     } = useColumn(id);
 
     
@@ -58,19 +61,6 @@ function BoardPage(){
         setItems(groupedTasks);
     }, [tasks, columns]);
 
-    const handleCreateColumn = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
-
-        if(!title.trim()) return;
-
-        await createColumn({
-            boardId: id,
-            title: title
-        });
-
-        setTitle('');
-        setIsClicked(false);
-    }
 
 
     const handleDragEnd = async (event: any) => {
@@ -113,6 +103,22 @@ function BoardPage(){
         );
     };
 
+
+
+    const handleCreateColumn = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault()
+
+        if(!title.trim()) return;
+
+        await createColumn({
+            boardId: id,
+            title: title
+        });
+
+        setTitle('');
+        setIsClicked(false);
+    }
+
     if(isLoading)
         return <p>Loading...</p>
 
@@ -149,6 +155,11 @@ function BoardPage(){
                         key={column.id}
                         column={column}
                         tasks={items[column.id] ?? []}
+                        isUpdated={isUpdated}
+                        deleteColumn={deleteColumn}
+                        updateColumn={async (input) => {
+                            await updateColumnTitle(input)
+                        }}
                         />
                     ))}
 
@@ -161,7 +172,7 @@ function BoardPage(){
                 {isClicked && <CreateModalWindow
                                     headerTitle="Create New Column"
                                     labelText="COLUMN TITLE"
-                                    isCreating={isCreating}
+                                    isDoneState={isCreating}
                                     setIsClicked={setIsClicked}
                                     setTitle={setTitle}
                                     title={title}

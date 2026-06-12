@@ -1,81 +1,116 @@
 import s  from './AuthForm.module.css';
+import { useForm } from 'react-hook-form'
+import { supabase } from '../../../lib/supabase';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-interface AuthFormProps {
-    headerText?: string;
-    email: string;
-    emailError: string
-    setEmailError: (value: string) => void;
-    password: string;
-    passwordError: string;
-    setPasswordError: (value: string) => void;
-    buttonText: string;
-    isSubmitting: boolean;
-    onEmailChange: (value: string) => void;
-    onPasswordChange: (value: string) => void;
-    onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-}
+type AuthMode = 'login' | 'register';
+
+type AuthFormValues = {
+  email: string;
+  password: string;
+};
+
+type AuthFormProps = {
+  mode: AuthMode;
+  headerText: string;
+  buttonText: string;
+};
 
 function AuthForm({ 
     headerText, 
-    email, 
-    emailError,
-    setEmailError,
-    password,
-    passwordError,
-    setPasswordError,
     buttonText, 
-    onEmailChange,
-    onPasswordChange,
-    isSubmitting,
-    onSubmit
+    mode
 }: AuthFormProps){
+    const navigate = useNavigate();
+    const [serverError, setServerError] = useState<string>('');
 
-    const handleEmail = (emailInput: string) => {
-        if(!emailInput.trim()){
-            setEmailError("Email can't be empty")
+    const {
+        register, 
+        handleSubmit, 
+        formState: {errors, isSubmitting}
+    } = useForm<AuthFormValues>({
+        defaultValues: {
+            email: '', 
+            password: '', 
+        }
+    })
+
+
+    const onSubmit = async (values: AuthFormValues) => {
+        setServerError('');
+
+        const email = values.email.trim();
+        const password = values.password;
+
+        if(mode === 'register'){
+            const { error } = await supabase.auth.signUp({
+                email,
+                password,
+            });
+
+
+            if (error) {
+                setServerError(error.message);
+                return;
+            }
+
+            navigate('/board');
+            return;
         }
 
-        setEmailError('');
-        onEmailChange(emailInput);
-    }
+        const {error} = await supabase.auth.signInWithPassword({
+            email,
+            password,
+        });
 
-    const handlePassswor = (passwordInput: string) => {
-        const passwordInputTrim = passwordInput.trim()
-
-        if(!passwordInputTrim){
-            setPasswordError("Password can't be empty")
+        if(error){
+            setServerError(error.message);
+            return;
         }
 
-        if(passwordInputTrim.length < 8){
-            setPasswordError("Password length less than 8 symbols");
-        }
+        navigate('/board');
 
-        setPasswordError('');
-        onPasswordChange(passwordInputTrim);
     }
 
     return (
         
-        <form className={s.form} onSubmit={onSubmit}>
+        <form className={s.form} onSubmit={handleSubmit(onSubmit)}>
             <h1 className={s.title}>{headerText}</h1>
 
             <label className={s.label} htmlFor="email">Email Address</label>
             <input className={s.input}
                 type="email" 
                 id="email" 
-                value={email}
-                placeholder="example@domain.com"  
-                onChange={(e) => handleEmail(e.target.value)}/>
-            {emailError && <p>{emailError}</p>}
+                {...register('email', {
+                    required:"Email is required",
+                    pattern: {
+                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                        message: 'Enter a valid email address'
+                    }
+                })}
+                placeholder="example@domain.com"/>
+            {errors.email && <p className={s.error}>{errors.email.message}</p>}
             
             <label className={s.label} htmlFor="password">Password</label>
             <input className={s.input}
                 type="password" 
                 id="password" 
-                value={password}
+                {...register('password', {
+                    required: "Passwors is required",
+                    minLength: 
+                        mode === 'register' 
+                            ? {
+                                value: 8,
+                                message: "Passwor must be at least 6 characters",
+                            }
+                            : undefined
+                })}
                 placeholder="Minimum 8 characters" 
-                onChange={(e) => handlePassswor(e.target.value)}/>
-            {passwordError && <p>{passwordError}</p>}
+                />
+            {errors.password && <p className={s.error}>{errors.password.message}</p>}
+
+            {serverError && <p className={s.error}>{serverError}</p>}
 
 
             <button className={s.subButton} type="submit" disabled={isSubmitting}>

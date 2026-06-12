@@ -3,7 +3,7 @@ import { useAuth } from '../../hooks/useAuth';
 
 
 import s from './Header.module.css'
-import icon from '../../assets/icon.svg'
+import icon from '../../assets/Icon.svg'
 import logout from '../../assets/logout.svg'
 
 

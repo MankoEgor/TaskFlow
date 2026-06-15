@@ -18,6 +18,23 @@ export async function getMyBoards(id?: string ): Promise<Board[]>{
 
 }
 
+export async function getBoardTitle(id: string) {
+    const {data, error} = await supabase
+        .from('boards')
+        .select('title')
+        .eq('id', id)
+        .limit(1)
+        .single()
+
+
+    if(error){
+        throw new Error(error.message)
+    }
+
+    return data.title ?? '';
+}
+
+
 
 export async function createNewBoard({title, userId}: createBoardInput): Promise<Board> {
     

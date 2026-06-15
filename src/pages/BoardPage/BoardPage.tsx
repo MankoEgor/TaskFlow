@@ -1,8 +1,9 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { useColumn } from "../../hooks/useColumn";
 import { useBoardTask } from "../../hooks/useBoardTask";
 import { useTask } from "../../hooks/useTask";
+import { useBoards } from "../../hooks/useBoard";
 import { DragDropProvider } from "@dnd-kit/react";
 import { move } from "@dnd-kit/helpers";
 
@@ -12,13 +13,19 @@ import ColumnBoard from "../../components/board/ColumnBoard/ColumnBoard";
 import CreateModalWindow from "../../components/shared/CreateModalWindow/CreateModalWindow";
 import ErrorModalWindow from "../../components/shared/ErrorModalWindow/ErrorModalWindow";
 import Loader from "../../components/shared/Loader/Loader";
+
 import addColumnIcon from '../../assets/addColumn.svg'
+import backIcon from '../../assets/arrow_back.svg'
+
 
 import s from './BoardPage.module.css'
 
 function BoardPage(){
 
     const {id} = useParams();
+    const navigate = useNavigate();
+
+    const {boardTitle, titleError} = useBoards(id);
 
     const [items, setItems] = useState<Record<string, Task[]>>({});
     const prevItems = useRef<Record<string, Task[]>>({});
@@ -134,8 +141,8 @@ function BoardPage(){
     if(isLoading)
         return <Loader/>
 
-    if(error || columnsError)
-        return <ErrorModalWindow error={error || columnsError!}/>;
+    if(error || columnsError || titleError)
+        return <ErrorModalWindow error={error || columnsError! || titleError!}/>;
 
    return (
         <DragDropProvider
@@ -161,6 +168,15 @@ function BoardPage(){
             }}>
 
             <div className={s.boardScroll}>
+
+                <div className={s.header}>
+                    <button onClick={() => navigate('/board')} className={s.backButton}>
+                        <img className={s.backButtonIcon} src={backIcon} alt="Back" />
+                        <p className={s.backButtonText}>Back</p>
+                    </button>
+                    <h1>{boardTitle}</h1>
+                </div>
+
                 <div className={s.columnDiv}>
                     {columns.map((column) => (
                     <ColumnBoard 

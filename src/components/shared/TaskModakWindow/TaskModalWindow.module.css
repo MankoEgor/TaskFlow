@@ -1,0 +1,133 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.modal{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: #F2F4F6;
+    max-width: fit-content;
+    border-radius: 8px;
+    padding: 16px;
+    min-width:670px;
+}
+
+
+.header{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: auto;
+}
+
+.container{
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.title{
+    font-size: 18px;
+}
+
+.medium, .low, .high{
+    padding: 8px 16px;
+    border-radius: 8px;
+}
+
+.priorityText{
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.low{
+    color: #004F48;
+    background: rgba(0, 79, 72, 0.1);
+    border: 1px #004F48 solid;
+}
+
+.medium{
+    border: 1px #3E5F8A solid;
+    background: rgba(62, 95, 138, 0.1);
+    color: #3E5F8A;
+}
+
+.high{
+    color: #BA1A1A;
+    background: rgba(186, 26, 26, 0.1);
+    border: 1px rgb(186, 26, 26) solid;
+}
+
+.closeButton{
+    display: flex;
+    justify-content: end;
+    padding: 16px 24px;
+}
+
+.taskInfo{
+    margin: 16px;
+    padding: 40px;
+    background: #fff;
+    border-radius: 8px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.title{
+    color: #191C1E;
+}
+
+.label{
+    font-size: 12px;
+    font-weight: bold;
+    color: #73777F;
+}
+
+.descriptionDiv{
+    border: 1px #C3C6D0 solid;
+    border-radius: 8px;
+    padding: 16px;
+    width: 100%;
+}
+
+.descriptionText{
+    color: #191C1E;
+}
+
+.taskDetailse{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 32px;
+}

@@ -3,6 +3,8 @@ import type { Task } from "../../../types/tasks.type";
 import deleteIcon from '../../../assets/delete.svg'
 
 import s from './TaskCard.module.css';
+import { useState } from "react";
+import TaskModalWindow from "../../shared/TaskModakWindow/TaskModalWindow";
 
 interface TaskCardProps {
     task: Task;
@@ -12,6 +14,8 @@ interface TaskCardProps {
 }
 
 function TaskCard({task, index, deleteTask}: TaskCardProps){
+
+  const [isClicked, setIsClicked] = useState<boolean>(false)
 
   const {ref} = useSortable({
     id: task.id,
@@ -27,8 +31,9 @@ function TaskCard({task, index, deleteTask}: TaskCardProps){
   })
 
     return (
-      <div ref={ref}
-          className={s.taskContainer}>
+      <>
+
+        <div ref={ref} className={s.taskContainer} onClick={() => setIsClicked(true)}>
           <div className={s.actionDiv}>
             <button className={s.actionButton} onClick={() => deleteTask(task.id)}>
               <img className={s.actionIcon}
@@ -36,11 +41,17 @@ function TaskCard({task, index, deleteTask}: TaskCardProps){
             </button>
             <p className={s.taskPriority}>{task.priority.toUpperCase()}</p>
           </div>
-          <div className={s.taskHeader}>
+          <div className={s.content}>
+            <div className={s.taskHeader}>
               <h3 className={s.taskName}>{task.title}</h3>
+            </div>
+            <p className={s.taskDescription}>{task.description}</p>
           </div>
-          <p className={s.taskDescription}>{task.description}</p>
-      </div>
+        </div>
+
+        {isClicked && <TaskModalWindow task={task} setClose={setIsClicked}/>}
+      </>
+
     )
 }
 

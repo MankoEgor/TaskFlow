@@ -1,9 +1,11 @@
+export type TaskPriority = 'low' | 'medium' | 'high';
+
 export type Task = {
     id: string;
     column_id: string;
     title: string;
     description: string;
-    priority: string;
+    priority: TaskPriority;
     due_date: string;
     assignee_id: string;
     position: number;
@@ -11,8 +13,6 @@ export type Task = {
     create_at: string;
 
 }
-
-export type TaskPriority = 'low' | 'medium' | 'high';
 
 export type CreateTaskInput = {
   column_id: string;

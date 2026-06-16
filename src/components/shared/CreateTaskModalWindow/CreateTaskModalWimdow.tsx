@@ -32,6 +32,7 @@ function CreateTaskModalWindow(props : CreateBoardModalWindowProps) {
         setTitle,
         setDescription,
         setPriority,
+        dueDate,
         setDueDate,
         // assigneeId,
         // setAssigneeId,
@@ -104,11 +105,13 @@ function CreateTaskModalWindow(props : CreateBoardModalWindowProps) {
                                     
                                 </div>
 
-                                <input className={s.dateInput}
+                                <input
+                                    value={dueDate}
+                                    onChange={(e) => setDueDate(e.target.value)}
+                                    className={s.dateInput}
                                     type="date" 
                                     lang="en-US"
                                 />
-
                             </div>
 
                             

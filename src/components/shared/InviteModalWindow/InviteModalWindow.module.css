@@ -37,3 +37,65 @@
     max-width: fit-content;
     border-radius: 8px;
 }
+
+.header{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    padding: 32px;
+    padding-bottom: 16px;
+
+}
+
+.headerText{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.headerTitle{
+    font-size: 24px;
+    font-weight: semi-bold;
+    color: #191C1E;
+}
+
+.closeButton img{
+    width: 14px;
+    height: 14px;
+}
+
+.form{
+    display: flex;
+    flex-direction: column;
+    padding: 24px 32px;
+    gap: 24px;
+}
+
+.buttonDiv{
+    padding: 24px 32px;
+    background: #F2F4F6;
+    display: flex;
+    flex-direction: row-reverse;
+    border-radius: 8px;
+    gap: 12px
+}
+
+.createButton{
+    background: #244771;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    color: #fff;
+    padding: 10px 31.7px 10px 32px;
+    border-radius: 8px;
+    border: none;
+    align-items: center;
+    font-size: 16px;
+}
+
+.cancelButton{
+    padding: 10px 24px;
+    border-radius: 8px;
+    border: 1px #C3C6D0 solid;
+    font-size: 16px;
+}

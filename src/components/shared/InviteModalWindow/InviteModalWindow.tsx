@@ -62,7 +62,9 @@ function InviteModalWindow({boardId, userId, boardTitle, setClose} : InviteModal
                             <div className={s.closeButton} onClick={() => setClose(false)}>
                                 <img src={crossIcon} alt="Close" />
                             </div>
+                        </div>
 
+                        <form className={s.form} onSubmit={() => handleInvite}>
                             <ModalInput 
                                 label='Email'
                                 state={email}
@@ -70,8 +72,25 @@ function InviteModalWindow({boardId, userId, boardTitle, setClose} : InviteModal
                                 setStateFunc={setEmail}
                                 />
 
-                            {successMessage && <p className={s.successMessage}>{successMessage}</p>}
-                        </div>
+                            {successMessage && <p className={s.successMessage}>{successMessage}</p>}    
+
+                            <div className={s.buttonDiv}>
+                                <button 
+                                    className={s.createButton}
+                                    type="submit"  
+                                    disabled={isSubmiting}>
+                                    {isSubmiting ? 'Sending...' : 'Send Invite'}
+                                </button>
+                                <button 
+                                    
+                                    className={s.cancelButton}
+                                    type='submit' 
+                                    disabled={isSubmiting}>
+                                    <p>Cancel</p>
+                                </button>
+                            </div>
+                        </form>
+                        
                     </div>
                 </div>
             </div>

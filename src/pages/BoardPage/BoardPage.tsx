@@ -13,17 +13,22 @@ import ColumnBoard from "../../components/board/ColumnBoard/ColumnBoard";
 import CreateModalWindow from "../../components/shared/CreateModalWindow/CreateModalWindow";
 import ErrorModalWindow from "../../components/shared/ErrorModalWindow/ErrorModalWindow";
 import Loader from "../../components/shared/Loader/Loader";
+import InviteModalWindow from "../../components/shared/InviteModalWindow/InviteModalWindow";
 
 import addColumnIcon from '../../assets/addColumn.svg'
 import backIcon from '../../assets/arrow_back.svg'
+import addIcon from '../../assets/add.svg'
 
 
 import s from './BoardPage.module.css'
+import { useAuth } from "../../hooks/useAuth";
 
 function BoardPage(){
 
     const {id} = useParams();
     const navigate = useNavigate();
+
+    const { user } = useAuth();
 
     const {boardTitle, titleError} = useBoards(id);
 
@@ -33,9 +38,12 @@ function BoardPage(){
     const [title, setTitle] = useState<string>('');
     const [isClicked, setIsClicked] = useState<boolean>(false);
     const [localError, setLocalError] = useState<Error | null>(null);
+    
+
+    const [isInviteClicked, setIsInviteClicked] = useState<boolean>(false);
 
     const {tasks, error, isLoading} = useBoardTask(id);
-    const {moveTask, reorderTasks} = useTask(id)
+    const {moveTask, reorderTasks} = useTask(id);
     
 
     const {
@@ -170,11 +178,21 @@ function BoardPage(){
             <div className={s.boardScroll}>
 
                 <div className={s.header}>
-                    <button onClick={() => navigate('/board')} className={s.backButton}>
-                        <img className={s.backButtonIcon} src={backIcon} alt="Back" />
-                        <p className={s.backButtonText}>Back</p>
-                    </button>
-                    <h1>{boardTitle}</h1>
+                    <div className={s.navigation}>
+                        <button onClick={() => navigate('/board')} className={s.backButton}>
+                            <img className={s.backButtonIcon} src={backIcon} alt="Back" />
+                            <p className={s.backButtonText}>Back</p>
+                        </button>
+                        <h1>{boardTitle}</h1>
+                    </div>
+
+                    <div className={s.memberDiv}>
+
+                        <button className={s.addMember} onClick={() => setIsInviteClicked(true)}>
+                            <img className={s.addMemberIcon} src={addIcon} alt="Invite Member" />
+                        </button>
+                    </div>
+
                 </div>
 
                 <div className={s.columnDiv}>
@@ -215,6 +233,13 @@ function BoardPage(){
                                     setTitle={setTitle}
                                     title={title}
                                     heandleCreate={handleCreateColumn}/>}
+
+                {isInviteClicked && <InviteModalWindow 
+                                            boardTitle={boardTitle}
+                                            userId={user?.id}
+                                            boardId={id!}
+                                            setClose={setIsInviteClicked}
+                                            />}
             </div>
 
             {localError && <ErrorModalWindow error={localError} onClose={() => setLocalError(null)} />}

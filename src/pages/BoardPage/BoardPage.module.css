@@ -54,7 +54,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 16px;
+  gap: 120px;
   margin-bottom: 32px;
 }
 
@@ -90,3 +90,22 @@
   height: 14px;
 }
 
+.navigation{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+}
+
+.addMember{
+  display: flex;
+  align-items: center;
+  border-radius: 100%;
+  border: 1px #73777F solid;
+}
+
+.addMemberIcon{
+  width: 32px;
+  height: 32px;
+  border-radius: 100%;
+}

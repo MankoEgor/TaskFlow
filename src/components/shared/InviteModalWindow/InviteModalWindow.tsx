@@ -9,7 +9,7 @@ import crossIcon from '../../../assets/cross.svg'
 
 interface InviteModalWindowProps {
     boardId: string;
-    userId: string;
+    userId?: string;
     boardTitle: string;
     setClose: (value: boolean) => void;
 }
@@ -30,7 +30,7 @@ function InviteModalWindow({boardId, userId, boardTitle, setClose} : InviteModal
         try{
             setIsSubmiting(true);
             
-            await createBoardInvite(boardId, email, userId);
+            await createBoardInvite(boardId, email, userId!);
 
             setEmail('');
             setSuccessMessage('Invite created. User will get access after registration.')
@@ -59,7 +59,7 @@ function InviteModalWindow({boardId, userId, boardTitle, setClose} : InviteModal
                             <div className={s.headerText}>
                                 <h1 className={s.headerTitle}>Add new member in {boardTitle} board</h1>
                             </div>
-                            <div className={s.closeButton} onClick={() => setClose(true)}>
+                            <div className={s.closeButton} onClick={() => setClose(false)}>
                                 <img src={crossIcon} alt="Close" />
                             </div>
 

@@ -4,6 +4,8 @@ import { supabase } from '../../../lib/supabase';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import {acceptPendingInvites} from '../../../services/boardInvites.service'
+
 type AuthMode = 'login' | 'register';
 
 type AuthFormValues = {
@@ -55,8 +57,13 @@ function AuthForm({
                 return;
             }
 
-            navigate('/board');
-            return;
+
+            const acceptedBoardId = await acceptPendingInvites();
+
+                if (acceptedBoardId) {
+                    navigate(`/board/${acceptedBoardId}`);
+                    return;
+                }
         }
 
         const {error} = await supabase.auth.signInWithPassword({
@@ -66,6 +73,13 @@ function AuthForm({
 
         if(error){
             setServerError(error.message);
+            return;
+        }
+
+        const acceptedBoardId = await acceptPendingInvites();
+
+        if (acceptedBoardId) {
+            navigate(`/board/${acceptedBoardId}`);
             return;
         }
 

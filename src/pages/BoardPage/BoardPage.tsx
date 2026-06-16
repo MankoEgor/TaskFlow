@@ -22,6 +22,7 @@ import addIcon from '../../assets/add.svg'
 
 import s from './BoardPage.module.css'
 import { useAuth } from "../../hooks/useAuth";
+import { useBoardTitle } from "../../hooks/useBoardTitle";
 
 function BoardPage(){
 
@@ -30,7 +31,7 @@ function BoardPage(){
 
     const { user } = useAuth();
 
-    const {boardTitle, titleError} = useBoards(id);
+    const {boardTitle, titleError} = useBoardTitle(id);
 
     const [items, setItems] = useState<Record<string, Task[]>>({});
     const prevItems = useRef<Record<string, Task[]>>({});

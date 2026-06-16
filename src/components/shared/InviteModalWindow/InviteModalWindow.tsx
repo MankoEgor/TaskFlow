@@ -21,8 +21,8 @@ function InviteModalWindow({boardId, userId, boardTitle, setClose} : InviteModal
     const [successMessage, setSuccessMessage] = useState<string>('');
     const [isSubmiting, setIsSubmiting] = useState<boolean>(false);
 
-    const handleInvite = async (e: React.FormEvent<HTMLFormElement>) => {
-        event?.preventDefault();
+    const handleInvite = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
 
         setError('');
         setSuccessMessage('');
@@ -34,6 +34,8 @@ function InviteModalWindow({boardId, userId, boardTitle, setClose} : InviteModal
 
             setEmail('');
             setSuccessMessage('Invite created. User will get access after registration.')
+
+            setClose(false);
 
 
 
@@ -64,7 +66,7 @@ function InviteModalWindow({boardId, userId, boardTitle, setClose} : InviteModal
                             </div>
                         </div>
 
-                        <form className={s.form} onSubmit={() => handleInvite}>
+                        <form className={s.form} onSubmit={handleInvite}>
                             <ModalInput 
                                 label='Email'
                                 state={email}
@@ -77,14 +79,13 @@ function InviteModalWindow({boardId, userId, boardTitle, setClose} : InviteModal
                             <div className={s.buttonDiv}>
                                 <button 
                                     className={s.createButton}
-                                    type="submit"  
+                                    type='submit' 
                                     disabled={isSubmiting}>
                                     {isSubmiting ? 'Sending...' : 'Send Invite'}
                                 </button>
                                 <button 
-                                    
+                                    onClick={() => setClose(false)}
                                     className={s.cancelButton}
-                                    type='submit' 
                                     disabled={isSubmiting}>
                                     <p>Cancel</p>
                                 </button>

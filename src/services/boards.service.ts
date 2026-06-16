@@ -4,17 +4,33 @@ import type {Board, createBoardInput} from '../types/boards.type'
 
 export async function getMyBoards(id?: string ): Promise<Board[]>{
 
-    const {data, error} = await supabase
+    const {data: members, error: membersError} = await supabase
+        .from('board_members')
+        .select('board_id')
+        .eq('user_id', id)
+
+    if(membersError){
+        throw new Error(membersError.message)
+    }
+
+    const boardsId = members.map((member) => member.board_id)
+
+    if(boardsId.length === 0){
+        return [];
+    }
+
+    const {data: boards, error: boardsError} = await supabase
         .from('boards')
         .select('*')
-        .eq('owner_id', id);
+        .in('id', boardsId)
+        .order('created_at', {ascending: false})
 
 
-    if(error){
-        throw new Error(error.message);
+    if(boardsError){
+        throw new Error(boardsError.message);
     } 
 
-    return data ?? [];
+    return boards ?? [];
 
 }
 

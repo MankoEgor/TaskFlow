@@ -4,7 +4,6 @@ import {
     getMyBoards, 
     createNewBoard, 
     deleteBoard,
-    getBoardTitle
 } from '../services/boards.service';
 
 export function useBoards(id?: string){
@@ -15,13 +14,6 @@ export function useBoards(id?: string){
         queryFn: () => getMyBoards(id),
         enabled: Boolean(id)
     })
-
-    const titleQuery = useQuery({
-        queryKey: ['boards-title', id],
-        queryFn: () => getBoardTitle(id!),
-        enabled: Boolean(id)
-    })
-
 
     const createBoardMutation = useMutation({
         mutationFn: createNewBoard,
@@ -45,9 +37,6 @@ export function useBoards(id?: string){
         boards: boardsQuery.data ?? [],
         isLoading: boardsQuery.isPending,
         error: boardsQuery.error,
-
-        boardTitle: titleQuery.data ?? '',
-        titleError: titleQuery.error,
 
         createBoard: createBoardMutation.mutateAsync,
         isCreating: createBoardMutation.isPending,

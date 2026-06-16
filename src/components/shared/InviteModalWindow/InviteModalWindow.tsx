@@ -51,6 +51,10 @@ function InviteModalWindow({boardId, userId, boardTitle, setClose} : InviteModal
         }   
     }
 
+    if(error){
+        return <p>{error}</p>
+    }
+
 
     return (
         <div className={s.overlay}>

@@ -1,7 +1,8 @@
 import s from './BoardsPage.module.css'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../../hooks/useAuth.ts';
 import { useBoards } from '../../hooks/useBoard.ts';
+import { useAcceptPendingInvites } from '../../hooks/useAcceptPendingInvites.ts';
 
 import type { Board } from '../../types/boards.type.ts';
 
@@ -15,6 +16,9 @@ import Loader from '../../components/shared/Loader/Loader.tsx';
 function BoardsPage() {
 
     const { user } = useAuth();
+
+    const { acceptedInvite } = useAcceptPendingInvites(user?.id)
+
 
     const {
         boards,
@@ -74,6 +78,17 @@ function BoardsPage() {
 
         return `${duration} seconds ago`;
     }
+
+    useEffect(() => {
+
+        if(!user?.id) return;
+
+        acceptedInvite().catch((error) => {
+            console.error('Failed to accept pending invites:', error);
+            
+        });
+
+    }, [user?.id, acceptedInvite])
 
     if (boardsError) {
         return <ErrorModalWindow error={boardsError} />;

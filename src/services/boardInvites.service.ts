@@ -51,13 +51,17 @@ export async function acceptPendingInvites(): Promise<string | null> {
   const {
     data: { user },
     error: userError,
-  } = await supabase.auth.getUser();
+  } = await supabase.auth.getUser();  
 
   console.log('invite user:', user);
   console.log('invite user error:', userError);
 
   if (userError || !user || !user.email) {
     throw new Error('User is not authenticated');
+  }
+
+  if(!user.email_confirmed_at){
+    throw new Error('Please confirm your email first');
   }
 
   const normalizedEmail = user.email.trim().toLowerCase();

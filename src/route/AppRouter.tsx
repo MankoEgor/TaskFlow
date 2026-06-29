@@ -9,6 +9,7 @@ import NotFoundPage from "../pages/404Page/NotFoundPage.tsx";
 import type React from "react";
 
 import MainLayout from "../layout/MainLayout.tsx";
+import ProfilePage from "../pages/ProfilePage/ProfilePage.tsx";
 
 
 function ProtectedRoute({ children} : { children: React.ReactNode }) {
@@ -76,6 +77,7 @@ export function AppRouter() {
             >
             <Route path="/board" element={<BoardsPage />} />
             <Route path="/board/:id" element={<BoardPage />} />
+            <Route path="/profile/:id" element={<ProfilePage/>}/>
             </Route>
         </Routes>
     )

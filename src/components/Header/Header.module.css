@@ -63,3 +63,16 @@
     height: 14px;
     width: 14px;
 }
+
+.profileAndSignOut{
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    justify-content: center;
+}
+
+.profile{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}

@@ -13,11 +13,7 @@ export async function createBoardInvite(
   email: string,
   invitedBy: string
 ): Promise<void> {
-  const normalizedEmail = email.trim().toLowerCase();
-
-  console.log('create invite boardId:', boardId);
-  console.log('create invite email:', normalizedEmail);
-  console.log('create invite invitedBy:', invitedBy);
+  const normalizedEmail = email.trim().toLowerCase(); 
 
   if (!normalizedEmail) {
     throw new Error('Email is required');
@@ -53,25 +49,17 @@ export async function acceptPendingInvites(): Promise<string | null> {
     error: userError,
   } = await supabase.auth.getUser();  
 
-  console.log('invite user:', user);
-  console.log('invite user error:', userError);
-
   if (userError || !user || !user.email) {
     throw new Error('User is not authenticated');
   }
 
   const normalizedEmail = user.email.trim().toLowerCase();
 
-  console.log('normalized email:', normalizedEmail);
-
   const { data: invites, error: invitesError } = await supabase
     .from('board_invites')
     .select('id, board_id, role, email, accepted_at')
     .eq('email', normalizedEmail)
     .is('accepted_at', null);
-
-  console.log('pending invites:', invites);
-  console.log('pending invites error:', invitesError);
 
   if (invitesError) {
     throw new Error(invitesError.message);
@@ -88,8 +76,6 @@ export async function acceptPendingInvites(): Promise<string | null> {
     role: invite.role,
   }));
 
-  console.log('memberships to insert:', memberships);
-
   const { data: insertedMembers, error: memberError } = await supabase
     .from('board_members')
     .upsert(memberships, {
@@ -98,16 +84,11 @@ export async function acceptPendingInvites(): Promise<string | null> {
     })
     .select();
 
-  console.log('inserted members:', insertedMembers);
-  console.log('member insert error:', memberError);
-
   if (memberError) {
     throw new Error(memberError.message);
   }
 
   const inviteIds = invites.map((invite) => invite.id);
-
-  console.log('invite ids to update:', inviteIds);
 
   const { data: updatedInvites, error: updateError } = await supabase
     .from('board_invites')
@@ -116,9 +97,6 @@ export async function acceptPendingInvites(): Promise<string | null> {
     })
     .in('id', inviteIds)
     .select();
-
-  console.log('updated invites:', updatedInvites);
-  console.log('invite update error:', updateError);
 
   if (updateError) {
     throw new Error(updateError.message);

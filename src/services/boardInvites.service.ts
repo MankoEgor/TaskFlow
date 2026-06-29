@@ -60,10 +60,6 @@ export async function acceptPendingInvites(): Promise<string | null> {
     throw new Error('User is not authenticated');
   }
 
-  if(!user.email_confirmed_at){
-    throw new Error('Please confirm your email first');
-  }
-
   const normalizedEmail = user.email.trim().toLowerCase();
 
   console.log('normalized email:', normalizedEmail);

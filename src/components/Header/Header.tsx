@@ -14,7 +14,9 @@ import { useNavigate } from 'react-router-dom';
 function Header(){
 
     const {user, signOut } = useAuth();
-    const {profileInfo, error} = useProfile(user?.id)
+    const {profileInfo, error } = useProfile(user?.id);
+
+    const fallbackLatter = user?.email?.[0].toUpperCase();
 
     const [quare, setQuare] = useState<string>('');
 
@@ -52,10 +54,9 @@ function Header(){
 
         <div className={s.profileAndSignOut}>
 
-            <div onClick={() => navigate(`/profile/${user?.id}`)} className={s.profile}>
-                <img src={profileInfo?.url} alt="" />
-                <h3>{profileInfo?.name}</h3>
-            </div>
+            { profileInfo?.url 
+                ? <img onClick={() => navigate(`/profile/${user?.id}`)} className={s.profileImage} src={profileInfo?.url} alt="" />
+                : <span onClick={() => navigate(`/profile/${user?.id}`)}className={s.fallback}>{fallbackLatter}</span>}
 
             <button className={s.signOut} onClick={handleSignOut}>
                 Sign Out

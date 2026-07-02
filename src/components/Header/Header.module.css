@@ -71,8 +71,18 @@
     justify-content: center;
 }
 
-.profile{
+
+.profileImage, .fallback{
+    width: 34px;
+    height: 34px;
+    border: 1px black solid;
+    border-radius: 100%;
+}
+
+.fallback{
     display: flex;
-    flex-direction: row;
     align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 18px;
 }

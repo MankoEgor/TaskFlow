@@ -1,12 +1,12 @@
 import { supabase } from "../lib/supabase";
 
-type ProfileInfo = {
-    id: string;
-    name: string;
-    url: string | null;
-}
+export type Profile = {
+  id: string;
+  name: string | null;
+  avatar_url: string | null;
+};
 
-export async function getProfileInfo(userId: string): Promise<ProfileInfo | null>{
+export async function getProfileInfo(userId: string): Promise<Profile | null>{
 
     const {data, error} = await supabase
         .from('profiles')
@@ -23,50 +23,73 @@ export async function getProfileInfo(userId: string): Promise<ProfileInfo | null
     return data ?? null;
 }
 
-export async function uploadUserAvatar(userId: string, file: File): Promise<string>{
+export async function uploadUserAvatar(
+  userId: string,
+  file: File
+): Promise<string> {
+  if (!file.type.startsWith('image/')) {
+    throw new Error('Only image files are allowed');
+  }
 
-    if(file.type.startsWith('image/')){
-        throw new Error('Only image files are allowed')
-    }
+  const maxSize = 2 * 1024 * 1024;
 
-    const max_size = 2 * 1024 * 1024;
+  if (file.size > maxSize) {
+    throw new Error('Image must be smaller than 2 MB');
+  }
 
-    if(file.size > max_size){
-        throw new Error('Image must be smaller than 2MB')
-    }
+  const fileExtension = file.name.split('.').pop()?.toLowerCase() ?? 'jpg';
 
-    const fileExt = file.name.split('.').pop();
-    const filePath = `${userId}/avatar.${fileExt}`;
+  const filePath =
+    `${userId}/avatar-${Date.now()}.${fileExtension}`;
 
-    const {error: uploadError} = await supabase.storage
-        .from('avatars')
-        .upload(filePath, file, {
-            upsert: true,
-            cacheControl: '3600'
-        })
+  console.log('avatar file:', file);
+  console.log('avatar file path:', filePath);
 
+  const {
+    data: uploadData,
+    error: uploadError,
+  } = await supabase.storage
+    .from('avatars')
+    .upload(filePath, file, {
+      cacheControl: '3600',
+      upsert: false,
+      contentType: file.type,
+    });
 
-    if(uploadError){
-        throw new Error(uploadError.message)
-    }
+  console.log('upload data:', uploadData);
+  console.log('upload error:', uploadError);
 
-    const { data } = await supabase.storage
-        .from('avatars')
-        .getPublicUrl(filePath);
+  if (uploadError) {
+    throw new Error(uploadError.message);
+  }
 
-    const avatarUrl = data.publicUrl;
+  const { data: publicUrlData } = supabase.storage
+    .from('avatars')
+    .getPublicUrl(filePath);
 
-    const {error: updateProfileError} = await supabase
-        .from('profiles')
-        .update({
-            avatar_url: avatarUrl
-        })
-        .eq('id', userId)
+  const avatarUrl = publicUrlData.publicUrl;
 
-    if(updateProfileError){
-        throw new Error(updateProfileError.message);
-    }
-     
-    return avatarUrl;
-}       
+  console.log('avatar public URL:', avatarUrl);
+
+  const {
+    data: updatedProfile,
+    error: profileError,
+  } = await supabase
+    .from('profiles')
+    .update({
+      avatar_url: avatarUrl,
+    })
+    .eq('id', userId)
+    .select('id, name, avatar_url')
+    .single();
+
+  console.log('updated profile:', updatedProfile);
+  console.log('profile update error:', profileError);
+
+  if (profileError) {
+    throw new Error(profileError.message);
+  }
+
+  return avatarUrl;
+}
 

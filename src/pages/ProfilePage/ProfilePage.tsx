@@ -1,10 +1,16 @@
 import { useAuth } from "../../hooks/useAuth";
 import { useProfile } from "../../hooks/useProfile";
 import { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 
-import s from './ProfilePage.module.css'
+import Button from "../../components/shared/Button/Button";
+import backIcon from '../../assets/arrow_back.svg'
+
+import s from './ProfilePage.module.css';
 
 function ProfilePage(){
+
+    const navigate = useNavigate()
 
     const {user} = useAuth();
     const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -17,7 +23,7 @@ function ProfilePage(){
 
     const [error, setError] = useState<string>('');
 
-    const handlearProfileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
 
         if(!file) return;
@@ -40,22 +46,42 @@ function ProfilePage(){
 
     const fallbackLetter = user?.email?.[0].toUpperCase() ?? '?';
 
+    console.log('profileInfo', profileInfo);
+    console.log('image', profileInfo?.avatar_url);
+
 
 
     return(
         <div className={s.container}>
+            <Button 
+                message="Back"
+                icon={backIcon}
+                onClick={() => navigate('/board')}
+            />
             <div className={s.info}>
-                { profileInfo?.url 
-                    ? <img className={s.profileImage} src={profileInfo.url} alt="" /> 
+                { profileInfo?.avatar_url 
+                    ? <img className={s.profileImage} src={profileInfo.avatar_url} alt="" /> 
                     : <span className={s.fallback}>{fallbackLetter}</span>
                 }
-                <button className={s.changeAvatarButton}>
+                <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploaded}
+                    className={s.changeAvatarButton}>
                     <p>Change Avatar</p>
                 </button>
+                
+                <input
+                    className={s.fileInput}
+                    type="file"
+                    accept="image/*"
+                    ref={fileInputRef}
+                    onChange={handleAvatarChange}/>
+
                 <input 
                     className={s.nameChange}
                     type="text" 
-                    placeholder={profileInfo?.name} />
+                    placeholder={profileInfo?.name ? profileInfo.name : "Enter your name"} />
             </div>
         </div>
         

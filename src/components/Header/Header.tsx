@@ -54,8 +54,8 @@ function Header(){
 
         <div className={s.profileAndSignOut}>
 
-            { profileInfo?.url 
-                ? <img onClick={() => navigate(`/profile/${user?.id}`)} className={s.profileImage} src={profileInfo?.url} alt="" />
+            { profileInfo?.avatar_url
+                ? <img onClick={() => navigate(`/profile/${user?.id}`)} className={s.profileImage} src={profileInfo.avatar_url} alt="" />
                 : <span onClick={() => navigate(`/profile/${user?.id}`)}className={s.fallback}>{fallbackLatter}</span>}
 
             <button className={s.signOut} onClick={handleSignOut}>

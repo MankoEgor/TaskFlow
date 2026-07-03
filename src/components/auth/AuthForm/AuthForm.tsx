@@ -61,7 +61,6 @@ function AuthForm({
             const acceptedBoardId = await acceptPendingInvites();
 
                 if (acceptedBoardId) {
-                    navigate(`/board/${acceptedBoardId}`);
                     return;
                 }
         }
@@ -79,7 +78,6 @@ function AuthForm({
         const acceptedBoardId = await acceptPendingInvites();
 
         if (acceptedBoardId) {
-            navigate(`/board/${acceptedBoardId}`);
             return;
         }
 

@@ -13,6 +13,7 @@ import CreateModalWindow from "../../components/shared/CreateModalWindow/CreateM
 import ErrorModalWindow from "../../components/shared/ErrorModalWindow/ErrorModalWindow";
 import Loader from "../../components/shared/Loader/Loader";
 import InviteModalWindow from "../../components/shared/InviteModalWindow/InviteModalWindow";
+import Button from "../../components/shared/Button/Button";
 
 import addColumnIcon from '../../assets/addColumn.svg'
 import backIcon from '../../assets/arrow_back.svg'
@@ -179,10 +180,15 @@ function BoardPage(){
 
                 <div className={s.header}>
                     <div className={s.navigation}>
-                        <button onClick={() => navigate('/board')} className={s.backButton}>
+                        <Button 
+                            message="Back"
+                            icon={backIcon}
+                            onClick={() => navigate('/board')}
+                            />
+                        {/* <button onClick={() => navigate('/board')} className={s.backButton}>
                             <img className={s.backButtonIcon} src={backIcon} alt="Back" />
                             <p className={s.backButtonText}>Back</p>
-                        </button>
+                        </button> */}
                         <h1>{boardTitle}</h1>
                     </div>
 

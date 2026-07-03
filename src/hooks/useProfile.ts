@@ -1,4 +1,4 @@
-import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { 
     getProfileInfo,
@@ -26,7 +26,7 @@ export function useProfile(id?: string){
         },
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: ['profile', id]
+                queryKey: ['profiles', id]
             });
         }
     })

@@ -42,7 +42,7 @@ export function useBoards(id?: string){
         isCreating: createBoardMutation.isPending,
 
         deleteBoard: deleteBoardMutation.mutateAsync,
-        isDeleting: deleteBoardMutation.isPending
+        isDeleting: deleteBoardMutation.isPending,
     }
     
 

@@ -109,3 +109,9 @@
   height: 32px;
   border-radius: 100%;
 }
+
+.memberDiv{
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}

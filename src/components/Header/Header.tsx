@@ -1,26 +1,23 @@
 import { useState } from 'react'
 import { useAuth } from '../../hooks/useAuth';
-
+import { useProfile } from '../../hooks/useProfile';
+import { useNavigate } from 'react-router-dom';
 
 import s from './Header.module.css'
 import icon from '../../assets/Icon.svg'
 import logout from '../../assets/logout.svg'
-import { useProfile } from '../../hooks/useProfile';
+import ProfileIcon from '../shared/ProfileIcon/ProfileIcon';
 import ErrorModalWindow from '../shared/ErrorModalWindow/ErrorModalWindow';
-import { useNavigate } from 'react-router-dom';
 
 
 
 function Header(){
 
+    const navigate = useNavigate()
+
     const {user, signOut } = useAuth();
     const {profileInfo, error } = useProfile(user?.id);
-
-    const fallbackLatter = user?.email?.[0].toUpperCase();
-
     const [quare, setQuare] = useState<string>('');
-
-    const navigate = useNavigate()
 
     function headleQuere(value: string) {
         setQuare(value)
@@ -54,10 +51,10 @@ function Header(){
 
         <div className={s.profileAndSignOut}>
 
-            { profileInfo?.avatar_url
-                ? <img onClick={() => navigate(`/profile/${user?.id}`)} className={s.profileImage} src={profileInfo.avatar_url} alt="" />
-                : <span onClick={() => navigate(`/profile/${user?.id}`)}className={s.fallback}>{fallbackLatter}</span>}
-
+            <ProfileIcon
+                name={profileInfo?.name!}
+                avatarUrl={profileInfo?.avatar_url!}
+                onClick={() => navigate(`profile/${user?.id}`)}/>
             <button className={s.signOut} onClick={handleSignOut}>
                 Sign Out
                 <img src={logout} alt="Logout" />

@@ -14,6 +14,7 @@ import ErrorModalWindow from "../../components/shared/ErrorModalWindow/ErrorModa
 import Loader from "../../components/shared/Loader/Loader";
 import InviteModalWindow from "../../components/shared/InviteModalWindow/InviteModalWindow";
 import Button from "../../components/shared/Button/Button";
+import ProfileIcon from "../../components/shared/ProfileIcon/ProfileIcon";
 
 import addColumnIcon from '../../assets/addColumn.svg'
 import backIcon from '../../assets/arrow_back.svg'
@@ -23,6 +24,7 @@ import addIcon from '../../assets/add.svg'
 import s from './BoardPage.module.css'
 import { useAuth } from "../../hooks/useAuth";
 import { useBoardTitle } from "../../hooks/useBoardTitle";
+import { useBoardMembers } from "../../hooks/useBoardMembers";
 
 function BoardPage(){
 
@@ -30,6 +32,8 @@ function BoardPage(){
     const navigate = useNavigate();
 
     const { user } = useAuth();
+    const {members} = useBoardMembers(id);
+    console.log(members);
 
     const {boardTitle, titleError} = useBoardTitle(id);
 
@@ -193,7 +197,12 @@ function BoardPage(){
                     </div>
 
                     <div className={s.memberDiv}>
-
+                        {members.map((member) => (
+                            <ProfileIcon 
+                                name={member.name}
+                                avatarUrl={member.avatar_url}
+                            />
+                        ))}
                         <button className={s.addMember} onClick={() => setIsInviteClicked(true)}>
                             <img className={s.addMemberIcon} src={addIcon} alt="Invite Member" />
                         </button>

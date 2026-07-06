@@ -100,18 +100,35 @@
 .addMember{
   display: flex;
   align-items: center;
-  border-radius: 100%;
+  justify-content: center;
+  margin-left: -10px;
+  border-radius: 22px;
   border: 1px #73777F solid;
+  cursor: pointer;
+}
+
+.addMemberText{
+  padding-right: 8px;
+  color: #73777F;
+}
+
+.addMember:hover, .addMember:hover .addMemberIcon {
+  border: 1px #191C1E solid;
+
+}
+
+.addMember:hover .addMemberText{
+  color: #191C1E;
 }
 
 .addMemberIcon{
-  width: 32px;
-  height: 32px;
+  width: 33px;
+  height: 33px;
   border-radius: 100%;
+  border: 1px #73777F solid;
+  margin-right: 8px;
 }
 
 .memberDiv{
   display: flex;
-  flex-direction: row;
-  gap: 10px;
 }

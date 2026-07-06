@@ -76,7 +76,8 @@ function CreateModalWindow({
                                 <button 
                                     className={s.cancelButton}
                                     type='submit' 
-                                    disabled={isDoneState}>
+                                    disabled={isDoneState}
+                                    onClick={() => setIsClicked(false)}>
                                     Cancel
                                 </button>
                             </div>

@@ -125,7 +125,8 @@ function CreateTaskModalWindow(props : CreateBoardModalWindowProps) {
                                 <button 
                                     className={s.cancelButton}
                                     type='submit' 
-                                    disabled={isCreating}>
+                                    disabled={isCreating}
+                                    onClick={() => setIsClicked(false)}>
                                     <p>Cancel</p>
                                 </button>
                             </div>

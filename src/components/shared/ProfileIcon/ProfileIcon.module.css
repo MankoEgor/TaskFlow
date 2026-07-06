@@ -3,6 +3,7 @@
     height: 34px;
     border: 1px black solid;
     border-radius: 100%;
+    margin-left: -10px
 }
 
 .fallback{

@@ -9,8 +9,8 @@ interface ProfileIconProps {
 function ProfileIcon(profile : ProfileIconProps) {
     return (
         <>
-            {profile.avatarUrl
-                ? <img onClick={profile.onClick} className={s.profileImage} src={profile.avatarUrl} alt="" />
+            {profile.avatarUrl && profile.name
+                ? <img onClick={profile.onClick} className={s.profileImage} src={profile.avatarUrl} alt={profile.name} />
                 : <span onClick={profile.onClick} className={s.fallback}>{profile.name?.[0].toUpperCase()}</span>}
         </>
     )

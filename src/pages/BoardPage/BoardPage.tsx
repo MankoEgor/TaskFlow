@@ -33,7 +33,6 @@ function BoardPage(){
 
     const { user } = useAuth();
     const {members} = useBoardMembers(id);
-    console.log(members);
 
     const {boardTitle, titleError} = useBoardTitle(id);
 
@@ -189,22 +188,20 @@ function BoardPage(){
                             icon={backIcon}
                             onClick={() => navigate('/board')}
                             />
-                        {/* <button onClick={() => navigate('/board')} className={s.backButton}>
-                            <img className={s.backButtonIcon} src={backIcon} alt="Back" />
-                            <p className={s.backButtonText}>Back</p>
-                        </button> */}
                         <h1>{boardTitle}</h1>
                     </div>
 
                     <div className={s.memberDiv}>
                         {members.map((member) => (
                             <ProfileIcon 
+                                key={member.id}
                                 name={member.name}
                                 avatarUrl={member.avatar_url}
                             />
                         ))}
                         <button className={s.addMember} onClick={() => setIsInviteClicked(true)}>
                             <img className={s.addMemberIcon} src={addIcon} alt="Invite Member" />
+                            <p className={s.addMemberText}>Invite</p>
                         </button>
                     </div>
 

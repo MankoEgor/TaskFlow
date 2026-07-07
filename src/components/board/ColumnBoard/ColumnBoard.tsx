@@ -15,6 +15,8 @@ import addIcon from '../../../assets/addTask.svg'
 import deleteIcon from '../../../assets/delete.svg'
 import editIcon from '../../../assets/edit.svg'
 import CreateModalWindow from '../../shared/CreateModalWindow/CreateModalWindow';
+import { useBoardMembers } from '../../../hooks/useBoardMembers';
+import type { Profile } from '../../../types/members.type';
 
 interface ColumnBoardProps {
     column: Column;
@@ -29,6 +31,8 @@ function ColumnBoard({column, tasks, deleteColumn, updateColumn, isUpdated}: Col
 
     const {user} = useAuth();
     const {createTask, isCreated, deleteTask, isDeleted} = useTask(column.board_id);
+
+    const { members } =  useBoardMembers(column.board_id)
 
     const [localError, setLocalError] = useState<Error | null>(null);
 
@@ -61,7 +65,7 @@ function ColumnBoard({column, tasks, deleteColumn, updateColumn, isUpdated}: Col
     const [taskDescription, setTaskDescription] = useState<string | null>('');
     const [taskPriority, setTaskPriority] = useState<TaskPriority>('medium');
     const [dueDate, setDueDate] = useState<any | null>(null);
-    // const [assigneeId, setAssigneeId] = useState<string | null>(null);
+    const [assignee, setAssignee] = useState<Profile | null>(null);
     const [isClicked, setIsClicked] = useState<boolean>(false)
 
 
@@ -80,7 +84,7 @@ function ColumnBoard({column, tasks, deleteColumn, updateColumn, isUpdated}: Col
                 description: taskDescription?.trim() || null,
                 priority: taskPriority,
                 due_date: dueDate || null,
-                assignee_id: user.id,
+                assignee_id: assignee?.id || null,
                 created_by: user.id,
             });
 
@@ -88,7 +92,7 @@ function ColumnBoard({column, tasks, deleteColumn, updateColumn, isUpdated}: Col
             setTaskDescription('');
             setTaskPriority('medium');
             setDueDate(null);
-            // setAssigneeId(null);
+            setAssignee(null);
             setIsClicked(false);
         } catch (err: any) {
             setLocalError(err instanceof Error ? err : new Error(String(err)));
@@ -161,6 +165,7 @@ function ColumnBoard({column, tasks, deleteColumn, updateColumn, isUpdated}: Col
             {localError && <ErrorModalWindow error={localError}/>}
 
             {isClicked && <CreateTaskModalWindow
+                                members={members}
                                 title={taskTitle}
                                 setTitle={setTaskTitle}
                                 description={taskDescription}
@@ -169,8 +174,8 @@ function ColumnBoard({column, tasks, deleteColumn, updateColumn, isUpdated}: Col
                                 setPriority={setTaskPriority}
                                 dueDate={dueDate}
                                 setDueDate={setDueDate}
-                                // assigneeId={assigneeId}
-                                // setAssigneeId={setAssigneeId}
+                                assignee={assignee}
+                                setAssignee={setAssignee}
                                 setIsClicked={setIsClicked}
                                 isCreating={isCreated}
                                 heandleCreateTask={handleCreateTask}

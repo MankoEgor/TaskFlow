@@ -5,8 +5,10 @@ import ModalInput from '../ModalInput/ModalInput';
 
 import cross from '../../../assets/cross.svg'
 import s from './CreateTaskModalWimdow.module.css'
+import type { Profile } from '../../../types/members.type';
 
 interface CreateBoardModalWindowProps {
+    members: Profile[];
     title: string;
     setTitle: (title: string) => void;
     description: string | null;
@@ -15,8 +17,8 @@ interface CreateBoardModalWindowProps {
     setPriority: (priority: TaskPriority) => void;
     dueDate: any | null;
     setDueDate: (dueDate: any | null) => void;
-    // assigneeId: string | null;
-    // setAssigneeId : (assigneeId: string | null) => void;
+    assignee: Profile | null;
+    setAssignee : (assignee: Profile | null) => void;
     setIsClicked: (isClicked: boolean) => void;
     isCreating: boolean;
     heandleCreateTask: (e: React.FormEvent<HTMLFormElement>) => void;
@@ -27,6 +29,7 @@ interface CreateBoardModalWindowProps {
 function CreateTaskModalWindow(props : CreateBoardModalWindowProps) {
 
     const {
+        members,
         title,
         description,
         setTitle,
@@ -34,8 +37,8 @@ function CreateTaskModalWindow(props : CreateBoardModalWindowProps) {
         setPriority,
         dueDate,
         setDueDate,
-        // assigneeId,
-        // setAssigneeId,
+        assignee,
+        setAssignee,
         setIsClicked,
         isCreating,
         heandleCreateTask
@@ -46,7 +49,7 @@ function CreateTaskModalWindow(props : CreateBoardModalWindowProps) {
         setDescription('');
         setPriority('medium');
         setDueDate(null);
-        // setAssigneeId(null);
+        setAssignee(null);
         setIsClicked(false);
     } 
 
@@ -105,13 +108,34 @@ function CreateTaskModalWindow(props : CreateBoardModalWindowProps) {
                                     
                                 </div>
 
-                                <input
-                                    value={dueDate}
-                                    onChange={(e) => setDueDate(e.target.value)}
-                                    className={s.dateInput}
-                                    type="date" 
-                                    lang="en-US"
-                                />
+                                <label className={s.field}>
+                                    <h1 className={s.modalLabel}>ASSIGNEE</h1>
+
+                                    <select
+                                        className={s.assigneeSelect}
+                                        name="assignee"
+                                        id="assignee"
+                                        value={assignee?.id || ''}
+                                        onChange={(event) => setAssignee(members.find((m) => m.id === event.target.value) || null)}
+                                    >
+                                        {members.map((member) => (
+                                        <option key={member.id} value={member.id}>
+                                            {member.name ?? 'Unnamed member'}
+                                        </option>
+                                        ))}
+                                    </select>
+                                </label>
+                                
+                                <label className={s.field}>
+                                    <h1 className={s.modalLabel}>DUE DATE</h1>
+                                    <input
+                                        value={dueDate}
+                                        onChange={(e) => setDueDate(e.target.value)}
+                                        className={s.dateInput}
+                                        type="date" 
+                                        lang="en-US"
+                                    />
+                                </label>
                             </div>
 
                             

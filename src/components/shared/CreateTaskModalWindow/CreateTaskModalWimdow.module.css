@@ -130,7 +130,7 @@
 
 .priorityDiv{
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     gap: 8px;
 }
 
@@ -175,5 +175,15 @@
     padding-left: 40px;
     width: max(243px);
     height: max(42px);
+}
+
+.field{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+select{
+    padding: 10px;
 }
 

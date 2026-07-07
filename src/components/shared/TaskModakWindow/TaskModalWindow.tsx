@@ -1,6 +1,8 @@
 import type { Task } from "../../../types/tasks.type"
 import s from './TaskModalWindow.module.css'
 import cross from '../../../assets/cross.svg'
+import { useProfile } from "../../../hooks/useProfile";
+import ProfileIcon from "../ProfileIcon/ProfileIcon";
 
 interface TaskModalWindowProps {
     task: Task;
@@ -8,6 +10,8 @@ interface TaskModalWindowProps {
 }
 
 function TaskModalWindow({task, setClose} : TaskModalWindowProps){
+
+    const {profileInfo} = useProfile(task.assignee_id)
 
     const priorityClass = {
         low: s.low,
@@ -35,7 +39,13 @@ function TaskModalWindow({task, setClose} : TaskModalWindowProps){
 
                             <div className={s.container}>
                                 <h3 className={s.label}>ASSIGNEE</h3>
-                                <p className={s.assigneeText}>{task.assignee_id}</p>
+                                <div className={s.assignee}>
+                                    {profileInfo?.avatar_url && profileInfo.name
+                                        && <ProfileIcon 
+                                                name={profileInfo.name}
+                                                avatarUrl={profileInfo.avatar_url}/>}
+                                    <p className={s.assigneeText}>{profileInfo?.name}</p>
+                                </div>
                             </div>
 
                             <div className={s.container}>

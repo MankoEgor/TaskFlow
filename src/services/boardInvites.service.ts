@@ -76,7 +76,7 @@ export async function acceptPendingInvites(): Promise<string | null> {
     role: invite.role,
   }));
 
-  const { data: insertedMembers, error: memberError } = await supabase
+  const { error: memberError } = await supabase
     .from('board_members')
     .upsert(memberships, {
       onConflict: 'board_id,user_id',
@@ -90,7 +90,7 @@ export async function acceptPendingInvites(): Promise<string | null> {
 
   const inviteIds = invites.map((invite) => invite.id);
 
-  const { data: updatedInvites, error: updateError } = await supabase
+  const { error: updateError } = await supabase
     .from('board_invites')
     .update({
       accepted_at: new Date().toISOString(),

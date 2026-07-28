@@ -7,6 +7,7 @@ import Button from "../../components/shared/Button/Button";
 import backIcon from '../../assets/arrow_back.svg'
 
 import s from './ProfilePage.module.css';
+import ErrorModalWindow from "../../components/shared/ErrorModalWindow/ErrorModalWindow";
 
 function ProfilePage(){
 
@@ -46,9 +47,6 @@ function ProfilePage(){
 
     const fallbackLetter = user?.email?.[0].toUpperCase() ?? '?';
 
-    console.log('profileInfo', profileInfo);
-    console.log('image', profileInfo?.avatar_url);
-
 
 
     return(
@@ -83,6 +81,12 @@ function ProfilePage(){
                     type="text" 
                     placeholder={profileInfo?.name ? profileInfo.name : "Enter your name"} />
             </div>
+
+            {error && (<ErrorModalWindow
+                            error={error}
+                            onClose={() => setError('')}
+                        />
+            )}
         </div>
         
     )

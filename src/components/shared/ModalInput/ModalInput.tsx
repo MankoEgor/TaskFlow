@@ -18,7 +18,7 @@ function ModalInput({label, state, setStateFunc, placeholderText}: ModalInputPro
                 value={state!}
                 onChange={(e) => setStateFunc(e.target.value)}
                 placeholder={placeholderText}/>
-    </div>
+        </div>
     )
 }
 

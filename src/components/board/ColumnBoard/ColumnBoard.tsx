@@ -3,7 +3,7 @@ import { useTask } from '../../../hooks/useTask';
 import { useAuth } from '../../../hooks/useAuth';
 import { useState } from 'react';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import type { Task, TaskPriority } from '../../../types/tasks.type';
+import type { Task } from '../../../types/tasks.type';
 import type { Column } from '../../../types/column.type';
 
 import TaskCard from '../TaskCard/TaskCard';
@@ -16,7 +16,8 @@ import deleteIcon from '../../../assets/delete.svg'
 import editIcon from '../../../assets/edit.svg'
 import CreateModalWindow from '../../shared/CreateModalWindow/CreateModalWindow';
 import { useBoardMembers } from '../../../hooks/useBoardMembers';
-import type { Profile } from '../../../types/members.type';
+
+import type { CreateTaskFormValue } from '../../shared/CreateTaskModalWindow/CreateTaskModalWimdow';
 
 interface ColumnBoardProps {
     column: Column;
@@ -54,49 +55,37 @@ function ColumnBoard({column, tasks, deleteColumn, updateColumn, isUpdated}: Col
 
             setUpdateColumnTitle('');
             setColumnIsUpdateClicked(false);
-        } catch (err: any) {
+        } catch (err: unknown) {
             setLocalError(err instanceof Error ? err : new Error(String(err)));
         }
     }
 
-
-    // states fot creating new task in this column
-    const [taskTitle, setTaskTitle] = useState<string>('');
-    const [taskDescription, setTaskDescription] = useState<string | null>('');
-    const [taskPriority, setTaskPriority] = useState<TaskPriority>('medium');
-    const [dueDate, setDueDate] = useState<any | null>(null);
-    const [assignee, setAssignee] = useState<Profile | null>(null);
     const [isClicked, setIsClicked] = useState<boolean>(false)
 
 
-    const handleCreateTask = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
+    const handleCreateTask = async (values: CreateTaskFormValue) => {
 
         if(!column.id) return;
         if(!user) return;
-        if(!taskTitle.trim()) return;
-        if(!taskPriority) return;
+        if(!values.title) return;
+        if(!values.priority) return;
 
-        try {
-            await createTask({
-                column_id: column.id,
-                title: taskTitle.trim(),
-                description: taskDescription?.trim() || null,
-                priority: taskPriority,
-                due_date: dueDate || null,
-                assignee_id: assignee?.id || null,
-                created_by: user.id,
-            });
+        console.log(user, values, column)
 
-            setTaskTitle('');
-            setTaskDescription('');
-            setTaskPriority('medium');
-            setDueDate(null);
-            setAssignee(null);
+
+        await createTask({
+            column_id: column.id,
+            title: values.title.trim(),
+            description: values.description.trim() || null,
+            priority: values.priority,
+            due_date: values.dueDate || null,
+            assignee_id: values.assignee?.id || null,
+            created_by: user.id,
+        });
             setIsClicked(false);
-        } catch (err: any) {
-            setLocalError(err instanceof Error ? err : new Error(String(err)));
-        }
+            console.log('added')
+
+        
     }
 
 
@@ -166,19 +155,9 @@ function ColumnBoard({column, tasks, deleteColumn, updateColumn, isUpdated}: Col
 
             {isClicked && <CreateTaskModalWindow
                                 members={members}
-                                title={taskTitle}
-                                setTitle={setTaskTitle}
-                                description={taskDescription}
-                                setDescription={setTaskDescription}
-                                priority={taskPriority}
-                                setPriority={setTaskPriority}
-                                dueDate={dueDate}
-                                setDueDate={setDueDate}
-                                assignee={assignee}
-                                setAssignee={setAssignee}
-                                setIsClicked={setIsClicked}
                                 isCreating={isCreated}
-                                heandleCreateTask={handleCreateTask}
+                                onClose={() => setIsClicked(false)}
+                                onCreateTask={handleCreateTask}
                                 />}
         </div>
     </>

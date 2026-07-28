@@ -1,61 +1,77 @@
-
-import type { TaskPriority } from '../../../types/tasks.type';
-
-import ModalInput from '../ModalInput/ModalInput';
+import {useForm, useWatch } from 'react-hook-form';
 
 import cross from '../../../assets/cross.svg'
 import s from './CreateTaskModalWimdow.module.css'
+
 import type { Profile } from '../../../types/members.type';
+import type { TaskPriority } from '../../../types/tasks.type';
+
+
 
 interface CreateBoardModalWindowProps {
     members: Profile[];
-    title: string;
-    setTitle: (title: string) => void;
-    description: string | null;
-    setDescription: (description: string | null) => void;
-    priority: TaskPriority;
-    setPriority: (priority: TaskPriority) => void;
-    dueDate: any | null;
-    setDueDate: (dueDate: any | null) => void;
-    assignee: Profile | null;
-    setAssignee : (assignee: Profile | null) => void;
-    setIsClicked: (isClicked: boolean) => void;
+    onClose: () => void;
     isCreating: boolean;
-    heandleCreateTask: (e: React.FormEvent<HTMLFormElement>) => void;
+    onCreateTask: (values: CreateTaskFormValue) => Promise<void>;
 
 }
 
+export type CreateTaskFormValue = {
+    title: string;
+    description: string;
+    priority: TaskPriority;
+    dueDate: string | null;
+    assignee: Profile | null;
+}
 
-function CreateTaskModalWindow(props : CreateBoardModalWindowProps) {
+
+function CreateTaskModalWindow({
+    members,
+    onClose,
+    isCreating,
+    onCreateTask,
+} : CreateBoardModalWindowProps) {
 
     const {
-        members,
-        title,
-        description,
-        setTitle,
-        setDescription,
-        setPriority,
-        dueDate,
-        setDueDate,
-        assignee,
-        setAssignee,
-        setIsClicked,
-        isCreating,
-        heandleCreateTask
-    } = props
+        register,
+        handleSubmit,
+        setValue,
+        control,
+        reset,
+        formState: {
+            errors,
+            isSubmitting,
+        },
+    } = useForm<CreateTaskFormValue>({
+        defaultValues: {
+            title: '',
+            description: '',
+            priority: 'medium',
+            dueDate: new Date().toISOString().split('T')[0],
+            assignee: null
+        }
+    })
 
-    const heandleClose = () =>{
-        setTitle('');
-        setDescription('');
-        setPriority('medium');
-        setDueDate(null);
-        setAssignee(null);
-        setIsClicked(false);
+    const handleClose = () =>{
+        reset();
+        onClose();
     } 
 
-    const heandlePriority = (level: TaskPriority) => {
-        setPriority(level);
+    const onSubmit = async (value: CreateTaskFormValue) => {
+        await onCreateTask(value);
+
+        reset();
+        onClose();
     }
+
+    const today = new Date().toISOString().slice(0, 10);
+
+    const selectedPriority = useWatch({
+        control,
+        name: 'priority'
+    })
+
+    const submitting = isCreating || isSubmitting;
 
     return (
         <div className={s.overlay}>
@@ -68,42 +84,103 @@ function CreateTaskModalWindow(props : CreateBoardModalWindowProps) {
                             <div className={s.headerText}>
                                 <h1 className={s.headerTitle}>Create New Task</h1>
                             </div>
-                            <div className={s.closeButton} onClick={heandleClose}>
+                            <div className={s.closeButton} onClick={handleClose}>
                                 <img src={cross} alt="Close" />
                             </div>
                         </div>
 
-                        <form className={s.form} onSubmit={heandleCreateTask}>
+                        <form className={s.form} onSubmit={handleSubmit(onSubmit)}>
 
-                            <ModalInput
-                                label='TASK TITLE'
-                                state={title}
-                                placeholderText='Enter task title'
-                                setStateFunc={setTitle}/>
+                            <label className={s.field}>
+                                <h1 className={s.modalLabel}>TASK TITLE</h1>
 
-                            <ModalInput
-                                label='DESCRIPTION (Optional)'
-                                state={description}
-                                placeholderText='Enter task description'
-                                setStateFunc={setDescription}/>
+                                <input
+                                    className={s.modalInput}
+                                    type="text" 
+                                    placeholder='Enter task title'
+                                    {...register('title', {
+                                        required: 'Task title is required',
+                                        validate: (value) => {
+                                            return (value.trim().length > 0 || 'Task title is required')
+                                        }
+                                    })}/>
+
+                                    {errors.title && (
+                                        <p className={s.error}>
+                                            {errors.title.message}
+                                        </p>
+                                    )}
+                            </label>
+
+
+                            <label className={s.field}>
+                                <h1 className={s.modalLabel}>DESCRIPTION (Optional)</h1>
+
+                                <input
+                                    className={s.modalInput}
+                                    type="text" 
+                                    placeholder='Enter task description'
+                                    {...register('description')}/>
+
+                            </label>
 
                             <div className={s.specialInfoDiv}>
 
                                 <div className={s.priorityInputDiv}> 
                                     <h1 className={s.modalLabel}>PRIORITY</h1>
                                     <div className={s.priorityDiv}>
-                                        <div className={s.priority} onClick={() => heandlePriority('low')}>
+
+                                        <button
+                                            type='button'
+                                            className={`${s.priority} ${
+                                                selectedPriority === 'low'
+                                                ? s.selectedPriority 
+                                                : ''
+                                            }`}
+                                            
+                                            onClick={() => 
+                                                setValue('priority', 'low', {
+                                                    shouldDirty: true
+                                                })
+                                            }
+                                            >
                                             <div id={s.lowCircle}></div>
                                             <p className={s.priorityType}>Low</p>
-                                        </div>
-                                        <div className={s.priority} onClick={() => heandlePriority('medium')}>
+                                        </button>
+
+                                        <button
+                                            type='button'
+                                            className={`${s.priority} ${
+                                                selectedPriority === 'medium'
+                                                ? s.selectedPriority 
+                                                : ''
+                                            }`}
+                                            
+                                            onClick={() => 
+                                                setValue('priority', 'medium', {
+                                                    shouldDirty: true
+                                                })
+                                            }>
                                             <div id={s.medCircle}></div>
                                             <p className={s.priorityType}>Medium</p>
-                                        </div>
-                                        <div className={s.priority} onClick={() => heandlePriority('high')}>
+                                        </button>
+
+                                        <button
+                                            type='button'
+                                            className={`${s.priority} ${
+                                                selectedPriority === 'high'
+                                                ? s.selectedPriority 
+                                                : ''
+                                            }`}
+                                            
+                                            onClick={() => 
+                                                setValue('priority', 'high', {
+                                                    shouldDirty: true
+                                                })
+                                            }>
                                             <div id={s.highCircle}></div>
                                             <p className={s.priorityType}>High</p>
-                                        </div>
+                                        </button>
                                     </div>
                                     
                                 </div>
@@ -113,15 +190,14 @@ function CreateTaskModalWindow(props : CreateBoardModalWindowProps) {
 
                                     <select
                                         className={s.assigneeSelect}
-                                        name="assignee"
-                                        id="assignee"
-                                        value={assignee?.id || ''}
-                                        onChange={(event) => setAssignee(members.find((m) => m.id === event.target.value) || null)}
+                                        {...register('assignee')}
                                     >
                                         {members.map((member) => (
+
                                         <option key={member.id} value={member.id}>
                                             {member.name ?? 'Unnamed member'}
                                         </option>
+
                                         ))}
                                     </select>
                                 </label>
@@ -129,12 +205,20 @@ function CreateTaskModalWindow(props : CreateBoardModalWindowProps) {
                                 <label className={s.field}>
                                     <h1 className={s.modalLabel}>DUE DATE</h1>
                                     <input
-                                        value={dueDate}
-                                        onChange={(e) => setDueDate(e.target.value)}
                                         className={s.dateInput}
-                                        type="date" 
-                                        lang="en-US"
+                                        type='date'
+                                        lang='en-US'
+                                        {...register('dueDate', {
+                                            required: 'Due date is required',
+                                            validate: (values) => !values || values >= today || 'Due date cannot be in the past'
+                                            
+                                        })}
                                     />
+                                    {errors.dueDate && (
+                                        <p className={s.error}>
+                                            {errors.dueDate.message?.toString()}
+                                        </p>
+                                    )}
                                 </label>
                             </div>
 
@@ -143,14 +227,13 @@ function CreateTaskModalWindow(props : CreateBoardModalWindowProps) {
                                 <button 
                                     className={s.createButton}
                                     type="submit"  
-                                    disabled={isCreating}>
-                                    {isCreating ? 'Creating...' : 'Create Task'}
+                                    disabled={submitting}>
+                                    {submitting ? 'Creating...' : 'Create Task'}
                                 </button>
                                 <button 
                                     className={s.cancelButton}
-                                    type='submit' 
-                                    disabled={isCreating}
-                                    onClick={() => setIsClicked(false)}>
+                                    disabled={submitting}
+                                    onClick={handleClose}>
                                     <p>Cancel</p>
                                 </button>
                             </div>

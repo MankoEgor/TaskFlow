@@ -8,6 +8,7 @@ import backIcon from '../../assets/arrow_back.svg'
 
 import s from './ProfilePage.module.css';
 import ErrorModalWindow from "../../components/shared/ErrorModalWindow/ErrorModalWindow";
+import Loader from "../../components/shared/Loader/Loader";
 
 function ProfilePage(){
 
@@ -19,7 +20,9 @@ function ProfilePage(){
     const {
         profileInfo, 
         uploadAvatar, 
-        isUploaded
+        isUploaded,
+        error: profileError,
+        loading
     } = useProfile(user?.id);
 
     const [error, setError] = useState<string>('');
@@ -47,6 +50,17 @@ function ProfilePage(){
 
     const fallbackLetter = user?.email?.[0].toUpperCase() ?? '?';
 
+
+    if(loading){
+        return <Loader />
+    }
+
+    if(profileError){
+        return <ErrorModalWindow
+                    error={profileError}
+                    onClose={() => navigate('/board')}
+                />
+    }
 
 
     return(

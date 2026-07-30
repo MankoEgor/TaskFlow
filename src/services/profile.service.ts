@@ -18,8 +18,6 @@ export async function getProfileInfo(userId: string): Promise<Profile | null>{
         throw new Error(error.message);
     }
 
-    console.log("profile info", data)
-
     return data ?? null;
 }
 
@@ -42,11 +40,7 @@ export async function uploadUserAvatar(
   const filePath =
     `${userId}/avatar-${Date.now()}.${fileExtension}`;
 
-  console.log('avatar file:', file);
-  console.log('avatar file path:', filePath);
-
   const {
-    data: uploadData,
     error: uploadError,
   } = await supabase.storage
     .from('avatars')
@@ -56,8 +50,6 @@ export async function uploadUserAvatar(
       contentType: file.type,
     });
 
-  console.log('upload data:', uploadData);
-  console.log('upload error:', uploadError);
 
   if (uploadError) {
     throw new Error(uploadError.message);
@@ -69,10 +61,7 @@ export async function uploadUserAvatar(
 
   const avatarUrl = publicUrlData.publicUrl;
 
-  console.log('avatar public URL:', avatarUrl);
-
   const {
-    data: updatedProfile,
     error: profileError,
   } = await supabase
     .from('profiles')
@@ -82,9 +71,6 @@ export async function uploadUserAvatar(
     .eq('id', userId)
     .select('id, name, avatar_url')
     .single();
-
-  console.log('updated profile:', updatedProfile);
-  console.log('profile update error:', profileError);
 
   if (profileError) {
     throw new Error(profileError.message);

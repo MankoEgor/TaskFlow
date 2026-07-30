@@ -66,7 +66,6 @@ export async function acceptPendingInvites(): Promise<string | null> {
   }
 
   if (!invites || invites.length === 0) {
-    console.log('no pending invites found');
     return null;
   }
 

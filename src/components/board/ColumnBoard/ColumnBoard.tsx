@@ -140,6 +140,7 @@ function ColumnBoard({column, tasks, deleteColumn, updateColumn, isUpdated}: Col
                         index={index}
                         deleteTask={deleteTask}
                         isDeleted={isDeleted}
+                        onError={setLocalError}
                         />
                 ))}
 

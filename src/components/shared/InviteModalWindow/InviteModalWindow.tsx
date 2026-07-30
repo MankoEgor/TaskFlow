@@ -51,10 +51,6 @@ function InviteModalWindow({boardId, userId, boardTitle, setClose} : InviteModal
         }   
     }
 
-    if(error){
-        return <p>{error}</p>
-    }
-
 
     return (
         <div className={s.overlay}>
@@ -78,7 +74,8 @@ function InviteModalWindow({boardId, userId, boardTitle, setClose} : InviteModal
                                 setStateFunc={setEmail}
                                 />
 
-                            {successMessage && <p className={s.successMessage}>{successMessage}</p>}    
+                            {successMessage && <p className={s.successMessage}>{successMessage}</p>} 
+                            ({error && <p className={s.error}>{error}</p>})   
 
                             <div className={s.buttonDiv}>
                                 <button 
@@ -90,7 +87,8 @@ function InviteModalWindow({boardId, userId, boardTitle, setClose} : InviteModal
                                 <button 
                                     onClick={() => setClose(false)}
                                     className={s.cancelButton}
-                                    disabled={isSubmiting}>
+                                    disabled={isSubmiting}
+                                    type='button'>
                                     <p>Cancel</p>
                                 </button>
                             </div>

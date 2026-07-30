@@ -10,13 +10,14 @@ import type React from "react";
 
 import MainLayout from "../layout/MainLayout.tsx";
 import ProfilePage from "../pages/ProfilePage/ProfilePage.tsx";
+import Loader from "../components/shared/Loader/Loader.tsx";
 
 
 function ProtectedRoute({ children} : { children: React.ReactNode }) {
     const {user, loading} = useAuth();
 
     if (loading) {
-        return <div>Loading...</div>
+        return <Loader/>
     }
 
     if(!user){
@@ -32,7 +33,7 @@ function PublicOnlyRoute({children} : { children: React.ReactNode }) {
     const {user, loading} = useAuth();
 
     if (loading) {
-        return <div>Loading...</div>
+        return <Loader/>
     }
 
     if(user){

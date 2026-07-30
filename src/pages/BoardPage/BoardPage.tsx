@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { useColumn } from "../../hooks/useColumn";
 import { useBoardTask } from "../../hooks/useBoardTask";
 import { useTask } from "../../hooks/useTask";
+import { useBoardRealtime } from "../../hooks/useBoardRealtime";
 import { DragDropProvider } from "@dnd-kit/react";
 import { move } from "@dnd-kit/helpers";
 import type { DragEndEvent, DragOverEvent } from "@dnd-kit/dom";
@@ -31,6 +32,7 @@ import { toError } from "../../utils/errors";
 function BoardPage(){
 
     const {id} = useParams();
+    useBoardRealtime(id);
     const navigate = useNavigate();
 
     const { user } = useAuth();

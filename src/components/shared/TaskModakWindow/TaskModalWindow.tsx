@@ -11,7 +11,7 @@ interface TaskModalWindowProps {
 
 function TaskModalWindow({task, setClose} : TaskModalWindowProps){
 
-    const {profileInfo} = useProfile(task.assignee_id)
+    const {profileInfo} = useProfile(task.assignee_id ?? undefined)
 
     const priorityClass = {
         low: s.low,
@@ -44,13 +44,13 @@ function TaskModalWindow({task, setClose} : TaskModalWindowProps){
                                         && <ProfileIcon 
                                                 name={profileInfo.name}
                                                 avatarUrl={profileInfo.avatar_url}/>}
-                                    <p className={s.assigneeText}>{profileInfo?.name}</p>
+                                    <p className={s.assigneeText}>{profileInfo?.name ?? 'Unassigned'}</p>
                                 </div>
                             </div>
 
                             <div className={s.container}>
                                 <h3 className={s.label}>DEADLINE</h3>
-                                <p className={s.deadlineText}>{task.due_date}</p>
+                                <p className={s.deadlineText}>{task.due_date ?? 'No deadline'}</p>
                             </div>
 
                             <div className={s.container}>
@@ -66,7 +66,7 @@ function TaskModalWindow({task, setClose} : TaskModalWindowProps){
                         <div className={s.container}>
                             <h3 className={s.label}>DESRIPTION</h3>
                             <div className={s.descriptionDiv}>
-                                <p className={s.descriptionText}>{task.description}</p>
+                                <p className={s.descriptionText}>{task.description ?? 'No description'}</p>
                             </div>
                             
                         </div>

@@ -1,10 +1,11 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useColumn } from "../../hooks/useColumn";
 import { useBoardTask } from "../../hooks/useBoardTask";
 import { useTask } from "../../hooks/useTask";
 import { DragDropProvider } from "@dnd-kit/react";
 import { move } from "@dnd-kit/helpers";
+import type { DragEndEvent, DragOverEvent } from "@dnd-kit/dom";
 
 import type { Task } from "../../types/tasks.type";
 
@@ -25,6 +26,7 @@ import s from './BoardPage.module.css'
 import { useAuth } from "../../hooks/useAuth";
 import { useBoardTitle } from "../../hooks/useBoardTitle";
 import { useBoardMembers } from "../../hooks/useBoardMembers";
+import { toError } from "../../utils/errors";
 
 function BoardPage(){
 
@@ -36,7 +38,7 @@ function BoardPage(){
 
     const {boardTitle, titleError} = useBoardTitle(id);
 
-    const [items, setItems] = useState<Record<string, Task[]>>({});
+    const [dragItems, setDragItems] = useState<Record<string, Task[]> | null>(null);
     const prevItems = useRef<Record<string, Task[]>>({});
 
     const [title, setTitle] = useState<string>('');
@@ -62,7 +64,7 @@ function BoardPage(){
 
     
 
-    useEffect(() => {
+    const groupedItems = useMemo(() => {
         const groupedTasks: Record<string, Task[]> = {};
 
         columns.forEach((column) => {
@@ -81,12 +83,13 @@ function BoardPage(){
             groupedTasks[columnId].sort((a, b) => a.position - b.position);
         }
 
-        setItems(groupedTasks);
+        return groupedTasks;
     }, [tasks, columns]);
 
+    const items = dragItems ?? groupedItems;
 
 
-    const handleDragEnd = async (event: any) => {
+    const handleDragEnd = async (event: DragEndEvent) => {
         const { source, target } = event.operation;
 
         if (!source || !target) return;
@@ -125,8 +128,8 @@ function BoardPage(){
                 position: index,
                 }))
             );
-        } catch (err: any) {
-            setLocalError(err instanceof Error ? err : new Error(String(err)));
+        } catch (err: unknown) {
+            setLocalError(toError(err, 'Failed to move task'));
         }
     };
 
@@ -145,38 +148,42 @@ function BoardPage(){
 
             setTitle('');
             setIsClicked(false);
-        } catch (err: any) {
-            setLocalError(err instanceof Error ? err : new Error(String(err)));
+        } catch (err: unknown) {
+            setLocalError(toError(err, 'Failed to create column'));
         }
     }
 
     if(isLoading)
         return <Loader/>
 
-    if(error || columnsError || titleError)
-        return <ErrorModalWindow error={error || columnsError! || titleError!}/>;
+    const pageError = error ?? columnsError ?? titleError;
+
+    if(pageError)
+        return <ErrorModalWindow error={pageError}/>;
 
    return (
         <DragDropProvider
             onDragStart={() => {
                 prevItems.current = items;
+                setDragItems(items);
             }}
 
-            onDragOver={(event) => {
+            onDragOver={(event: DragOverEvent) => {
                 const {source} = event.operation;
 
                 if(source?.type !== 'task') return;
 
-                setItems((currentItems) => move(currentItems, event))
+                setDragItems((currentItems) => move(currentItems ?? groupedItems, event))
             }}
 
             onDragEnd={async (event) => {
                 if(event.canceled){
-                    setItems(prevItems.current);
+                    setDragItems(null);
                     return;
                 }
 
                 await handleDragEnd(event)
+                setDragItems(null);
             }}>
 
             <div className={s.boardScroll}>
@@ -217,15 +224,15 @@ function BoardPage(){
                         deleteColumn={async (columnId) => {
                             try {
                                 await deleteColumn(columnId);
-                            } catch (err: any) {
-                                setLocalError(err instanceof Error ? err : new Error(String(err)));
+                            } catch (err: unknown) {
+                                setLocalError(toError(err, 'Failed to delete column'));
                             }
                         }}
                         updateColumn={async (input) => {
                             try {
                                 await updateColumnTitle(input);
-                            } catch (err: any) {
-                                setLocalError(err instanceof Error ? err : new Error(String(err)));
+                            } catch (err: unknown) {
+                                setLocalError(toError(err, 'Failed to update column'));
                             }
                         }}
                         />

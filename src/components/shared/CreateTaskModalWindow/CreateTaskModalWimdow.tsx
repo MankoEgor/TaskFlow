@@ -20,8 +20,8 @@ export type CreateTaskFormValue = {
     title: string;
     description: string;
     priority: TaskPriority;
-    dueDate: string | null;
-    assignee: Profile | null;
+    dueDate: string;
+    assigneeId: string;
 }
 
 
@@ -47,8 +47,8 @@ function CreateTaskModalWindow({
             title: '',
             description: '',
             priority: 'medium',
-            dueDate: new Date().toISOString().split('T')[0],
-            assignee: null
+            dueDate: '',
+            assigneeId: ''
         }
     })
 
@@ -116,9 +116,8 @@ function CreateTaskModalWindow({
                             <label className={s.field}>
                                 <h1 className={s.modalLabel}>DESCRIPTION (Optional)</h1>
 
-                                <input
-                                    className={s.modalInput}
-                                    type="text" 
+                                <textarea
+                                    className={s.modalTextarea}
                                     placeholder='Enter task description'
                                     {...register('description')}/>
 
@@ -140,7 +139,8 @@ function CreateTaskModalWindow({
                                             
                                             onClick={() => 
                                                 setValue('priority', 'low', {
-                                                    shouldDirty: true
+                                                    shouldDirty: true,
+                                                    shouldValidate: true
                                                 })
                                             }
                                             >
@@ -158,7 +158,8 @@ function CreateTaskModalWindow({
                                             
                                             onClick={() => 
                                                 setValue('priority', 'medium', {
-                                                    shouldDirty: true
+                                                    shouldDirty: true,
+                                                    shouldValidate: true
                                                 })
                                             }>
                                             <div id={s.medCircle}></div>
@@ -175,7 +176,8 @@ function CreateTaskModalWindow({
                                             
                                             onClick={() => 
                                                 setValue('priority', 'high', {
-                                                    shouldDirty: true
+                                                    shouldDirty: true,
+                                                    shouldValidate: true
                                                 })
                                             }>
                                             <div id={s.highCircle}></div>
@@ -190,8 +192,9 @@ function CreateTaskModalWindow({
 
                                     <select
                                         className={s.assigneeSelect}
-                                        {...register('assignee')}
+                                        {...register('assigneeId')}
                                     >
+                                        <option value="">Unassigned</option>
                                         {members.map((member) => (
 
                                         <option key={member.id} value={member.id}>
@@ -208,8 +211,8 @@ function CreateTaskModalWindow({
                                         className={s.dateInput}
                                         type='date'
                                         lang='en-US'
+                                        min={today}
                                         {...register('dueDate', {
-                                            required: 'Due date is required',
                                             validate: (values) => !values || values >= today || 'Due date cannot be in the past'
                                             
                                         })}
@@ -232,6 +235,7 @@ function CreateTaskModalWindow({
                                 </button>
                                 <button 
                                     className={s.cancelButton}
+                                    type="button"
                                     disabled={submitting}
                                     onClick={handleClose}>
                                     <p>Cancel</p>

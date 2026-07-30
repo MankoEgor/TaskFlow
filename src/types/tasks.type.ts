@@ -4,13 +4,13 @@ export type Task = {
     id: string;
     column_id: string;
     title: string;
-    description: string;
+    description: string | null;
     priority: TaskPriority;
-    due_date: string;
-    assignee_id: string;
+    due_date: string | null;
+    assignee_id: string | null;
     position: number;
     created_by: string;
-    create_at: string;
+    created_at: string;
 
 }
 

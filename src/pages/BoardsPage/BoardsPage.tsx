@@ -11,6 +11,7 @@ import addButton from '../../assets/add.svg';
 import CreateModalWindow from '../../components/shared/CreateModalWindow/CreateModalWindow.tsx';
 import ErrorModalWindow from '../../components/shared/ErrorModalWindow/ErrorModalWindow.tsx';
 import Loader from '../../components/shared/Loader/Loader.tsx';
+import { toError } from '../../utils/errors.ts';
 
 
 function BoardsPage() {
@@ -47,16 +48,16 @@ function BoardsPage() {
             })
             setTitle('');
             setIsClicked(false);
-        } catch (err: any) {
-            setLocalError(err instanceof Error ? err : new Error(String(err)));
+        } catch (err: unknown) {
+            setLocalError(toError(err, 'Failed to create board'));
         }
     }
 
     const heandleDeleteBoard = async (board_Id: string) => {
         try {
             await deleteBoard(board_Id)
-        } catch (err: any) {
-            setLocalError(err instanceof Error ? err : new Error(String(err)));
+        } catch (err: unknown) {
+            setLocalError(toError(err, 'Failed to delete board'));
         }
     }
 

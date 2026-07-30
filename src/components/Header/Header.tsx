@@ -31,6 +31,9 @@ function Header(){
         return <ErrorModalWindow error={error}/>
     }
 
+    const profileName = profileInfo?.name ?? user?.email ?? 'User';
+    const profileAvatarUrl = profileInfo?.avatar_url ?? null;
+
     return (
         <header className={s.header}>
             <div className={s.logoAndSearch}>
@@ -52,8 +55,8 @@ function Header(){
         <div className={s.profileAndSignOut}>
 
             <ProfileIcon
-                name={profileInfo?.name!}
-                avatarUrl={profileInfo?.avatar_url!}
+                name={profileName}
+                avatarUrl={profileAvatarUrl}
                 onClick={() => navigate(`profile/${user?.id}`)}/>
             <button className={s.signOut} onClick={handleSignOut}>
                 Sign Out

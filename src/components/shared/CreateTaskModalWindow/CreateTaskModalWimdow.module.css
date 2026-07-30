@@ -70,6 +70,15 @@
     border: 1px #C3C6D0 solid;
 }
 
+.modalTextarea{
+    min-height: 96px;
+    resize: vertical;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px #C3C6D0 solid;
+    font: inherit;
+}
+
 .form{
     display: flex;
     flex-direction: column;

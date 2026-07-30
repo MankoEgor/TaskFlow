@@ -16,6 +16,7 @@ import deleteIcon from '../../../assets/delete.svg'
 import editIcon from '../../../assets/edit.svg'
 import CreateModalWindow from '../../shared/CreateModalWindow/CreateModalWindow';
 import { useBoardMembers } from '../../../hooks/useBoardMembers';
+import { toError } from '../../../utils/errors';
 
 import type { CreateTaskFormValue } from '../../shared/CreateTaskModalWindow/CreateTaskModalWimdow';
 
@@ -56,7 +57,7 @@ function ColumnBoard({column, tasks, deleteColumn, updateColumn, isUpdated}: Col
             setUpdateColumnTitle('');
             setColumnIsUpdateClicked(false);
         } catch (err: unknown) {
-            setLocalError(err instanceof Error ? err : new Error(String(err)));
+            setLocalError(toError(err, 'Failed to update column'));
         }
     }
 
@@ -70,20 +71,21 @@ function ColumnBoard({column, tasks, deleteColumn, updateColumn, isUpdated}: Col
         if(!values.title) return;
         if(!values.priority) return;
 
-        console.log(user, values, column)
+        try {
+            await createTask({
+                column_id: column.id,
+                title: values.title.trim(),
+                description: values.description.trim() || null,
+                priority: values.priority,
+                due_date: values.dueDate || null,
+                assignee_id: values.assigneeId || null,
+                created_by: user.id,
+            });
 
-
-        await createTask({
-            column_id: column.id,
-            title: values.title.trim(),
-            description: values.description.trim() || null,
-            priority: values.priority,
-            due_date: values.dueDate || null,
-            assignee_id: values.assignee?.id || null,
-            created_by: user.id,
-        });
             setIsClicked(false);
-            console.log('added')
+        } catch (err: unknown) {
+            setLocalError(toError(err, 'Failed to create task'));
+        }
 
         
     }
@@ -151,7 +153,7 @@ function ColumnBoard({column, tasks, deleteColumn, updateColumn, isUpdated}: Col
                 <p className={s.buttonText}>Add Task</p>
             </button>
 
-            {localError && <ErrorModalWindow error={localError}/>}
+            {localError && <ErrorModalWindow error={localError} onClose={() => setLocalError(null)}/>}
 
             {isClicked && <CreateTaskModalWindow
                                 members={members}

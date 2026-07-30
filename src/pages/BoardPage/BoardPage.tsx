@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useColumn } from "../../hooks/useColumn";
 import { useBoardTask } from "../../hooks/useBoardTask";
 import { useTask } from "../../hooks/useTask";
@@ -38,7 +38,7 @@ function BoardPage(){
 
     const {boardTitle, titleError} = useBoardTitle(id);
 
-    const [dragItems, setDragItems] = useState<Record<string, Task[]> | null>(null);
+    const [items, setItems] = useState<Record<string, Task[]>>({});
     const prevItems = useRef<Record<string, Task[]>>({});
 
     const [title, setTitle] = useState<string>('');
@@ -64,7 +64,7 @@ function BoardPage(){
 
     
 
-    const groupedItems = useMemo(() => {
+    useEffect(() => {
         const groupedTasks: Record<string, Task[]> = {};
 
         columns.forEach((column) => {
@@ -83,11 +83,9 @@ function BoardPage(){
             groupedTasks[columnId].sort((a, b) => a.position - b.position);
         }
 
-        return groupedTasks;
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setItems(groupedTasks);
     }, [tasks, columns]);
-
-    const items = dragItems ?? groupedItems;
-
 
     const handleDragEnd = async (event: DragEndEvent) => {
         const { source, target } = event.operation;
@@ -165,7 +163,6 @@ function BoardPage(){
         <DragDropProvider
             onDragStart={() => {
                 prevItems.current = items;
-                setDragItems(items);
             }}
 
             onDragOver={(event: DragOverEvent) => {
@@ -173,17 +170,16 @@ function BoardPage(){
 
                 if(source?.type !== 'task') return;
 
-                setDragItems((currentItems) => move(currentItems ?? groupedItems, event))
+                setItems((currentItems) => move(currentItems, event))
             }}
 
             onDragEnd={async (event) => {
                 if(event.canceled){
-                    setDragItems(null);
+                    setItems(prevItems.current);
                     return;
                 }
 
                 await handleDragEnd(event)
-                setDragItems(null);
             }}>
 
             <div className={s.boardScroll}>

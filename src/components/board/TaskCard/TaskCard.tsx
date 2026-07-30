@@ -35,7 +35,13 @@ function TaskCard({task, index, deleteTask}: TaskCardProps){
 
         <div ref={ref} className={s.taskContainer} onClick={() => setIsClicked(true)}>
           <div className={s.actionDiv}>
-            <button className={s.actionButton} onClick={() => deleteTask(task.id)}>
+            <button 
+              className={s.actionButton} 
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation();
+                deleteTask(task.id);
+              }}>
               <img className={s.actionIcon}
                   src={deleteIcon} alt="Delete" />
             </button>

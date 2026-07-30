@@ -34,7 +34,11 @@ function BoardPage(){
     const navigate = useNavigate();
 
     const { user } = useAuth();
-    const {members} = useBoardMembers(id);
+    const {
+        members,
+        error: membersError,
+        isLoading: isMembersLoading
+    } = useBoardMembers(id);
 
     const {boardTitle, titleError} = useBoardTitle(id);
 
@@ -154,7 +158,7 @@ function BoardPage(){
     if(isLoading)
         return <Loader/>
 
-    const pageError = error ?? columnsError ?? titleError;
+    const pageError = error ?? columnsError ?? titleError ?? membersError;
 
     if(pageError)
         return <ErrorModalWindow error={pageError}/>;
@@ -195,7 +199,7 @@ function BoardPage(){
                     </div>
 
                     <div className={s.memberDiv}>
-                        {members.map((member) => (
+                        {isMembersLoading ? null : members.map((member) => (
                             <ProfileIcon 
                                 key={member.id}
                                 name={member.name}

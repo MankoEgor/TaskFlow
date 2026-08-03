@@ -8,6 +8,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 1000;
+    border-radius: 8px;
 }
 
 .backdrop {
@@ -37,6 +39,7 @@
     border-radius: 8px;
     padding: 16px;
     min-width:670px;
+    overflow-y: auto;
 }
 
 
@@ -142,4 +145,36 @@
 
 .assigneeText{
     font-weight: 700;
+}
+
+.commentsDiv{
+    border: 1px solid #191C1E;
+    border-radius: 8px;
+    width: 100%;
+    padding: 16px;
+    overflow-y: auto;
+}
+
+.commentsDiv .noComments{
+    text-align: center;
+}
+
+.commentInput{
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+
+}
+
+.sendButton{
+    background: #3E5F8A;
+    border: none;
+}
+
+.input{
+    width: 100%;
+    padding: 4px;
 }

@@ -1,5 +1,5 @@
 import {supabase} from '../lib/supabase';
-import type { CreateCommentInput } from '../types/comments';
+import type { Comment, CreateCommentInput } from '../types/comments.type';
 
 export async function getTaskComments(taskId: string): Promise<Comment[]> {
 
@@ -7,14 +7,14 @@ export async function getTaskComments(taskId: string): Promise<Comment[]> {
         .from('comments')
         .select(`
             *,
-            profile:profiles (
+            profile:profiles!comments_user_id_profiles_fkey (
                 id,
                 name,
                 avatar_url
             )
         `)
-        .eq('taskId', taskId)
-        .order('createdAt', {ascending: true});
+        .eq('task_id', taskId)
+        .order('created_at', {ascending: true});
 
     if (error) {
         throw new Error(error.message);

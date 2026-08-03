@@ -75,7 +75,7 @@ function InviteModalWindow({boardId, userId, boardTitle, setClose} : InviteModal
                                 />
 
                             {successMessage && <p className={s.successMessage}>{successMessage}</p>} 
-                            ({error && <p className={s.error}>{error}</p>})   
+                            {error && <p className={s.error}>{error}</p>}  
 
                             <div className={s.buttonDiv}>
                                 <button 

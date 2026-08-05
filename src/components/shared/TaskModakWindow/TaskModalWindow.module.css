@@ -9,7 +9,6 @@
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    border-radius: 8px;
 }
 
 .backdrop {
@@ -39,6 +38,7 @@
     border-radius: 8px;
     padding: 16px;
     min-width:670px;
+    max-height: calc(100hv-48px);
     overflow-y: auto;
 }
 
@@ -153,6 +153,7 @@
     width: 100%;
     padding: 16px;
     overflow-y: auto;
+    max-height: fit-content;
 }
 
 .commentsDiv .noComments{
@@ -176,5 +177,97 @@
 
 .input{
     width: 100%;
-    padding: 4px;
+    min-height: 64px;
+    max-height: 160px;
+    padding: 8px;
+    resize: vertical;
+    font: inherit;
+}
+
+.comment{
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+}
+
+.commentScroll{
+    padding: 0 12px;
+    overflow-y: auto;
+    max-height: 78px;
+}
+
+.sendButton{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.sendImage{
+    width: 20px;
+    height: 20px;
+    margin: 2px;
+}
+
+.commentText{
+    display: flex;
+    flex-direction: column;
+}
+
+
+.commentInfo{
+    font-size: 10px;
+}
+
+.commentTextContainer{
+    width: fit-content;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: row;
+    background: #3E5F8A;
+    padding: 4px 8px;
+    margin: 4px 0;
+    align-items: center;
+    color: #fff;
+
+}
+
+.deleteButton{
+    border: none;
+    width: 14px;
+    height: 14px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.deleteButton>img{
+    width: 14px;
+    height: 14px;
+}
+
+.dateInfo{
+    font-size: 8px;
+    color: #C3C6D0
+}
+
+.commentInfoContainer{
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    align-items: center;
+}
+
+.commentContent{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.commentContent > p{
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
 }

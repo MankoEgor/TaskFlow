@@ -4,12 +4,14 @@ import cross from '../../../assets/cross.svg'
 import { useProfile } from "../../../hooks/useProfile";
 import ProfileIcon from "../ProfileIcon/ProfileIcon";
 import { useComments } from "../../../hooks/useComments";
+import { formatDateTime } from '../../../utils/date'
 
 import type { Comment } from "../../../types/comments.type";
 import ErrorModalWindow from "../ErrorModalWindow/ErrorModalWindow";
 import { useState } from "react";
 import { useAuth } from "../../../hooks/useAuth";
 import sendIcon from '../../../assets/send.svg'
+import deleteIcon from '../../../assets/delete.svg'
 
 interface TaskModalWindowProps {
     task: Task;
@@ -26,7 +28,7 @@ function TaskModalWindow({task, setClose} : TaskModalWindowProps){
         error,
         createComment,
         // isCreating,
-        // deleteComment,
+        deleteComment,
         // isDeleting,
     } = useComments(task.id)
 
@@ -114,40 +116,69 @@ function TaskModalWindow({task, setClose} : TaskModalWindowProps){
                                     <p className={s.descriptionText}>{task.description ?? 'No description'}</p>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <div className={s.taskInfo}>
+
                             <div className={s.container}>
                                 <h3 className={s.title}>COMMENTS</h3>
 
                                 {error && <ErrorModalWindow error={error}/>}
 
                                 <div className={s.commentsDiv}>
-                                    {data.length > 0 ? data.map((comment: Comment) => (
-                                        <div key={comment.id} className={s.comment}>
-                                            {comment.content}
-                                        </div>
-                                    )) : (
-                                        <p className={s.noComments}>No comments yet.</p>
-                                    )}
+                                    <div className={s.commentScroll}>
+                                        {data.length > 0 ? data.map((comment: Comment) => (
+                                            <div key={comment.id} className={s.comment}>
+                                                <div>
+                                                    {comment.profile?.avatar_url && comment.profile.name
+                                                    && <ProfileIcon 
+                                                            name={comment.profile.name}
+                                                            avatarUrl={comment.profile.avatar_url}/>}
+                                                </div>
+                                                <div className={s.commentTextContainer}>
+                                                    <div className={s.commentText}>
+                                                        <div className={s.commentInfoContainer}>
+                                                            <p className={s.commentInfo}>{comment.profile?.name}</p>
+                                                            <p className={s.dateInfo}>{formatDateTime(comment.created_at)}</p>
+                                                        </div>
+                                                        
+                                                        <div className={s.commentContent}>
+                                                            <p>{comment.content}</p>
+                                                            {user?.id === comment.user_id && <button 
+                                                                                                className={s.deleteButton}
+                                                                                                onClick={() => deleteComment(comment.id)}>
+                                                                                                <img src={deleteIcon} alt="delete" />
+                                                                                            </button>}
+                                                        </div>
+                                                            
+                                                        
+                                                    </div>
+                                                </div>
+                                                
+                                                
+                                            </div>
+                                        )) : (
+                                            <p className={s.noComments}>No comments yet.</p>
+                                        )}
+                                    </div>
+                                    
 
                                     <div className={s.commentInput}>
                                         {localError && <ErrorModalWindow 
                                                             error={localError} 
                                                             onClose={() => setLocalError(null)}/>}
-                                        <input 
+                                        <textarea
                                             className={s.input}
-                                            type="text" 
                                             value={comment}
                                             onChange={(e) => setComment(e.target.value)}
-                                            />
+                                            rows={3}
+                                            maxLength={500}
+                                            placeholder="Write a comment"
+                                        />
 
                                         <button 
                                             className={s.sendButton} 
                                             onClick={handleCreateComment}>
 
-                                            <img src={sendIcon} alt="send" />
-                                            
+                                            <img className={s.sendImage} src={sendIcon} alt="send" />
+
                                         </button>
                                     </div>
                                 </div>

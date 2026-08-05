@@ -1,9 +1,9 @@
 export type Comment = {
     id: string;
-    taskId: string;
-    userId: string;
+    task_id: string;
+    user_id: string;
     content: string;
-    createdAt: string;
+    created_at: string;
     profile?: {
         id: string;
         name: string | null;

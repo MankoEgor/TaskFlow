@@ -12,6 +12,8 @@ import { useState } from "react";
 import { useAuth } from "../../../hooks/useAuth";
 import sendIcon from '../../../assets/send.svg'
 import deleteIcon from '../../../assets/delete.svg'
+import Loader from "../Loader/Loader";
+import { toError } from "../../../utils/errors";
 
 interface TaskModalWindowProps {
     task: Task;
@@ -24,12 +26,12 @@ function TaskModalWindow({task, setClose} : TaskModalWindowProps){
 
     const {
         data,
-        // isLoading,
+        isLoading,
         error,
         createComment,
-        // isCreating,
+        isCreating,
         deleteComment,
-        // isDeleting,
+        isDeleting,
     } = useComments(task.id)
 
     const {profileInfo} = useProfile(task.assignee_id ?? undefined)
@@ -50,10 +52,6 @@ function TaskModalWindow({task, setClose} : TaskModalWindowProps){
             return;
         }
 
-        console.log(user.id)
-        console.log(task.id)
-        console.log(comment)
-
         try {
             await createComment({
                 task_id: task.id,
@@ -62,7 +60,15 @@ function TaskModalWindow({task, setClose} : TaskModalWindowProps){
             });
             setComment(''); 
         } catch (error) {
-            setLocalError(new Error(error instanceof Error ? error.message : ''));
+            setLocalError(toError(error, 'Failed to create comment'));
+        }
+    }
+
+    const handleDeleteComment = async (commentId: string) => {
+        try {
+            await deleteComment(commentId);
+        } catch (error) {
+            setLocalError(toError(error, 'Failed to delete comment'));
         }
     }
 
@@ -117,25 +123,28 @@ function TaskModalWindow({task, setClose} : TaskModalWindowProps){
                                 </div>
                             </div>
 
-                            <div className={s.commentContainer}>
-                                <h3 className={s.title}>COMMENTS</h3>
+                            <div className={s.container}>
+                                <h3 className={s.label}>COMMENTS</h3>
 
                                 {error && <ErrorModalWindow error={error}/>}
 
                                 <div className={s.commentsDiv}>
                                     <div className={s.commentScroll}>
-                                        {data.length > 0 ? data.map((comment: Comment) => (
+                                        {isLoading ? (
+                                            <Loader/>
+                                        ) : data.length > 0 ? data.map((comment: Comment) => (
                                             <div key={comment.id} className={s.comment}>
                                                 <div>
-                                                    {comment.profile?.avatar_url && comment.profile.name
-                                                    && <ProfileIcon 
-                                                            name={comment.profile.name}
-                                                            avatarUrl={comment.profile.avatar_url}/>}
+                                                    <ProfileIcon
+                                                        name={comment.profile?.name ?? 'Unknown user'}
+                                                        avatarUrl={comment.profile?.avatar_url ?? null}/>
                                                 </div>
                                                 <div className={s.commentTextContainer}>
                                                     <div className={s.commentText}>
                                                         <div className={s.commentInfoContainer}>
-                                                            <p className={s.commentInfo}>{comment.profile?.name}</p>
+                                                            <p className={s.commentInfo}>
+                                                                {comment.profile?.name ?? 'Unknown user'}
+                                                            </p>
                                                             <p className={s.dateInfo}>{formatDateTime(comment.created_at)}</p>
                                                         </div>
                                                         
@@ -143,16 +152,13 @@ function TaskModalWindow({task, setClose} : TaskModalWindowProps){
                                                             <p>{comment.content}</p>
                                                             {user?.id === comment.user_id && <button 
                                                                                                 className={s.deleteButton}
-                                                                                                onClick={() => deleteComment(comment.id)}>
+                                                                                                onClick={() => handleDeleteComment(comment.id)}
+                                                                                                disabled={isDeleting}>
                                                                                                 <img src={deleteIcon} alt="delete" />
                                                                                             </button>}
                                                         </div>
-                                                            
-                                                        
                                                     </div>
-                                                </div>
-                                                
-                                                
+                                                </div> 
                                             </div>
                                         )) : (
                                             <p className={s.noComments}>No comments yet.</p>
@@ -175,7 +181,8 @@ function TaskModalWindow({task, setClose} : TaskModalWindowProps){
 
                                         <button 
                                             className={s.sendButton} 
-                                            onClick={handleCreateComment}>
+                                            onClick={handleCreateComment}
+                                            disabled={comment.trim() === '' || isCreating}>
 
                                             <img className={s.sendImage} src={sendIcon} alt="send" />
 

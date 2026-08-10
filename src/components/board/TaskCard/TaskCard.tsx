@@ -6,6 +6,8 @@ import s from './TaskCard.module.css';
 import { useState } from "react";
 import TaskModalWindow from "../../shared/TaskModakWindow/TaskModalWindow";
 import { toError } from "../../../utils/errors";
+import { useProfile } from "../../../hooks/useProfile";
+import ProfileIcon from "../../shared/ProfileIcon/ProfileIcon";
 
 interface TaskCardProps {
     task: Task;
@@ -18,6 +20,7 @@ interface TaskCardProps {
 function TaskCard({task, index, deleteTask, onError}: TaskCardProps){
 
   const [isClicked, setIsClicked] = useState<boolean>(false)
+  const {profileInfo} = useProfile(task.assignee_id ?? undefined)
 
   const {ref} = useSortable({
     id: task.id,
@@ -60,6 +63,15 @@ function TaskCard({task, index, deleteTask, onError}: TaskCardProps){
               <h3 className={s.taskName}>{task.title}</h3>
             </div>
             <p className={s.taskDescription}>{task.description}</p>
+            {task.assignee_id && (
+              <div
+                className={s.taskAssignee}
+                title={`Assigned to ${profileInfo?.name ?? 'Unknown user'}`}>
+                <ProfileIcon
+                  name={profileInfo?.name ?? 'Unknown user'}
+                  avatarUrl={profileInfo?.avatar_url ?? null}/>
+              </div>
+            )}
           </div>
         </div>
 

@@ -6,6 +6,10 @@
     margin-left: -10px
 }
 
+.profileImage{
+    object-fit: cover;
+}
+
 .fallback{
     display: flex;
     align-items: center;

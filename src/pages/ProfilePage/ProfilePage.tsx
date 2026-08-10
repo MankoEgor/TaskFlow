@@ -48,7 +48,9 @@ function ProfilePage(){
         }
     };
 
-    const fallbackLetter = user?.email?.[0].toUpperCase() ?? '?';
+    const fallbackLetter = profileInfo?.name?.[0]?.toUpperCase()
+        ?? user?.email?.[0]?.toUpperCase()
+        ?? '?';
 
 
     if(loading){
@@ -72,7 +74,10 @@ function ProfilePage(){
             />
             <div className={s.info}>
                 { profileInfo?.avatar_url 
-                    ? <img className={s.profileImage} src={profileInfo.avatar_url} alt="" /> 
+                    ? <img
+                        className={s.profileImage}
+                        src={profileInfo.avatar_url}
+                        alt={profileInfo.name ?? 'Profile avatar'} />
                     : <span className={s.fallback}>{fallbackLetter}</span>
                 }
                 <button
@@ -90,10 +95,9 @@ function ProfilePage(){
                     ref={fileInputRef}
                     onChange={handleAvatarChange}/>
 
-                <input 
-                    className={s.nameChange}
-                    type="text" 
-                    placeholder={profileInfo?.name ? profileInfo.name : "Enter your name"} />
+                <p className={s.profileName}>
+                    {profileInfo?.name ?? user?.email ?? 'Unknown user'}
+                </p>
             </div>
 
             {error && (<ErrorModalWindow

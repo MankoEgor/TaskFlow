@@ -4,9 +4,11 @@ import {
     createComment,
     deleteComment
 } from '../services/comments.service';
+import { useCommentsRealtime } from './useCommentsRealtime';
 
 export function useComments(taskId: string) {
     const queryClient = useQueryClient();
+    useCommentsRealtime(taskId);
 
     const commentsQuery = useQuery({
         queryKey: ['comments', taskId],

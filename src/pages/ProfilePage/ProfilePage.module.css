@@ -40,11 +40,13 @@
 }
 
 
-.nameChange{
-    padding: 16px 12px;
-    border-radius: 8px;
-    border: none;
-    min-width: 480px;
+.profileName{
+    max-width: 100%;
+    color: #191C1E;
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+    overflow-wrap: anywhere;
 }
 
 

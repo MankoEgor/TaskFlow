@@ -1,8 +1,8 @@
 export function formatDateTime(value: string): string {
     const date = new Date(value);
 
-    if(Number.isNaN(date.getTime)){
-        return 'Uncknow date';
+    if(Number.isNaN(date.getTime())){
+        return 'Unknow date';
     }
 
     const formattedDate = new Intl.DateTimeFormat('en-GB', {

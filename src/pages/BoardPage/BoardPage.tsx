@@ -188,8 +188,6 @@ function BoardPage(){
                 await handleDragEnd(event)
             }}>
 
-            <div className={s.boardScroll}>
-
                 <div className={s.header}>
                     <div className={s.navigation}>
                         <Button 
@@ -215,7 +213,8 @@ function BoardPage(){
                     </div>
 
                 </div>
-
+                
+            <div className={s.boardScroll}>
                 <div className={s.columnDiv}>
                     {columns.map((column) => (
                     <ColumnBoard 

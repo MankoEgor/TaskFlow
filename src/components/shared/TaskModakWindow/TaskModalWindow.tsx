@@ -117,7 +117,7 @@ function TaskModalWindow({task, setClose} : TaskModalWindowProps){
                                 </div>
                             </div>
 
-                            <div className={s.container}>
+                            <div className={s.commentContainer}>
                                 <h3 className={s.title}>COMMENTS</h3>
 
                                 {error && <ErrorModalWindow error={error}/>}

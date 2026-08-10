@@ -23,17 +23,34 @@ export async function getTaskComments(taskId: string): Promise<Comment[]> {
     return data as Comment[];
 }
 
-export async function createComment(comment: CreateCommentInput): Promise<void> {
-    if(!comment.task_id || !comment.user_id || !comment.content) return;
+export async function createComment(
+    input: CreateCommentInput
+): Promise<void> {
+    const content = input.content.trim();
 
-    if(comment.content.trim().length === 0 || comment.content.trim().length > 500) 
-        throw new Error('Comment content exceeds the maximum length of 500 characters.');
+    if (!input.task_id) {
+        throw new Error('Task ID is required');
+    }
 
-    comment.content = comment.content.trim();
+    if (!input.user_id) {
+        throw new Error('You must be logged in to create a comment');
+    }
 
-    const {error} = await supabase
+    if (!content) {
+        throw new Error('Comment cannot be empty');
+    }
+
+    if (content.length > 500) {
+        throw new Error('Comment cannot exceed 500 characters');
+    }
+
+    const { error } = await supabase
         .from('comments')
-        .insert(comment);
+        .insert({
+            task_id: input.task_id,
+            user_id: input.user_id,
+            content,
+        });
 
     if (error) {
         throw new Error(error.message);

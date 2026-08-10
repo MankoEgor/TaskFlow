@@ -59,10 +59,14 @@ function TaskCard({task, index, deleteTask, onError}: TaskCardProps){
             <p className={s.taskPriority}>{task.priority.toUpperCase()}</p>
           </div>
           <div className={s.content}>
-            <div className={s.taskHeader}>
-              <h3 className={s.taskName}>{task.title}</h3>
+            <div className={s.taskInfo}>
+                <div className={s.taskHeader}>
+                  <h3 className={s.taskName}>{task.title}</h3>
+                </div>
+
+                <p className={s.taskDescription}>{task.description}</p>
             </div>
-            <p className={s.taskDescription}>{task.description}</p>
+            
             {task.assignee_id && (
               <div
                 className={s.taskAssignee}

@@ -9,6 +9,12 @@
     box-shadow: 2px 2px rgba(0, 0, 0, 0.05);
 }
 
+.taskInfo{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
 .taskHeader{
     display: flex;
     justify-content: space-between;
@@ -57,7 +63,8 @@
 
 .content{
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 .taskAssignee{

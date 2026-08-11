@@ -10,22 +10,30 @@ interface BoardCardProps {
     createAt: string;
     createAtFunction: (id: string) => string;
     deleteFunction: (id: string) => void;
+    canDelete: boolean;
 }
 
-function BoardCard({ id, title, createAt, createAtFunction, deleteFunction }: BoardCardProps) {
+function BoardCard({
+    id,
+    title,
+    createAt,
+    createAtFunction,
+    deleteFunction,
+    canDelete
+}: BoardCardProps) {
 
     const navigate = useNavigate();
 
     const time = createAtFunction(createAt);
     return (
         <div className={s.boardCard}>
-            <div className={s.deleteButton}>
+            {canDelete && <div className={s.deleteButton}>
                 <img className=
                 {s.deleteIcon} 
                 src={del} 
                 onClick={() => deleteFunction(id)}
                 alt="delete" />
-            </div>
+            </div>}
             <div onClick={() => navigate(`/board/${id}`)} className={s.boardInfo}>
                 <h3 className={s.boardTitle}>{title}</h3>
                 <p className={s.time}>Created: {time}</p>

@@ -23,13 +23,21 @@ import type { CreateTaskFormValue } from '../../shared/CreateTaskModalWindow/Cre
 interface ColumnBoardProps {
     column: Column;
     tasks: Task[];
+    canManageBoard: boolean;
     isUpdated: boolean;
     deleteColumn: (columnId: string) => void;
     updateColumn: (input: {columnId: string, title: string}) => Promise<void>;
 }
 
 
-function ColumnBoard({column, tasks, deleteColumn, updateColumn, isUpdated}: ColumnBoardProps){
+function ColumnBoard({
+    column,
+    tasks,
+    canManageBoard,
+    deleteColumn,
+    updateColumn,
+    isUpdated
+}: ColumnBoardProps){
 
     const {user} = useAuth();
     const {createTask, isCreated, deleteTask, isDeleted} = useTask(column.board_id);
@@ -108,14 +116,14 @@ function ColumnBoard({column, tasks, deleteColumn, updateColumn, isUpdated}: Col
         <div className={s.column}>
             <div className={s.header}> 
                 <h1 className={s.title}>{column.title}</h1>
-                <div className={s.menuActionDiv}>
+                {canManageBoard && <div className={s.menuActionDiv}>
                     <button className={s.actionButton} onClick={() => deleteColumn(column.id)}>
                         <img className={s.btnIcon} src={deleteIcon} alt="Delete" />
                     </button>
                     <button className={s.actionButton} onClick={() => setColumnIsUpdateClicked(true)}>
                         <img className={s.btnIcon} src={editIcon} alt="Rename" />
                     </button>
-                </div>
+                </div>}
             </div>
 
             {isColumnUpdateClicked && <CreateModalWindow    

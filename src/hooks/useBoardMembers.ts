@@ -1,11 +1,31 @@
-import { useQuery } from '@tanstack/react-query'
-import { getAllBoardMembers } from '../services/boardMembers.service'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+    getAllBoardMembers,
+    removeBoardMember
+} from '../services/boardMembers.service'
 
 export function useBoardMembers(id?: string) {
+    const queryClient = useQueryClient();
+
     const queryMembers = useQuery({
         queryKey: ['board-members', id],
         queryFn: () => getAllBoardMembers(id!),
         enabled: Boolean(id)
+    })
+
+    const removeMemberMutation = useMutation({
+        mutationFn: (userId: string) => {
+            if (!id) {
+                throw new Error('Board ID is required');
+            }
+
+            return removeBoardMember(id, userId);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ['board-members', id]
+            });
+        }
     })
 
     return {
@@ -13,5 +33,7 @@ export function useBoardMembers(id?: string) {
         isError: queryMembers.isError,
         error: queryMembers.error,
         isLoading: queryMembers.isLoading,
+        removeMember: removeMemberMutation.mutateAsync,
+        isRemoving: removeMemberMutation.isPending,
     }
 }

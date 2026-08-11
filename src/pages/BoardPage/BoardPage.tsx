@@ -21,6 +21,7 @@ import ProfileIcon from "../../components/shared/ProfileIcon/ProfileIcon";
 import addColumnIcon from '../../assets/addColumn.svg'
 import backIcon from '../../assets/arrow_back.svg'
 import addIcon from '../../assets/add.svg'
+import deleteIcon from '../../assets/delete.svg'
 
 
 import s from './BoardPage.module.css'
@@ -39,8 +40,13 @@ function BoardPage(){
     const {
         members,
         error: membersError,
-        isLoading: isMembersLoading
+        isLoading: isMembersLoading,
+        removeMember,
+        isRemoving
     } = useBoardMembers(id);
+
+    const currentMember = members.find((member) => member.id === user?.id);
+    const isOwner = currentMember?.role === 'owner';
 
     const {boardTitle, titleError} = useBoardTitle(id);
 
@@ -157,6 +163,20 @@ function BoardPage(){
         }
     }
 
+    const handleRemoveMember = async (memberId: string, memberName: string | null) => {
+        const confirmed = window.confirm(
+            `Remove ${memberName ?? 'this member'} from the board?`
+        );
+
+        if (!confirmed) return;
+
+        try {
+            await removeMember(memberId);
+        } catch (err: unknown) {
+            setLocalError(toError(err, 'Failed to remove member'));
+        }
+    }
+
     if(isLoading)
         return <Loader/>
 
@@ -200,16 +220,31 @@ function BoardPage(){
 
                     <div className={s.memberDiv}>
                         {isMembersLoading ? null : members.map((member) => (
-                            <ProfileIcon 
-                                key={member.id}
-                                name={member.name}
-                                avatarUrl={member.avatar_url}
-                            />
+                            <div className={s.memberItem} key={member.id}>
+                                <ProfileIcon
+                                    name={member.name ?? 'Unknown user'}
+                                    avatarUrl={member.avatar_url}
+                                />
+                                {isOwner && member.role !== 'owner' && (
+                                    <button
+                                        className={s.removeMemberButton}
+                                        type="button"
+                                        title={`Remove ${member.name ?? 'member'}`}
+                                        aria-label={`Remove ${member.name ?? 'member'}`}
+                                        disabled={isRemoving}
+                                        onClick={() => handleRemoveMember(member.id, member.name)}>
+                                        <img
+                                            className={s.removeMemberIcon}
+                                            src={deleteIcon}
+                                            alt=""/>
+                                    </button>
+                                )}
+                            </div>
                         ))}
-                        <button className={s.addMember} onClick={() => setIsInviteClicked(true)}>
+                        {isOwner && <button className={s.addMember} onClick={() => setIsInviteClicked(true)}>
                             <img className={s.addMemberIcon} src={addIcon} alt="Invite Member" />
                             <p className={s.addMemberText}>Invite</p>
-                        </button>
+                        </button>}
                     </div>
 
                 </div>
@@ -221,6 +256,7 @@ function BoardPage(){
                         key={column.id}
                         column={column}
                         tasks={items[column.id] ?? []}
+                        canManageBoard={isOwner}
                         isUpdated={isUpdated}
                         deleteColumn={async (columnId) => {
                             try {
@@ -239,10 +275,10 @@ function BoardPage(){
                         />
                     ))}
 
-                    <div onClick={() => setIsClicked(true)} className={s.addButton}>
+                    {isOwner && <div onClick={() => setIsClicked(true)} className={s.addButton}>
                         <img className={s.addButtonIcon} src={addColumnIcon} alt="" />
                         <p className={s.addButtonText}>Add Column</p>
-                    </div>
+                    </div>}
                 </div>
 
                 {isClicked && <CreateModalWindow
@@ -254,7 +290,7 @@ function BoardPage(){
                                     title={title}
                                     heandleCreate={handleCreateColumn}/>}
 
-                {isInviteClicked && <InviteModalWindow 
+                {isOwner && isInviteClicked && <InviteModalWindow
                                             boardTitle={boardTitle}
                                             userId={user?.id}
                                             boardId={id!}

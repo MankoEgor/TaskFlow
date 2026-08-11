@@ -137,6 +137,7 @@ function BoardsPage() {
                         createAt={b.created_at}
                         createAtFunction={() => getDuration(b.created_at)}
                         deleteFunction={heandleDeleteBoard}
+                        canDelete={b.owner_id === user?.id}
                     />
                     ))}
                 </div>

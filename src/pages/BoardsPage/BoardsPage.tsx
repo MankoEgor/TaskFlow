@@ -61,32 +61,12 @@ function BoardsPage() {
         }
     }
 
-    const getDuration = (createdAt: string) : string => {
-        const createdDate = new Date(createdAt);
-        const now = new Date();
-        const duration = Math.floor((now.getTime() - createdDate.getTime()) / 1000); // Duration in seconds`
-        if(duration < 60){
-            return `${duration} seconds ago`;
-        }
-        else if(duration < 3600){
-            const minutes = Math.floor(duration / 60);
-            return `${minutes} minutes ago`;
-        }
-        else if(duration < 86400){
-            const hours = Math.floor(duration / 3600);
-            return `${hours} hours ago`;
-        }
-
-        return `${duration} seconds ago`;
-    }
-
     useEffect(() => {
 
         if(!user?.id) return;
 
-        acceptedInvite().catch((error) => {
-            console.error('Failed to accept pending invites:', error);
-            
+        acceptedInvite().catch((error: unknown) => {
+            setLocalError(toError(error, 'Failed to accept pending invites'));
         });
 
     }, [user?.id, acceptedInvite])
@@ -134,8 +114,6 @@ function BoardsPage() {
                         key={b.id}
                         id={b.id}
                         title={b.title}
-                        createAt={b.created_at}
-                        createAtFunction={() => getDuration(b.created_at)}
                         deleteFunction={heandleDeleteBoard}
                         canDelete={b.owner_id === user?.id}
                     />

@@ -63,6 +63,8 @@
 
 .title{
     font-size: 18px;
+    max-width: 100%;
+    overflow-wrap: anywhere;
 }
 
 .medium, .low, .high{
@@ -132,6 +134,9 @@
 
 .descriptionText{
     color: #191C1E;
+    max-width: 100%;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
 }
 
 .taskDetailse{
@@ -151,6 +156,8 @@
 
 .assigneeText{
     font-weight: 700;
+    min-width: 0;
+    overflow-wrap: anywhere;
 }
 
 .commentsDiv{
@@ -234,7 +241,7 @@
 .commentTextContainer{
     width: auto;
     min-width: 0;
-    max-width: 100%;
+    max-width: calc(100% - 42px);
     border-radius: 8px;
     display: flex;
     flex-direction: row;
@@ -306,11 +313,43 @@
     }
 
     .taskDetailse{
-        flex-wrap: wrap;
+        align-items: stretch;
+        flex-direction: column;
         gap: 20px;
     }
 
     .commentScroll{
         padding: 0;
+    }
+}
+
+@media (max-width: 560px){
+    .modal{
+        width: calc(100vw - 8px);
+        height: calc(100vh - 8px);
+        padding: 4px;
+    }
+
+    .closeButton{
+        padding: 12px 16px;
+    }
+
+    .taskInfo{
+        margin: 4px;
+        padding: 16px;
+        gap: 20px;
+    }
+
+    .commentsDiv{
+        padding: 12px;
+    }
+
+    .commentInput{
+        gap: 6px;
+    }
+
+    .sendButton{
+        flex: 0 0 36px;
+        min-height: 36px;
     }
 }

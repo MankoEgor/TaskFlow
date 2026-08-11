@@ -2,7 +2,12 @@ body{
     background: rgba(195, 198, 208, 0.2);
 }
 
-main{
+.container{
+    width: 100%;
+    min-width: 0;
+}
+
+.container main{
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -15,7 +20,7 @@ main{
 
 .boardList{
     display: grid;
-    grid-template-columns: repeat(auto-fill, 259px);
+    grid-template-columns: repeat(auto-fill, minmax(240px, 280px));
     justify-content: center;
     gap: 20px;
     width: 100%;
@@ -30,7 +35,7 @@ main{
     color: #191C1E;
     text-align: left;
     font-weight: bold;   
-    letter-spacing: -0.64px; 
+    letter-spacing: 0;
     line-height: 40px;
     
 }
@@ -59,7 +64,7 @@ main{
     gap: 16px;
     cursor: pointer;
     transition: transform 0.3s ease;
-    height: min(184px);
+    min-height: 184px;
 }
 
 .addButton:hover{
@@ -70,9 +75,33 @@ main{
 
 .addBoardTitle{
     font-size: 18px;
-    font-weight: 800px;
+    font-weight: 800;
     color: #43474E;
     letter-spacing: 0px;
 
+}
+
+@media (max-width: 600px){
+    .boardsContainer{
+        padding: 20px 16px 12px;
+    }
+
+    .boardsTitle{
+        font-size: 26px;
+        line-height: 34px;
+    }
+
+    .boardsDescription{
+        font-size: 14px;
+    }
+
+    .boardList{
+        grid-template-columns: minmax(0, 1fr);
+        padding: 12px 16px 20px;
+    }
+
+    .addButton{
+        min-height: 144px;
+    }
 }
 

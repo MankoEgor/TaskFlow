@@ -8,6 +8,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 16px;
+    z-index: 1000;
 }
 
 .backdrop {
@@ -26,6 +28,7 @@
   align-items: center;
   justify-content: center;
   height: 100%;
+  min-width: 0;
 }
 
 .modal{
@@ -34,15 +37,18 @@
     align-items: center;
     justify-content: center;
     background: #fff;
-    max-width: fit-content;
+    width: min(574px, 100%);
+    max-width: none;
+    max-height: calc(100vh - 32px);
     border-radius: 8px;
+    overflow-y: auto;
 }
 
 .header{
     width: 100%;
     display: flex;
     flex-direction: row;
-    padding: 32px;
+    padding: 24px 32px 16px;
     padding-bottom: 16px;
 
 }
@@ -57,6 +63,7 @@
     font-size: 24px;
     font-weight: semi-bold;
     color: #191C1E;
+    overflow-wrap: anywhere;
 }
 
 .closeButton img{
@@ -69,6 +76,7 @@
     flex-direction: column;
     padding: 24px 32px;
     gap: 24px;
+    width: 100%;
 }
 
 .buttonDiv{
@@ -77,7 +85,8 @@
     display: flex;
     flex-direction: row-reverse;
     border-radius: 8px;
-    gap: 12px
+    gap: 12px;
+    flex-wrap: wrap;
 }
 
 .createButton{
@@ -98,4 +107,34 @@
     border-radius: 8px;
     border: 1px #C3C6D0 solid;
     font-size: 16px;
+}
+
+@media (max-width: 560px){
+    .overlay{
+        padding: 8px;
+    }
+
+    .modal{
+        width: 100%;
+        max-height: calc(100vh - 16px);
+    }
+
+    .header{
+        padding: 20px 16px 12px;
+    }
+
+    .headerTitle{
+        font-size: 20px;
+    }
+
+    .form,
+    .buttonDiv{
+        padding: 16px;
+    }
+
+    .createButton,
+    .cancelButton{
+        flex: 1 1 140px;
+        justify-content: center;
+    }
 }

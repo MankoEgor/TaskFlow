@@ -3,15 +3,18 @@
     height: 152px;
     border: 1px black solid;
     border-radius: 100%;
+    object-fit: cover;
 }
 
 .container{
     width: 100%;
+    min-height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     margin: auto;
-    padding: 0 24px;
+    gap: 24px;
+    padding: 24px;
 }
 
 .info{
@@ -52,5 +55,26 @@
 
 .fileInput{
     display: none;
+}
+
+@media (max-width: 560px){
+    .container{
+        justify-content: flex-start;
+        padding: 16px;
+    }
+
+    .profileImage,
+    .fallback{
+        width: 112px;
+        height: 112px;
+    }
+
+    .fallback{
+        font-size: 32px;
+    }
+
+    .info{
+        gap: 18px;
+    }
 }
 

@@ -3,8 +3,8 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 0;
-    padding-right: 24px;
+    gap: 16px;
+    padding: 12px 24px;
     background: #fff;
     border: 1px solid #C3C6D0;
 }
@@ -13,35 +13,16 @@
     font-size: 18px;
     font-weight: bold;
     color: #244771;
-    letter-spacing: -0.8px;
-    line-break: 40px;
+    letter-spacing: 0;
 }
 
 .logoContainer{
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content:space-around;
-    margin-left: 24px;
-    margin-right: 32px;
+    justify-content: space-around;
     gap: 8px;
-}
-
-.search{
-    height: max(35px);
-    width: max(448px);
-    border-radius: 8px;
-    border: none;
-    background: #ECEEF0;
-    padding-left: 40px;
-    font-size: 14px;
-    color: #6B7280;
-}
-
-.logoAndSearch{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+    flex-shrink: 0;
 }
 
 .signOut{
@@ -69,8 +50,14 @@
     flex-direction: row;
     gap: 8px;
     justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
 }
 
+.profileAndSignOut > img,
+.profileAndSignOut > span{
+    margin-left: 0;
+}
 
 .profileImage, .fallback{
     width: 34px;
@@ -85,4 +72,29 @@
     justify-content: center;
     font-weight: 800;
     font-size: 18px;
+}
+
+@media (max-width: 760px){
+    .header{
+        padding: 10px 16px;
+    }
+}
+
+@media (max-width: 560px){
+    .header{
+        padding: 10px 12px;
+    }
+
+    .signOut{
+        width: 38px;
+        height: 38px;
+        padding: 0;
+        gap: 0;
+        font-size: 0;
+    }
+
+    .signOut img{
+        width: 16px;
+        height: 16px;
+    }
 }

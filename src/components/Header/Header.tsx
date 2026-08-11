@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useAuth } from '../../hooks/useAuth';
 import { useProfile } from '../../hooks/useProfile';
 import { useNavigate } from 'react-router-dom';
@@ -17,11 +16,6 @@ function Header(){
 
     const {user, signOut } = useAuth();
     const {profileInfo, error } = useProfile(user?.id);
-    const [quare, setQuare] = useState<string>('');
-
-    function headleQuere(value: string) {
-        setQuare(value)
-    }
 
     const handleSignOut = async () => {
         await signOut();
@@ -36,20 +30,9 @@ function Header(){
 
     return (
         <header className={s.header}>
-            <div className={s.logoAndSearch}>
-                <div className={s.logoContainer}>
-                    <img src={icon} alt="icon" />
-                    <h1 className={s.logo}>TaskFlow</h1>
-                </div>
-
-                <input className={s.search}
-                    type="text" 
-                    name="" 
-                    id="" 
-                    placeholder='Search a board'
-                    value={quare}
-                    onChange={(e) => headleQuere(e.target.value)}
-                    />
+            <div className={s.logoContainer}>
+                <img src={icon} alt="icon" />
+                <h1 className={s.logo}>TaskFlow</h1>
             </div>
 
         <div className={s.profileAndSignOut}>
@@ -58,7 +41,12 @@ function Header(){
                 name={profileName}
                 avatarUrl={profileAvatarUrl}
                 onClick={() => navigate(`profile/${user?.id}`)}/>
-            <button className={s.signOut} onClick={handleSignOut}>
+            <button
+                className={s.signOut}
+                type="button"
+                title="Sign out"
+                aria-label="Sign out"
+                onClick={handleSignOut}>
                 Sign Out
                 <img src={logout} alt="Logout" />
             </button>

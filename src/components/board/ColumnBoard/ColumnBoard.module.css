@@ -1,7 +1,8 @@
 .column{
     display: flex;
     flex-direction: column;
-    width: max(320px);
+    width: 320px;
+    flex: 0 0 320px;
     background: #F2F4F6;
     border: 1px #C3C6D0 solid;
     border-radius: 8px;
@@ -35,8 +36,10 @@
 .title{
     font-size: 16px;
     color: #191C1E;
-    font-weight: 700px;
+    font-weight: 700;
     margin: 0;
+    min-width: 0;
+    overflow-wrap: anywhere;
 }
 
 .menuActionDiv{
@@ -89,4 +92,12 @@
     align-items: center;
     padding: 16px;
     color: #73777F;
+}
+
+@media (max-width: 560px){
+    .column{
+        width: calc(100vw - 32px);
+        flex-basis: calc(100vw - 32px);
+        padding: 14px;
+    }
 }

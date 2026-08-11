@@ -12,3 +12,13 @@ footer{
     color: #43474E;
     line-height: 20px;
 }
+
+@media (max-width: 560px){
+    footer{
+        padding: 20px 16px;
+    }
+
+    .footerText{
+        font-size: 12px;
+    }
+}

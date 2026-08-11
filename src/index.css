@@ -13,11 +13,28 @@ html,
 body,
 #root {
   min-height: 100%;
+  width: 100%;
   margin: 0;
+}
+
+body {
+  min-width: 320px;
+  overflow-x: hidden;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+img {
+  max-width: 100%;
 }
 
 #root{
     width: 100%;
     font-family: "Manrope";
-    color: #43474E
+    color: #43474E;
 }

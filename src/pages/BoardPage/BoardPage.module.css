@@ -3,6 +3,7 @@
   overflow-x: auto;
   overflow-y: hidden;
   padding: 32px 36px;
+  scrollbar-gutter: stable;
 }
 
 .columnDiv {
@@ -12,6 +13,7 @@
 
   width: max-content;
   min-width: 100%;
+  padding-bottom: 8px;
 }
 
 .addButton{
@@ -23,7 +25,9 @@
     border: 1px #C3C6D0 dashed;
     border-radius: 8px;
     background: #F2F4F6;
-    padding: 19px 80px;
+    width: 320px;
+    flex: 0 0 320px;
+    padding: 19px 24px;
     gap: 8px;
 }
 
@@ -54,9 +58,11 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 120px;
+  justify-content: space-between;
+  gap: 24px;
   margin: 36px 32px;
   margin-bottom: 0px;
+  min-width: 0;
 
 }
 
@@ -97,6 +103,12 @@
   flex-direction: row;
   align-items: center;
   gap: 16px;
+  min-width: 0;
+}
+
+.navigation h1{
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .addMember{
@@ -134,6 +146,9 @@
 .memberDiv{
   display: flex;
   align-items: center;
+  min-width: 0;
+  padding-top: 8px;
+  padding-left: 10px;
 }
 
 .memberItem{
@@ -172,4 +187,53 @@
 .removeMemberIcon{
   width: 12px;
   height: 12px;
+}
+
+@media (max-width: 760px){
+  .header{
+    align-items: flex-start;
+    flex-direction: column;
+    margin: 24px 20px 0;
+  }
+
+  .memberDiv{
+    width: 100%;
+    overflow-x: auto;
+    padding-right: 8px;
+    padding-bottom: 4px;
+  }
+
+  .boardScroll{
+    padding: 24px 20px;
+  }
+}
+
+@media (max-width: 560px){
+  .header{
+    gap: 16px;
+    margin: 20px 16px 0;
+  }
+
+  .navigation{
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .navigation h1{
+    font-size: 24px;
+    line-height: 32px;
+  }
+
+  .boardScroll{
+    padding: 20px 16px;
+  }
+
+  .columnDiv{
+    gap: 16px;
+  }
+
+  .addButton{
+    width: calc(100vw - 32px);
+    flex-basis: calc(100vw - 32px);
+  }
 }

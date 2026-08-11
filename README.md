@@ -4,6 +4,8 @@ TaskFlow is a responsive Jira-like task management application built with React,
 
 Repository: [github.com/MankoEgor/TaskFlow](https://github.com/MankoEgor/TaskFlow)
 
+Live demo: [tasksfloows.netlify.app](https://tasksfloows.netlify.app/board)
+
 ## Demo accounts
 
 The following accounts are intended for review and contain public test data only:

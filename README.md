@@ -4,6 +4,26 @@ TaskFlow is a responsive Jira-like task management application built with React,
 
 Repository: [github.com/MankoEgor/TaskFlow](https://github.com/MankoEgor/TaskFlow)
 
+## Demo accounts
+
+The following accounts are intended for review and contain public test data only:
+
+| Role | Email | Password |
+| --- | --- | --- |
+| Owner | `alex@taskflow.test` | `TaskFlow2026!` |
+| Member | `maria@taskflow.test` | `TaskFlow2026!` |
+
+The owner can manage the board structure, invitations, and members. The member can work with tasks and comments but cannot perform owner-only operations.
+
+To prepare the demo environment:
+
+1. Register both accounts through the application.
+2. Open **Supabase Dashboard > SQL Editor**.
+3. Run `supabase/demo-data.sql` once.
+4. Sign in as either user and open the `Website Launch` board.
+
+The seed is safe to run again. It creates the two memberships, three workflow columns, nine realistic tasks with different priorities and assignees, and sample comments without duplicating existing demo records.
+
 ## Implemented scope
 
 ### Level 1: MVP

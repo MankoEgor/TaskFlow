@@ -19,7 +19,7 @@ export async function createBoardInvite(
     throw new Error('Email is required');
   }
 
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('board_invites')
     .upsert(
       {
@@ -27,15 +27,13 @@ export async function createBoardInvite(
         email: normalizedEmail,
         role: 'member',
         invited_by: invitedBy,
+        accepted_at: null,
       },
       {
         onConflict: 'board_id,email',
       }
     )
     .select();
-
-  console.log('created invite data:', data);
-  console.log('created invite error:', error);
 
   if (error) {
     throw new Error(error.message);

@@ -149,8 +149,6 @@ function BoardPage(){
         }
     };
 
-
-
     const handleCreateColumn = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
 
@@ -180,6 +178,23 @@ function BoardPage(){
             await removeMember(memberId);
         } catch (err: unknown) {
             setLocalError(toError(err, 'Failed to remove member'));
+        }
+    }
+
+    const handleDeleteColumn = async (columnId: string) => {
+
+        try {
+            await deleteColumn(columnId);
+        } catch (err: unknown) {
+            setLocalError(toError(err, 'Failed to delete column'));
+        }
+    }
+
+    const handleUpdateColumnTitle = async (input: {columnId: string, title: string}) => {
+        try {
+            await updateColumnTitle(input);
+        } catch (err: unknown) {
+            setLocalError(toError(err, 'Failed to update column'));
         }
     }
 
@@ -266,20 +281,8 @@ function BoardPage(){
                         tasks={items[column.id] ?? []}
                         canManageBoard={isOwner}
                         isUpdated={isUpdated}
-                        deleteColumn={async (columnId) => {
-                            try {
-                                await deleteColumn(columnId);
-                            } catch (err: unknown) {
-                                setLocalError(toError(err, 'Failed to delete column'));
-                            }
-                        }}
-                        updateColumn={async (input) => {
-                            try {
-                                await updateColumnTitle(input);
-                            } catch (err: unknown) {
-                                setLocalError(toError(err, 'Failed to update column'));
-                            }
-                        }}
+                        deleteColumn={handleDeleteColumn}
+                        updateColumn={handleUpdateColumnTitle}
                         />
                     ))}
 

@@ -4,9 +4,9 @@ import type { BoardMember } from '../../../types/members.type';
 import Button from "../../../components/shared/Button/Button";
 import ProfileIcon from '../../../components/shared/ProfileIcon/ProfileIcon';
 
-import addIcon from '../../assets/add.svg';
-import backIcon from '../../assets/arrow_back.svg';
-import deleteIcon from '../../assets/delete.svg'
+import addIcon from '../../../assets/add.svg';
+import backIcon from '../../../assets/arrow_back.svg';
+import deleteIcon from '../../../assets/delete.svg'
 
 import s from './BoardHeader.module.css';
 

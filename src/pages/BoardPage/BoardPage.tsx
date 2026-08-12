@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useColumn } from "../../hooks/useColumn";
 import { useBoardTask } from "../../hooks/useBoardTask";
@@ -15,13 +15,10 @@ import CreateModalWindow from "../../components/shared/CreateModalWindow/CreateM
 import ErrorModalWindow from "../../components/shared/ErrorModalWindow/ErrorModalWindow";
 import Loader from "../../components/shared/Loader/Loader";
 import InviteModalWindow from "../../components/shared/InviteModalWindow/InviteModalWindow";
-import Button from "../../components/shared/Button/Button";
-import ProfileIcon from "../../components/shared/ProfileIcon/ProfileIcon";
+
+import BoardHeader from "../../components/board/BoardHeader/BoardHeader";
 
 import addColumnIcon from '../../assets/addColumn.svg'
-import backIcon from '../../assets/arrow_back.svg'
-import addIcon from '../../assets/add.svg'
-import deleteIcon from '../../assets/delete.svg'
 
 
 import s from './BoardPage.module.css'
@@ -34,7 +31,6 @@ function BoardPage(){
 
     const {id} = useParams();
     useBoardRealtime(id);
-    const navigate = useNavigate();
 
     const { user } = useAuth();
     const {
@@ -229,46 +225,15 @@ function BoardPage(){
                 await handleDragEnd(event)
             }}>
 
-                <div className={s.header}>
-                    <div className={s.navigation}>
-                        <Button 
-                            message="Back"
-                            icon={backIcon}
-                            onClick={() => navigate('/board')}
-                            />
-                        <h1>{boardTitle}</h1>
-                    </div>
-
-                    <div className={s.memberDiv}>
-                        {isMembersLoading ? null : members.map((member) => (
-                            <div className={s.memberItem} key={member.id}>
-                                <ProfileIcon
-                                    name={member.name ?? 'Unknown user'}
-                                    avatarUrl={member.avatar_url}
-                                />
-                                {isOwner && member.role !== 'owner' && (
-                                    <button
-                                        className={s.removeMemberButton}
-                                        type="button"
-                                        title={`Remove ${member.name ?? 'member'}`}
-                                        aria-label={`Remove ${member.name ?? 'member'}`}
-                                        disabled={isRemoving}
-                                        onClick={() => handleRemoveMember(member.id, member.name)}>
-                                        <img
-                                            className={s.removeMemberIcon}
-                                            src={deleteIcon}
-                                            alt=""/>
-                                    </button>
-                                )}
-                            </div>
-                        ))}
-                        {isOwner && <button className={s.addMember} onClick={() => setIsInviteClicked(true)}>
-                            <img className={s.addMemberIcon} src={addIcon} alt="Invite Member" />
-                            <p className={s.addMemberText}>Invite</p>
-                        </button>}
-                    </div>
-
-                </div>
+            <BoardHeader
+                boardTitle={boardTitle}
+                members={members}
+                isMembersLoading={isMembersLoading}
+                isOwner={isOwner}
+                isRemoving={isRemoving}
+                setIsInviteClicked={setIsInviteClicked}
+                handleRemoveMember={handleRemoveMember}
+            />
                 
             <div className={s.boardScroll}>
                 <div className={s.columnDiv}>

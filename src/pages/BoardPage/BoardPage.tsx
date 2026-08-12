@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useColumn } from "../../hooks/useColumn";
 import { useBoardTask } from "../../hooks/useBoardTask";
 import { useTask } from "../../hooks/useTask";
@@ -44,6 +44,12 @@ function BoardPage(){
         removeMember,
         isRemoving
     } = useBoardMembers(id);
+
+    const membersById = useMemo(
+        () => 
+            new Map(members.map(member => [member.id, member] as const)), 
+        [members]
+    );
 
     const currentMember = members.find((member) => member.id === user?.id);
     const isOwner = currentMember?.role === 'owner';
@@ -254,6 +260,8 @@ function BoardPage(){
                     {columns.map((column) => (
                     <ColumnBoard 
                         key={column.id}
+                        members={members}
+                        membersById={membersById}
                         column={column}
                         tasks={items[column.id] ?? []}
                         canManageBoard={isOwner}

@@ -4,6 +4,7 @@ import { useAuth } from '../../../hooks/useAuth';
 import { useState } from 'react';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import type { Task } from '../../../types/tasks.type';
+import type { BoardMember } from '../../../types/members.type';
 import type { Column } from '../../../types/column.type';
 
 import TaskCard from '../TaskCard/TaskCard';
@@ -15,12 +16,13 @@ import addIcon from '../../../assets/addTask.svg'
 import deleteIcon from '../../../assets/delete.svg'
 import editIcon from '../../../assets/edit.svg'
 import CreateModalWindow from '../../shared/CreateModalWindow/CreateModalWindow';
-import { useBoardMembers } from '../../../hooks/useBoardMembers';
 import { toError } from '../../../utils/errors';
 
 import type { CreateTaskFormValue } from '../../shared/CreateTaskModalWindow/CreateTaskModalWimdow';
 
 interface ColumnBoardProps {
+    members: BoardMember[];
+    membersById: ReadonlyMap<string, BoardMember>;
     column: Column;
     tasks: Task[];
     canManageBoard: boolean;
@@ -36,13 +38,13 @@ function ColumnBoard({
     canManageBoard,
     deleteColumn,
     updateColumn,
-    isUpdated
+    isUpdated,
+    members,
+    membersById
 }: ColumnBoardProps){
 
     const {user} = useAuth();
     const {createTask, isCreated, deleteTask, isDeleted} = useTask(column.board_id);
-
-    const { members } =  useBoardMembers(column.board_id)
 
     const [localError, setLocalError] = useState<Error | null>(null);
 
@@ -149,7 +151,12 @@ function ColumnBoard({
                         deleteTask={deleteTask}
                         isDeleted={isDeleted}
                         onError={setLocalError}
-                        />
+                        assignee={
+                            task.assignee_id 
+                                ? membersById.get(task.assignee_id) 
+                                : undefined
+                        }
+                    />
                 ))}
 
                 {isDropTarget && tasks.length === 0 && <div className={s.dropDiv}>DROP IT HERE</div>}

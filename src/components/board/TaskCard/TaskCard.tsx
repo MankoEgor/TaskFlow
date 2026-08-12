@@ -1,12 +1,12 @@
 import { useSortable } from "@dnd-kit/react/sortable";
 import type { Task } from "../../../types/tasks.type";
+import type { BoardMember } from "../../../types/members.type";
 import deleteIcon from '../../../assets/delete.svg'
 
 import s from './TaskCard.module.css';
 import { useState } from "react";
 import TaskModalWindow from "../../shared/TaskModakWindow/TaskModalWindow";
 import { toError } from "../../../utils/errors";
-import { useProfile } from "../../../hooks/useProfile";
 import ProfileIcon from "../../shared/ProfileIcon/ProfileIcon";
 
 interface TaskCardProps {
@@ -15,12 +15,12 @@ interface TaskCardProps {
     deleteTask: (taskId: string) => void;
     isDeleted: boolean;
     onError?: (error: Error) => void;
+    assignee: BoardMember | undefined;
 }
 
-function TaskCard({task, index, deleteTask, onError}: TaskCardProps){
+function TaskCard({task, index, deleteTask, onError, assignee}: TaskCardProps){
 
   const [isClicked, setIsClicked] = useState<boolean>(false)
-  const {profileInfo} = useProfile(task.assignee_id ?? undefined)
 
   const {ref} = useSortable({
     id: task.id,
@@ -70,10 +70,10 @@ function TaskCard({task, index, deleteTask, onError}: TaskCardProps){
             {task.assignee_id && (
               <div
                 className={s.taskAssignee}
-                title={`Assigned to ${profileInfo?.name ?? 'Unknown user'}`}>
+                title={`Assigned to ${assignee?.name ?? 'Unknown user'}`}>
                 <ProfileIcon
-                  name={profileInfo?.name ?? 'Unknown user'}
-                  avatarUrl={profileInfo?.avatar_url ?? null}/>
+                  name={assignee?.name ?? 'Unknown user'}
+                  avatarUrl={assignee?.avatar_url ?? null}/>
               </div>
             )}
           </div>

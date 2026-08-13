@@ -40,14 +40,14 @@ function BoardPage(){
         isRemoving
     } = useBoardMembers(id);
 
+    const isOwner = members.some(
+        (member) => member.id === user?.id && member.role === 'owner');
+
     const membersById = useMemo(
         () => 
             new Map(members.map(member => [member.id, member] as const)), 
         [members]
     );
-
-    const currentMember = members.find((member) => member.id === user?.id);
-    const isOwner = currentMember?.role === 'owner';
 
     const {boardTitle, titleError} = useBoardTitle(id);
 

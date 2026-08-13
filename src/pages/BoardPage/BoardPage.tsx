@@ -4,22 +4,17 @@ import { useColumn } from "../../hooks/useColumn";
 import { useBoardTask } from "../../hooks/useBoardTask";
 import { useTask } from "../../hooks/useTask";
 import { useBoardRealtime } from "../../hooks/useBoardRealtime";
-import { DragDropProvider } from "@dnd-kit/react";
 
 
-
-import ColumnBoard from "../../components/board/ColumnBoard/ColumnBoard";
 import CreateModalWindow from "../../components/shared/CreateModalWindow/CreateModalWindow";
 import ErrorModalWindow from "../../components/shared/ErrorModalWindow/ErrorModalWindow";
 import Loader from "../../components/shared/Loader/Loader";
 import InviteModalWindow from "../../components/shared/InviteModalWindow/InviteModalWindow";
 
 import BoardHeader from "../../components/board/BoardHeader/BoardHeader";
+import KanbanBoard from "../../components/board/KanbanBoard/KanbanBoard";
 
-import addColumnIcon from '../../assets/addColumn.svg'
 
-
-import s from './BoardPage.module.css'
 import { useAuth } from "../../hooks/useAuth";
 import { useBoardTitle } from "../../hooks/useBoardTitle";
 import { useBoardMembers } from "../../hooks/useBoardMembers";
@@ -146,13 +141,7 @@ function BoardPage(){
         return <ErrorModalWindow error={pageError}/>;
 
    return (
-        <DragDropProvider
-
-            onDragStart={handleDragStart}
-
-            onDragOver={handleDragOver}
-
-            onDragEnd={handleDragEnd}>
+        <>
 
             {dndError && <ErrorModalWindow error={dndError} onClose={clearDndError} />}
 
@@ -165,49 +154,41 @@ function BoardPage(){
                 setIsInviteClicked={setIsInviteClicked}
                 handleRemoveMember={handleRemoveMember}
             />
-                
-            <div className={s.boardScroll}>
-                <div className={s.columnDiv}>
-                    {columns.map((column) => (
-                    <ColumnBoard 
-                        key={column.id}
-                        members={members}
-                        membersById={membersById}
-                        column={column}
-                        tasks={items[column.id] ?? []}
-                        canManageBoard={isOwner}
-                        isUpdated={isUpdated}
-                        deleteColumn={handleDeleteColumn}
-                        updateColumn={handleUpdateColumnTitle}
-                        />
-                    ))}
 
-                    {isOwner && <div onClick={() => setIsClicked(true)} className={s.addButton}>
-                        <img className={s.addButtonIcon} src={addColumnIcon} alt="" />
-                        <p className={s.addButtonText}>Add Column</p>
-                    </div>}
-                </div>
+            <KanbanBoard
+                members={members}
+                membersById={membersById}
+                items={items}
+                columns={columns}
+                isOwner={isOwner}
+                isUpdated={isUpdated}
+                handleDeleteColumn={handleDeleteColumn}
+                handleUpdateColumnTitle={handleUpdateColumnTitle}
+                onColumnAdd={() => setIsClicked(true)}
+                handleDragEnd={handleDragEnd}
+                handleDragOver={handleDragOver}
+                handleDragStart={handleDragStart}
+            />
 
-                {isClicked && <CreateModalWindow
-                                    headerTitle="Create New Column"
-                                    labelText="COLUMN TITLE"
-                                    isDoneState={isCreating}
-                                    setIsClicked={setIsClicked}
-                                    setTitle={setTitle}
-                                    title={title}
-                                    heandleCreate={handleCreateColumn}/>}
+            {isClicked && <CreateModalWindow
+                                headerTitle="Create New Column"
+                                labelText="COLUMN TITLE"
+                                isDoneState={isCreating}
+                                setIsClicked={setIsClicked}
+                                setTitle={setTitle}
+                                title={title}
+                                heandleCreate={handleCreateColumn}/>}
 
-                {isOwner && isInviteClicked && <InviteModalWindow
-                                            boardTitle={boardTitle}
-                                            userId={user?.id}
-                                            boardId={id!}
-                                            setClose={setIsInviteClicked}
-                                            />}
-            </div>
+            {isOwner && isInviteClicked && <InviteModalWindow
+                                        boardTitle={boardTitle}
+                                        userId={user?.id}
+                                        boardId={id!}
+                                        setClose={setIsInviteClicked}
+                                        />}
 
             {localError && <ErrorModalWindow error={localError} onClose={() => setLocalError(null)} />}
 
-        </DragDropProvider>
+        </>
     );
 }
 

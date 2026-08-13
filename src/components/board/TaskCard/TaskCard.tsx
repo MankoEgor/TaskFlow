@@ -16,9 +16,10 @@ interface TaskCardProps {
     isDeleted: boolean;
     onError?: (error: Error) => void;
     assignee: BoardMember | undefined;
+    currentColumnId: string;
 }
 
-function TaskCard({task, index, deleteTask, onError, assignee}: TaskCardProps){
+function TaskCard({task, index, deleteTask, onError, assignee, currentColumnId}: TaskCardProps){
 
   const [isClicked, setIsClicked] = useState<boolean>(false)
 
@@ -27,11 +28,11 @@ function TaskCard({task, index, deleteTask, onError, assignee}: TaskCardProps){
     index,
     type: 'task',
     accept: 'task',
-    group: task.column_id,
+    group: currentColumnId,
     data: {
       type: 'task',
       taskId: task.id,
-      columnId: task.column_id
+      columnId: currentColumnId
     }
   })
 

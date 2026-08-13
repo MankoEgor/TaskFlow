@@ -1,6 +1,7 @@
 import { supabase } from "../lib/supabase";
 
 import type {Task, CreateTaskInput} from '../types/tasks.type'
+import type { TaskPositionUpdate } from '../types/kanban.type'
 
 
 export async function getAllBoardTask(boardId?: string): Promise<Task[]> {
@@ -79,37 +80,24 @@ export async function deleteTask(taskId: string): Promise<void>{
     }
 }
 
-export async function updateTaskPosition(taskId: string, targetColumnId: string, targetPosition: number){
-
-
-    const {error} = await supabase
-        .from('tasks')
-        .update(({
-            column_id: targetColumnId,
-            position: targetPosition
-        }))
-        .eq('id', taskId)
-
-    if(error){
-        throw new Error(error.message);
-    }
-}
-
-export async function updateTaskPositionInSameColumn(
-    tasks: {id: string, position: number}[]
-): Promise<void>{
-    const result = await Promise.all(
-        tasks.map((task) => 
+export async function updateTaskPositions(
+    tasks: TaskPositionUpdate[]
+): Promise<void> {
+    const results = await Promise.all(
+        tasks.map((task) =>
             supabase
                 .from('tasks')
-                .update({position: task.position})
+                .update({
+                    column_id: task.column_id,
+                    position: task.position,
+                })
                 .eq('id', task.id)
         )
-    )
+    );
 
-    const failed = result.find((result) => result.error)
+    const failedResult = results.find((result) => result.error);
 
-    if(failed?.error){
-        throw new Error(failed.error.message)
+    if (failedResult?.error) {
+        throw new Error(failedResult.error.message);
     }
 }

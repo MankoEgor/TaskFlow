@@ -156,6 +156,7 @@ function ColumnBoard({
                                 ? membersById.get(task.assignee_id) 
                                 : undefined
                         }
+                        currentColumnId={column.id}
                     />
                 ))}
 

@@ -1,14 +1,12 @@
 import { useParams } from "react-router-dom";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { useColumn } from "../../hooks/useColumn";
 import { useBoardTask } from "../../hooks/useBoardTask";
 import { useTask } from "../../hooks/useTask";
 import { useBoardRealtime } from "../../hooks/useBoardRealtime";
 import { DragDropProvider } from "@dnd-kit/react";
-import { move } from "@dnd-kit/helpers";
-import type { DragEndEvent, DragOverEvent } from "@dnd-kit/dom";
 
-import type { Task } from "../../types/tasks.type";
+
 
 import ColumnBoard from "../../components/board/ColumnBoard/ColumnBoard";
 import CreateModalWindow from "../../components/shared/CreateModalWindow/CreateModalWindow";
@@ -26,6 +24,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { useBoardTitle } from "../../hooks/useBoardTitle";
 import { useBoardMembers } from "../../hooks/useBoardMembers";
 import { toError } from "../../utils/errors";
+import { useKanbanDnd } from "../../hooks/useKanbanDnd";
 
 function BoardPage(){
 
@@ -52,8 +51,6 @@ function BoardPage(){
 
     const {boardTitle, titleError} = useBoardTitle(id);
 
-    const [items, setItems] = useState<Record<string, Task[]>>({});
-    const prevItems = useRef<Record<string, Task[]>>({});
 
     const [title, setTitle] = useState<string>('');
     const [isClicked, setIsClicked] = useState<boolean>(false);
@@ -63,7 +60,7 @@ function BoardPage(){
     const [isInviteClicked, setIsInviteClicked] = useState<boolean>(false);
 
     const {tasks, error, isLoading} = useBoardTask(id);
-    const {moveTask, reorderTasks} = useTask(id);
+    const {saveTaskPositions} = useTask(id);
     
 
     const {
@@ -76,74 +73,20 @@ function BoardPage(){
         error: columnsError
     } = useColumn(id);
 
-    
 
-    useEffect(() => {
-        const groupedTasks: Record<string, Task[]> = {};
+    const {
+    items,
+    dndError,
+    clearDndError,
+    handleDragStart,
+    handleDragOver,
+    handleDragEnd,
+} = useKanbanDnd({
+    columns,
+    tasks,
+    saveTaskPositions
+});
 
-        columns.forEach((column) => {
-            groupedTasks[column.id] = [];
-        });
-
-        tasks.forEach((task) => {
-            if (!groupedTasks[task.column_id]) {
-            groupedTasks[task.column_id] = [];
-            }
-
-            groupedTasks[task.column_id].push(task);
-        });
-
-        for (const columnId in groupedTasks) {
-            groupedTasks[columnId].sort((a, b) => a.position - b.position);
-        }
-
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setItems(groupedTasks);
-    }, [tasks, columns]);
-
-    const handleDragEnd = async (event: DragEndEvent) => {
-        const { source, target } = event.operation;
-
-        if (!source || !target) return;
-        if (source.type !== 'task') return;
-
-        const taskId = source.data?.taskId as string | undefined;
-        const sourceColumnId = source.data?.columnId as string | undefined;
-        const targetColumnId = target.data?.columnId as string | undefined;
-
-        if (!taskId || !sourceColumnId || !targetColumnId) return;
-
-        const finalColumnTasks = items[targetColumnId] ?? [];
-
-        let targetPosition = finalColumnTasks.findIndex(
-            (task) => task.id === taskId
-        );
-
-        if (targetPosition === -1) {
-            targetPosition = finalColumnTasks.length;
-        }
-
-        try {
-            if (sourceColumnId !== targetColumnId) {
-                await moveTask({
-                taskId,
-                targetColumnId,
-                targetPosition,
-                });
-
-                return;
-            }
-
-            await reorderTasks(
-                finalColumnTasks.map((task, index) => ({
-                id: task.id,
-                position: index,
-                }))
-            );
-        } catch (err: unknown) {
-            setLocalError(toError(err, 'Failed to move task'));
-        }
-    };
 
     const handleCreateColumn = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
@@ -204,26 +147,14 @@ function BoardPage(){
 
    return (
         <DragDropProvider
-            onDragStart={() => {
-                prevItems.current = items;
-            }}
 
-            onDragOver={(event: DragOverEvent) => {
-                const {source} = event.operation;
+            onDragStart={handleDragStart}
 
-                if(source?.type !== 'task') return;
+            onDragOver={handleDragOver}
 
-                setItems((currentItems) => move(currentItems, event))
-            }}
+            onDragEnd={handleDragEnd}>
 
-            onDragEnd={async (event) => {
-                if(event.canceled){
-                    setItems(prevItems.current);
-                    return;
-                }
-
-                await handleDragEnd(event)
-            }}>
+            {dndError && <ErrorModalWindow error={dndError} onClose={clearDndError} />}
 
             <BoardHeader
                 boardTitle={boardTitle}

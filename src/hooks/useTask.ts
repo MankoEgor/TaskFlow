@@ -3,8 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
     createNewTask, 
     deleteTask, 
-    updateTaskPosition,
-    updateTaskPositionInSameColumn
+    updateTaskPositions,
 } from "../services/tasks.service"
 
 export function useTask(boardId?: string){
@@ -29,31 +28,14 @@ export function useTask(boardId?: string){
         }
     })
 
-    const moveTaskMutation = useMutation({
-        mutationFn: ({
-            taskId, 
-            targetColumnId,
-            targetPosition
-        }:{
-            taskId: string,
-            targetColumnId: string,
-            targetPosition: number
-        }) => updateTaskPosition(taskId, targetColumnId, targetPosition),
-        onSuccess:() => {
-            queryClient.invalidateQueries({
-                queryKey: ['board-tasks', boardId]
-            })}
 
-    });
-
-    const reorderTasksMutation = useMutation({
-        mutationFn: updateTaskPositionInSameColumn,
-        onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: ['board-tasks', boardId]
-            })
-        }
-    }) 
+    const updateTaskPositionsMutation = useMutation({
+    mutationFn: updateTaskPositions,
+    onSuccess: () =>
+        queryClient.invalidateQueries({
+            queryKey: ['board-tasks', boardId],
+        }),
+});
 
     return {
 
@@ -63,11 +45,8 @@ export function useTask(boardId?: string){
         deleteTask: deleteTaskMutation.mutateAsync,
         isDeleted: deleteTaskMutation.isPending,
 
-        moveTask: moveTaskMutation.mutateAsync,
-        isMoving: moveTaskMutation.isPending,
-
-        reorderTasks: reorderTasksMutation.mutateAsync,
-        isReordering: reorderTasksMutation.isPending
+        saveTaskPositions: updateTaskPositionsMutation.mutateAsync,
+        isSavingPositions:  updateTaskPositionsMutation.isPending,
 
     }
 }

@@ -4,7 +4,6 @@ import type { KanbanItems } from '../../../types/kanban.type'
 import type { 
     DragEndEvent,
     DragOverEvent,
-    DragStartEvent
 } from '@dnd-kit/dom';
 import { DragDropProvider } from "@dnd-kit/react";
 
@@ -26,7 +25,6 @@ interface KanbanBoardProps {
     handleDeleteColumn: (columnId: string) => void;
     handleUpdateColumnTitle: (input: {columnId: string, title: string}) => Promise<void>;
     onColumnAdd: () => void;
-    handleDragStart: (event: DragStartEvent) => void;
     handleDragOver: (event: DragOverEvent) => void;
     handleDragEnd: (event: DragEndEvent) => Promise<void>;
 }
@@ -42,7 +40,6 @@ function KanbanBoard(
         handleDeleteColumn,
         handleUpdateColumnTitle,
         onColumnAdd,
-        handleDragStart,
         handleDragOver,
         handleDragEnd
     } : KanbanBoardProps
@@ -50,8 +47,6 @@ function KanbanBoard(
 
     return (
         <DragDropProvider
-        
-            onDragStart={handleDragStart}
         
             onDragOver={handleDragOver}
         

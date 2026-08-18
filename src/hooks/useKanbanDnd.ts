@@ -1,17 +1,14 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import type { DragEndEvent, DragOverEvent } from '@dnd-kit/dom';
 import { move } from '@dnd-kit/helpers';
-import type {
-    DragEndEvent,
-    DragOverEvent,
-    DragStartEvent
-} from '@dnd-kit/dom';
 
 import type { Column } from '../types/column.type';
 import type { Task } from '../types/tasks.type';
-import type { KanbanItems, TaskPositionUpdate } from '../types/kanban.type';
+import type { KanbanItems, MoveTaskInput } from '../types/kanban.type';
 import {
+    getTaskMoveInput,
     groupTasksByColumn,
-    normalizePositions,
+    hasSameTaskOrder,
 } from '../utils/kanban';
 import { toError } from '../utils/errors';
 
@@ -19,15 +16,13 @@ import { toError } from '../utils/errors';
 type UseKanbanDndParams = {
     columns: Column[];
     tasks: Task[];
-    saveTaskPositions: (
-        tasks: TaskPositionUpdate[]
-    ) => Promise<void>;
+    moveTask: (input: MoveTaskInput) => Promise<void>;
 };
 
 export function useKanbanDnd({
     columns,
     tasks,
-    saveTaskPositions,
+    moveTask,
 }: UseKanbanDndParams) {
     const groupedItems = useMemo(
         () => groupTasksByColumn(columns, tasks),
@@ -39,11 +34,6 @@ export function useKanbanDnd({
 
     const items = dragItems ?? groupedItems;
 
-    const sourceColumnRefId = useRef<string | null>(null);
-
-    const handleDragStart = useCallback((event: DragStartEvent) => {
-        sourceColumnRefId.current = event.operation.source?.data?.columnId ?? null;
-    }, []);
 
     const handleDragOver = useCallback(
         (event: DragOverEvent) => {
@@ -53,9 +43,14 @@ export function useKanbanDnd({
                 return;
             }
 
-            setDragItems((currentItems) =>
-                move(currentItems ?? groupedItems, event)
-            );
+            setDragItems((currentItems) => {
+                const baseItems = currentItems ?? groupedItems;
+                const nextItems = move(baseItems, event);
+
+                return hasSameTaskOrder(baseItems, nextItems)
+                    ? currentItems
+                    : nextItems;
+            });
         },
         [groupedItems]
     );
@@ -73,74 +68,46 @@ export function useKanbanDnd({
             const taskId =
                 source?.data?.taskId as string | undefined;
 
-            const sourceColumnId = sourceColumnRefId.current;
-
             const targetColumnId =
                 target?.data?.columnId as string | undefined;
 
             if (
                 !taskId 
-                || !sourceColumnId 
                 || !targetColumnId
                 || !source 
                 || !target 
                 || source.type !== 'task') {
 
                 setDragItems(null);
-                sourceColumnRefId.current = null;
                 return;
             }
 
-            const finalItems = dragItems ?? groupedItems;
-            const affectedColumnIds =
-            sourceColumnId === targetColumnId
-                ? [sourceColumnId]
-                : [sourceColumnId, targetColumnId];
-
-        const normalizedTasks = normalizePositions(
-            finalItems,
-            affectedColumnIds
-        );
-
-        const changedTasks = normalizedTasks.filter(
-            (update) => {
-                const originalTask = tasks.find(
-                    (task) => task.id === update.id
-                );
-
-                return (
-                    !originalTask ||
-                    originalTask.column_id !== update.column_id ||
-                    originalTask.position !== update.position
-                );
-            }
-        );
-
-        try {
-            if (changedTasks.length > 0) {
-                await saveTaskPositions(changedTasks);
-            }
-        } catch (error: unknown) {
-            setDndError(
-                toError(error, 'Failed to move task')
+            const moveInput = getTaskMoveInput(
+                dragItems ?? groupedItems,
+                taskId,
+                targetColumnId,
             );
-        } finally {
-            setDragItems(null);
-            sourceColumnRefId.current = null;
-        }
-    },
-    [
-        dragItems,
-        groupedItems,
-        tasks,
-        saveTaskPositions,
-    ]
+
+            if (!moveInput) {
+                setDragItems(null);
+                return;
+            }
+
+            try {
+                await moveTask(moveInput);
+            } catch (error: unknown) {
+                setDndError(toError(error, 'Failed to move task'));
+            } finally {
+                setDragItems(null);
+            }
+        },
+        [dragItems, groupedItems, moveTask],
     );
-        return {
+
+    return {
         items,
         dndError,
         clearDndError: () => setDndError(null),
-        handleDragStart,
         handleDragOver,
         handleDragEnd,
     };

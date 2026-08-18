@@ -1,7 +1,7 @@
 import { supabase } from "../lib/supabase";
 
 import type {Task, CreateTaskInput} from '../types/tasks.type'
-import type { TaskPositionUpdate } from '../types/kanban.type'
+import type { MoveTaskInput } from '../types/kanban.type'
 
 
 export async function getAllBoardTask(boardId?: string): Promise<Task[]> {
@@ -80,24 +80,14 @@ export async function deleteTask(taskId: string): Promise<void>{
     }
 }
 
-export async function updateTaskPositions(
-    tasks: TaskPositionUpdate[]
-): Promise<void> {
-    const results = await Promise.all(
-        tasks.map((task) =>
-            supabase
-                .from('tasks')
-                .update({
-                    column_id: task.column_id,
-                    position: task.position,
-                })
-                .eq('id', task.id)
-        )
-    );
+export async function moveTask(input: MoveTaskInput): Promise<void> {
+    const {error} = await supabase.rpc('move_task', {
+        p_task_id: input.taskId,
+        p_target_column_id: input.targetColumnId,
+        p_target_index: input.targetIndex,
+    });
 
-    const failedResult = results.find((result) => result.error);
-
-    if (failedResult?.error) {
-        throw new Error(failedResult.error.message);
+    if(error){
+        throw new Error(error.message);
     }
 }

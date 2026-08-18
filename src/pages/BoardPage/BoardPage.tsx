@@ -55,7 +55,7 @@ function BoardPage(){
     const [isInviteClicked, setIsInviteClicked] = useState<boolean>(false);
 
     const {tasks, error, isLoading} = useBoardTask(id);
-    const {saveTaskPositions} = useTask(id);
+    const {moveTask} = useTask(id);
     
 
     const {
@@ -73,13 +73,12 @@ function BoardPage(){
     items,
     dndError,
     clearDndError,
-    handleDragStart,
     handleDragOver,
     handleDragEnd,
 } = useKanbanDnd({
     columns,
     tasks,
-    saveTaskPositions
+    moveTask
 });
 
 
@@ -167,7 +166,6 @@ function BoardPage(){
                 onColumnAdd={() => setIsClicked(true)}
                 handleDragEnd={handleDragEnd}
                 handleDragOver={handleDragOver}
-                handleDragStart={handleDragStart}
             />
 
             {isClicked && <CreateModalWindow

@@ -44,7 +44,6 @@ function BoardsPage() {
         try {
             await createBoard({
                 title: title.trim(),
-                userId: user?.id
             })
             setTitle('');
             setIsClicked(false);

@@ -114,7 +114,7 @@ function AuthForm({
                         mode === 'register' 
                             ? {
                                 value: 8,
-                                message: "Passwor must be at least 6 characters",
+                                message: "Passwor must be at least 8 characters",
                             }
                             : undefined
                 })}

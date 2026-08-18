@@ -109,12 +109,12 @@ function AuthForm({
                 type="password" 
                 id="password" 
                 {...register('password', {
-                    required: "Passwors is required",
+                    required: "Password is required",
                     minLength: 
                         mode === 'register' 
                             ? {
                                 value: 8,
-                                message: "Passwor must be at least 8 characters",
+                                message: "Password must be at least 8 characters",
                             }
                             : undefined
                 })}

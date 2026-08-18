@@ -1,6 +1,6 @@
 import { supabase } from "../lib/supabase";
 
-import type {Task, CreateTaskInput} from '../types/tasks.type'
+import type {Task, CreateTaskInput, UpdateTaskInput} from '../types/tasks.type'
 import type { MoveTaskInput } from '../types/kanban.type'
 
 
@@ -89,5 +89,31 @@ export async function moveTask(input: MoveTaskInput): Promise<void> {
 
     if(error){
         throw new Error(error.message);
+    }
+}
+
+export async function updateTask(input: UpdateTaskInput): Promise<void> {
+
+    const title = input.title.trim();
+
+    if(!title){
+        throw new Error('Task title is required')
+    }
+
+    const {error} = await supabase
+        .from('tasks')
+        .update({
+            title,
+            description: input.description?.trim() || null,
+            priority: input.priority,
+            due_date: input.due_date,
+            assignee_id: input.assignee_id
+        })
+        .eq('id', input.taskId)
+        .select()
+        .single()
+        
+    if(error){
+        throw new Error(error.message)
     }
 }

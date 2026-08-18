@@ -3,7 +3,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
     createNewTask, 
     deleteTask, 
-    moveTask
+    moveTask,
+    updateTask
 } from "../services/tasks.service"
 import type { Task } from '../types/tasks.type';
 import type { MoveTaskInput } from '../types/kanban.type';
@@ -68,6 +69,14 @@ export function useTask(boardId?: string){
             }),
     });
 
+    const updateTaskMutation = useMutation({
+        mutationFn: updateTask,
+        onSuccess: () => 
+            queryClient.invalidateQueries({
+                queryKey: ['board-tasks', boardId]
+            })
+    })
+
     return {
 
         createTask: createTaskMutation.mutateAsync,
@@ -78,6 +87,9 @@ export function useTask(boardId?: string){
 
         moveTask: moveTaskMutation.mutateAsync,
         isMovingTask: moveTaskMutation.isPending,
+
+        updateTask: updateTaskMutation.mutateAsync,
+        isUpdating: updateTaskMutation.isPending,
 
     }
 }

@@ -1,11 +1,11 @@
 import { useSortable } from "@dnd-kit/react/sortable";
-import type { Task } from "../../../types/tasks.type";
+import type { Task, UpdateTaskInput } from "../../../types/tasks.type";
 import type { BoardMember } from "../../../types/members.type";
 import deleteIcon from '../../../assets/delete.svg'
 
 import s from './TaskCard.module.css';
 import { useState } from "react";
-import TaskModalWindow from "../../shared/TaskModakWindow/TaskModalWindow";
+import TaskModalWindow from "../../shared/TaskModalWindow/TaskModalWindow";
 import { toError } from "../../../utils/errors";
 import ProfileIcon from "../../shared/ProfileIcon/ProfileIcon";
 
@@ -15,11 +15,24 @@ interface TaskCardProps {
     deleteTask: (taskId: string) => void;
     isDeleted: boolean;
     onError?: (error: Error) => void;
+    members: BoardMember[];
+    updateTask: (input: UpdateTaskInput) => Promise<void>;
+    isUpdating: boolean;
     assignee: BoardMember | undefined;
     currentColumnId: string;
 }
 
-function TaskCard({task, index, deleteTask, onError, assignee, currentColumnId}: TaskCardProps){
+function TaskCard({
+  task,
+  index,
+  deleteTask,
+  onError,
+  members,
+  updateTask,
+  isUpdating,
+  assignee,
+  currentColumnId,
+}: TaskCardProps){
 
   const [isClicked, setIsClicked] = useState<boolean>(false)
 
@@ -80,7 +93,16 @@ function TaskCard({task, index, deleteTask, onError, assignee, currentColumnId}:
           </div>
         </div>
 
-        {isClicked && <TaskModalWindow task={task} setClose={setIsClicked}/>}
+        {isClicked && (
+          <TaskModalWindow
+            task={task}
+            members={members}
+            assignee={assignee}
+            updateTask={updateTask}
+            isUpdating={isUpdating}
+            setClose={setIsClicked}
+          />
+        )}
       </>
 
     )

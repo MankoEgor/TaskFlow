@@ -3,7 +3,7 @@ import { useTask } from '../../../hooks/useTask';
 import { useAuth } from '../../../hooks/useAuth';
 import { useState } from 'react';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import type { Task } from '../../../types/tasks.type';
+import type { Task, TaskFormValues } from '../../../types/tasks.type';
 import type { BoardMember } from '../../../types/members.type';
 import type { Column } from '../../../types/column.type';
 
@@ -17,8 +17,6 @@ import deleteIcon from '../../../assets/delete.svg'
 import editIcon from '../../../assets/edit.svg'
 import CreateModalWindow from '../../shared/CreateModalWindow/CreateModalWindow';
 import { toError } from '../../../utils/errors';
-
-import type { CreateTaskFormValue } from '../../shared/CreateTaskModalWindow/CreateTaskModalWimdow';
 
 interface ColumnBoardProps {
     members: BoardMember[];
@@ -44,7 +42,14 @@ function ColumnBoard({
 }: ColumnBoardProps){
 
     const {user} = useAuth();
-    const {createTask, isCreated, deleteTask, isDeleted} = useTask(column.board_id);
+    const {
+        createTask,
+        isCreated,
+        deleteTask,
+        isDeleted,
+        updateTask,
+        isUpdating,
+    } = useTask(column.board_id);
 
     const [localError, setLocalError] = useState<Error | null>(null);
 
@@ -74,7 +79,7 @@ function ColumnBoard({
     const [isClicked, setIsClicked] = useState<boolean>(false)
 
 
-    const handleCreateTask = async (values: CreateTaskFormValue) => {
+    const handleCreateTask = async (values: TaskFormValues) => {
 
         if(!column.id) return;
         if(!user) return;
@@ -151,6 +156,9 @@ function ColumnBoard({
                         deleteTask={deleteTask}
                         isDeleted={isDeleted}
                         onError={setLocalError}
+                        members={members}
+                        updateTask={updateTask}
+                        isUpdating={isUpdating}
                         assignee={
                             task.assignee_id 
                                 ? membersById.get(task.assignee_id) 

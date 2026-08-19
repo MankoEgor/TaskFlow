@@ -33,4 +33,11 @@ export type UpdateTaskInput = EditableTaskFields & {
     taskId: string;
 };
 
+export type TaskFormValues = {
+    title: string;
+    description: string;
+    priority: TaskPriority;
+    dueDate: string;
+    assigneeId: string;
+};
 

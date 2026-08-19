@@ -1,10 +1,10 @@
-import {useForm, useWatch } from 'react-hook-form';
+import {useForm, useWatch} from 'react-hook-form';
 
 import cross from '../../../assets/cross.svg'
 import s from './CreateTaskModalWimdow.module.css'
 
 import type { Profile } from '../../../types/members.type';
-import type { TaskPriority } from '../../../types/tasks.type';
+import type { TaskFormValues } from '../../../types/tasks.type';
 
 
 
@@ -12,18 +12,9 @@ interface CreateBoardModalWindowProps {
     members: Profile[];
     onClose: () => void;
     isCreating: boolean;
-    onCreateTask: (values: CreateTaskFormValue) => Promise<void>;
+    onCreateTask: (values: TaskFormValues) => Promise<void>;
 
 }
-
-export type CreateTaskFormValue = {
-    title: string;
-    description: string;
-    priority: TaskPriority;
-    dueDate: string;
-    assigneeId: string;
-}
-
 
 function CreateTaskModalWindow({
     members,
@@ -42,7 +33,7 @@ function CreateTaskModalWindow({
             errors,
             isSubmitting,
         },
-    } = useForm<CreateTaskFormValue>({
+    } = useForm<TaskFormValues>({
         defaultValues: {
             title: '',
             description: '',
@@ -57,7 +48,7 @@ function CreateTaskModalWindow({
         onClose();
     } 
 
-    const onSubmit = async (value: CreateTaskFormValue) => {
+    const onSubmit = async (value: TaskFormValues) => {
         await onCreateTask(value);
 
         reset();

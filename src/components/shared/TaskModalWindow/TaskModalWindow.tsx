@@ -18,6 +18,7 @@ import { toError } from '../../../utils/errors';
 import ErrorModalWindow from '../ErrorModalWindow/ErrorModalWindow';
 import Loader from '../Loader/Loader';
 import ProfileIcon from '../ProfileIcon/ProfileIcon';
+import TaskForm from '../TaskForm/TaskForm';
 
 import cross from '../../../assets/cross.svg';
 import deleteIcon from '../../../assets/delete.svg';
@@ -82,11 +83,6 @@ function TaskModalWindow({
         isDeleting,
     } = useComments(task.id);
 
-    const priorityClass = {
-        low: s.low,
-        medium: s.medium,
-        high: s.high,
-    } as const;
 
     const handleCreateComment = async () => {
         if (!user?.id) {
@@ -267,54 +263,10 @@ function TaskModalWindow({
                                     </div>
                                 </form>
                             ) : (
-                                <>
-                                    <div className={s.container}>
-                                        <h3 className={s.label}>TASK TITLE</h3>
-                                        <h1 className={s.title}>{task.title}</h1>
-                                    </div>
-
-                                    <div className={s.taskDetailse}>
-                                        <div className={s.container}>
-                                            <h3 className={s.label}>ASSIGNEE</h3>
-                                            <div className={s.assignee}>
-                                                {assignee && (
-                                                    <ProfileIcon
-                                                        name={assignee.name ?? 'Unknown user'}
-                                                        avatarUrl={assignee.avatar_url}
-                                                    />
-                                                )}
-                                                <p className={s.assigneeText}>
-                                                    {assignee?.name ?? 'Unassigned'}
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        <div className={s.container}>
-                                            <h3 className={s.label}>DEADLINE</h3>
-                                            <p className={s.deadlineText}>
-                                                {task.due_date ?? 'No deadline'}
-                                            </p>
-                                        </div>
-
-                                        <div className={s.container}>
-                                            <h3 className={s.label}>PRIORITY</h3>
-                                            <div className={priorityClass[task.priority]}>
-                                                <p className={s.priorityText}>
-                                                    {task.priority.toUpperCase()}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className={s.container}>
-                                        <h3 className={s.label}>DESCRIPTION</h3>
-                                        <div className={s.descriptionDiv}>
-                                            <p className={s.descriptionText}>
-                                                {task.description ?? 'No description'}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </>
+                                <TaskForm
+                                    task={task}
+                                    assignee={assignee}
+                                />
                             )}
 
                             <div className={s.container}>

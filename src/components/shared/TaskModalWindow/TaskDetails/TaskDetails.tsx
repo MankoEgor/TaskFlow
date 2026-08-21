@@ -1,16 +1,16 @@
-import type { Task } from "../../../types/tasks.type";
-import type { BoardMember } from "../../../types/members.type";
+import type { Task } from "../../../../types/tasks.type";
+import type { BoardMember } from "../../../../types/members.type";
 
-import ProfileIcon from "../ProfileIcon/ProfileIcon";
+import ProfileIcon from "../../ProfileIcon/ProfileIcon";
 
-import s from "../TaskModalWindow/TaskModalWindow.module.css";
+import s from "../TaskModalWindow.module.css";
 
-interface TaskFormProps {
+interface TaskDetailsProps {
   task: Task;
   assignee: BoardMember | undefined;
 }
 
-function TaskForm({ task, assignee }: TaskFormProps) {
+function TaskDetails({ task, assignee }: TaskDetailsProps) {
   const priorityClass = {
     low: s.low,
     medium: s.medium,
@@ -63,4 +63,4 @@ function TaskForm({ task, assignee }: TaskFormProps) {
   );
 }
 
-export default TaskForm;
+export default TaskDetails;

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 
 import type { BoardMember } from "../../../types/members.type";
 import type {
@@ -8,6 +8,7 @@ import type {
 } from "../../../types/tasks.type";
 
 import { toError } from "../../../utils/errors";
+import { useDialogAccessibility } from "../../../hooks/useDialogAccessibility";
 
 import ErrorModalWindow from "../ErrorModalWindow/ErrorModalWindow";
 import TaskDetails from "./TaskDetails/TaskDetails";
@@ -38,6 +39,10 @@ function TaskModalWindow({
 }: TaskModalWindowProps) {
   const [editingMode, setEditingMode] = useState(false);
   const [localError, setLocalError] = useState<Error | null>(null);
+
+  const handleClose = () => setClose(false);
+  const titleId = useId();
+  const dialogRef = useDialogAccessibility<HTMLDivElement>(handleClose);
 
   const handleEdit = () => {
     setEditingMode(true);
@@ -70,7 +75,17 @@ function TaskModalWindow({
     <div className={s.overlay}>
       <div className={s.backdrop}>
         <div className={s.content}>
-          <div className={s.modal}>
+          <div
+            ref={dialogRef}
+            className={s.modal}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={titleId}
+            tabIndex={-1}
+          >
+            <h2 id={titleId} className={s.visuallyHidden}>
+              Task: {task.title}
+            </h2>
             <div className={s.modalActions}>
               {!editingMode && (
                 <button
@@ -88,7 +103,7 @@ function TaskModalWindow({
                 type="button"
                 title="Close"
                 aria-label="Close task"
-                onClick={() => setClose(false)}
+                onClick={handleClose}
               >
                 <img src={cross} alt="" />
               </button>

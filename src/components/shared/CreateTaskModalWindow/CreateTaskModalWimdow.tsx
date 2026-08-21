@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import {useForm, useWatch} from 'react-hook-form';
 
 import cross from '../../../assets/cross.svg'
@@ -5,6 +6,7 @@ import s from './CreateTaskModalWimdow.module.css'
 
 import type { Profile } from '../../../types/members.type';
 import type { TaskFormValues } from '../../../types/tasks.type';
+import { useDialogAccessibility } from '../../../hooks/useDialogAccessibility';
 
 
 
@@ -46,7 +48,10 @@ function CreateTaskModalWindow({
     const handleClose = () =>{
         reset();
         onClose();
-    } 
+    }
+
+    const titleId = useId();
+    const dialogRef = useDialogAccessibility<HTMLDivElement>(handleClose);
 
     const onSubmit = async (value: TaskFormValues) => {
         await onCreateTask(value);
@@ -69,15 +74,26 @@ function CreateTaskModalWindow({
             <div className={s.backdrop}>
                 <div className={s.content}>
 
-                    <div className={s.modal}>
+                    <div
+                        ref={dialogRef}
+                        className={s.modal}
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby={titleId}
+                        tabIndex={-1}>
 
                         <div className={s.header}>
                             <div className={s.headerText}>
-                                <h1 className={s.headerTitle}>Create New Task</h1>
+                                <h1 id={titleId} className={s.headerTitle}>Create New Task</h1>
                             </div>
-                            <div className={s.closeButton} onClick={handleClose}>
-                                <img src={cross} alt="Close" />
-                            </div>
+                            <button
+                                className={s.closeButton}
+                                type="button"
+                                title="Close"
+                                aria-label="Close create task dialog"
+                                onClick={handleClose}>
+                                <img src={cross} alt="" />
+                            </button>
                         </div>
 
                         <form className={s.form} onSubmit={handleSubmit(onSubmit)}>

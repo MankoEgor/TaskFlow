@@ -37,7 +37,9 @@ export function useComments(taskId: string) {
     return {
         data: commentsQuery.data ?? [],
         isLoading: commentsQuery.isPending,
+        isRefetching: commentsQuery.isFetching,
         error: commentsQuery.error,
+        refetch: commentsQuery.refetch,
 
 
         createComment: createCommentMutation.mutateAsync,

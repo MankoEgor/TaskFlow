@@ -3,9 +3,16 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
     createNewTask, 
     deleteTask, 
-    updateTaskPosition,
-    updateTaskPositionInSameColumn
+    moveTask,
+    updateTask
 } from "../services/tasks.service"
+import type { Task } from '../types/tasks.type';
+import type { MoveTaskInput } from '../types/kanban.type';
+import { applyTaskMove } from '../utils/kanban';
+
+type MoveTaskContext = {
+    previousTasks?: Task[];
+};
 
 export function useTask(boardId?: string){
     const queryClient = useQueryClient()
@@ -29,31 +36,46 @@ export function useTask(boardId?: string){
         }
     })
 
-    const moveTaskMutation = useMutation({
-        mutationFn: ({
-            taskId, 
-            targetColumnId,
-            targetPosition
-        }:{
-            taskId: string,
-            targetColumnId: string,
-            targetPosition: number
-        }) => updateTaskPosition(taskId, targetColumnId, targetPosition),
-        onSuccess:() => {
-            queryClient.invalidateQueries({
-                queryKey: ['board-tasks', boardId]
-            })}
 
+    const moveTaskMutation = useMutation({
+        mutationFn: moveTask,
+        onMutate: async (input: MoveTaskInput): Promise<MoveTaskContext> => {
+            const queryKey = ['board-tasks', boardId];
+
+            await queryClient.cancelQueries({ queryKey });
+
+            const previousTasks = queryClient.getQueryData<Task[]>(queryKey);
+
+            if (previousTasks) {
+                queryClient.setQueryData(
+                    queryKey,
+                    applyTaskMove(previousTasks, input),
+                );
+            }
+
+            return { previousTasks };
+        },
+        onError: (_error, _input, context: MoveTaskContext | undefined) => {
+            if (context?.previousTasks) {
+                queryClient.setQueryData(
+                    ['board-tasks', boardId],
+                    context.previousTasks,
+                );
+            }
+        },
+        onSettled: () =>
+            queryClient.invalidateQueries({
+                queryKey: ['board-tasks', boardId],
+            }),
     });
 
-    const reorderTasksMutation = useMutation({
-        mutationFn: updateTaskPositionInSameColumn,
-        onSuccess: () => {
+    const updateTaskMutation = useMutation({
+        mutationFn: updateTask,
+        onSuccess: () => 
             queryClient.invalidateQueries({
                 queryKey: ['board-tasks', boardId]
             })
-        }
-    }) 
+    })
 
     return {
 
@@ -64,10 +86,10 @@ export function useTask(boardId?: string){
         isDeleted: deleteTaskMutation.isPending,
 
         moveTask: moveTaskMutation.mutateAsync,
-        isMoving: moveTaskMutation.isPending,
+        isMovingTask: moveTaskMutation.isPending,
 
-        reorderTasks: reorderTasksMutation.mutateAsync,
-        isReordering: reorderTasksMutation.isPending
+        updateTask: updateTaskMutation.mutateAsync,
+        isUpdating: updateTaskMutation.isPending,
 
     }
 }

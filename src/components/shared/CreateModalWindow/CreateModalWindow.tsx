@@ -1,6 +1,9 @@
+import { useId } from 'react';
+
 import s from './CreateModalWindow.module.css'
 import cross from '../../../assets/cross.svg';
 import create from '../../../assets/createButton.svg'
+import { useDialogAccessibility } from '../../../hooks/useDialogAccessibility';
 
 interface CreateModalWindowProps {
     headerTitle: string,
@@ -31,23 +34,39 @@ function CreateModalWindow({
    const heandleClose = () =>{
         setTitle('');
         setIsClicked(false);
-   } 
+   }
+
+    const titleId = useId();
+    const descriptionId = useId();
+    const dialogRef = useDialogAccessibility<HTMLDivElement>(heandleClose);
 
     return (
         <div className={s.overlay}>
             <div className={s.backdrop}>
                 <div className={s.content}>
 
-                    <div className={s.modal}>
+                    <div
+                        ref={dialogRef}
+                        className={s.modal}
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby={titleId}
+                        aria-describedby={headerDiscription ? descriptionId : undefined}
+                        tabIndex={-1}>
 
                         <div className={s.header}>
                             <div className={s.headerText}>
-                                <h1 className={s.headerTitle}>{headerTitle}</h1>
-                                {headerDiscription && <p className={s.headerDiscription}>{headerDiscription}</p>}
+                                <h1 id={titleId} className={s.headerTitle}>{headerTitle}</h1>
+                                {headerDiscription && <p id={descriptionId} className={s.headerDiscription}>{headerDiscription}</p>}
                             </div>
-                            <div className={s.closeButton} onClick={heandleClose}>
-                                <img src={cross} alt="Close" />
-                            </div>
+                            <button
+                                className={s.closeButton}
+                                type="button"
+                                title="Close"
+                                aria-label="Close dialog"
+                                onClick={heandleClose}>
+                                <img src={cross} alt="" />
+                            </button>
                         </div>
 
                         <form className={s.form} onSubmit={heandleCreate}>
@@ -75,9 +94,9 @@ function CreateModalWindow({
                                 </button>
                                 <button 
                                     className={s.cancelButton}
-                                    type='submit' 
+                                    type='button'
                                     disabled={isDoneState}
-                                    onClick={() => setIsClicked(false)}>
+                                    onClick={heandleClose}>
                                     Cancel
                                 </button>
                             </div>

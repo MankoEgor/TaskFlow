@@ -1,12 +1,13 @@
 import { useSortable } from "@dnd-kit/react/sortable";
-import type { Task } from "../../../types/tasks.type";
+import type { Task, UpdateTaskInput } from "../../../types/tasks.type";
+import type { BoardMember } from "../../../types/members.type";
 import deleteIcon from '../../../assets/delete.svg'
 
 import s from './TaskCard.module.css';
 import { useState } from "react";
-import TaskModalWindow from "../../shared/TaskModakWindow/TaskModalWindow";
+import { toast } from "sonner";
+import TaskModalWindow from "../../shared/TaskModalWindow/TaskModalWindow";
 import { toError } from "../../../utils/errors";
-import { useProfile } from "../../../hooks/useProfile";
 import ProfileIcon from "../../shared/ProfileIcon/ProfileIcon";
 
 interface TaskCardProps {
@@ -14,24 +15,36 @@ interface TaskCardProps {
     index: number;
     deleteTask: (taskId: string) => void;
     isDeleted: boolean;
-    onError?: (error: Error) => void;
+    members: BoardMember[];
+    updateTask: (input: UpdateTaskInput) => Promise<void>;
+    isUpdating: boolean;
+    assignee: BoardMember | undefined;
+    currentColumnId: string;
 }
 
-function TaskCard({task, index, deleteTask, onError}: TaskCardProps){
+function TaskCard({
+  task,
+  index,
+  deleteTask,
+  members,
+  updateTask,
+  isUpdating,
+  assignee,
+  currentColumnId,
+}: TaskCardProps){
 
   const [isClicked, setIsClicked] = useState<boolean>(false)
-  const {profileInfo} = useProfile(task.assignee_id ?? undefined)
 
   const {ref} = useSortable({
     id: task.id,
     index,
     type: 'task',
     accept: 'task',
-    group: task.column_id,
+    group: currentColumnId,
     data: {
       type: 'task',
       taskId: task.id,
-      columnId: task.column_id
+      columnId: currentColumnId
     }
   })
 
@@ -49,7 +62,7 @@ function TaskCard({task, index, deleteTask, onError}: TaskCardProps){
                 try {
                   await deleteTask(task.id);
                 } catch (error: unknown) {
-                    onError?.(toError(error, 'Failed to delete task'));
+                    toast.error(toError(error, 'Failed to delete task').message);
                   }
                 }
               }>
@@ -70,16 +83,25 @@ function TaskCard({task, index, deleteTask, onError}: TaskCardProps){
             {task.assignee_id && (
               <div
                 className={s.taskAssignee}
-                title={`Assigned to ${profileInfo?.name ?? 'Unknown user'}`}>
+                title={`Assigned to ${assignee?.name ?? 'Unknown user'}`}>
                 <ProfileIcon
-                  name={profileInfo?.name ?? 'Unknown user'}
-                  avatarUrl={profileInfo?.avatar_url ?? null}/>
+                  name={assignee?.name ?? 'Unknown user'}
+                  avatarUrl={assignee?.avatar_url ?? null}/>
               </div>
             )}
           </div>
         </div>
 
-        {isClicked && <TaskModalWindow task={task} setClose={setIsClicked}/>}
+        {isClicked && (
+          <TaskModalWindow
+            task={task}
+            members={members}
+            assignee={assignee}
+            updateTask={updateTask}
+            isUpdating={isUpdating}
+            setClose={setIsClicked}
+          />
+        )}
       </>
 
     )

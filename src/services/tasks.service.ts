@@ -1,6 +1,7 @@
 import { supabase } from "../lib/supabase";
 
-import type {Task, CreateTaskInput} from '../types/tasks.type'
+import type {Task, CreateTaskInput, UpdateTaskInput} from '../types/tasks.type'
+import type { MoveTaskInput } from '../types/kanban.type'
 
 
 export async function getAllBoardTask(boardId?: string): Promise<Task[]> {
@@ -79,37 +80,40 @@ export async function deleteTask(taskId: string): Promise<void>{
     }
 }
 
-export async function updateTaskPosition(taskId: string, targetColumnId: string, targetPosition: number){
-
-
-    const {error} = await supabase
-        .from('tasks')
-        .update(({
-            column_id: targetColumnId,
-            position: targetPosition
-        }))
-        .eq('id', taskId)
+export async function moveTask(input: MoveTaskInput): Promise<void> {
+    const {error} = await supabase.rpc('move_task', {
+        p_task_id: input.taskId,
+        p_target_column_id: input.targetColumnId,
+        p_target_index: input.targetIndex,
+    });
 
     if(error){
         throw new Error(error.message);
     }
 }
 
-export async function updateTaskPositionInSameColumn(
-    tasks: {id: string, position: number}[]
-): Promise<void>{
-    const result = await Promise.all(
-        tasks.map((task) => 
-            supabase
-                .from('tasks')
-                .update({position: task.position})
-                .eq('id', task.id)
-        )
-    )
+export async function updateTask(input: UpdateTaskInput): Promise<void> {
 
-    const failed = result.find((result) => result.error)
+    const title = input.title.trim();
 
-    if(failed?.error){
-        throw new Error(failed.error.message)
+    if(!title){
+        throw new Error('Task title is required')
+    }
+
+    const {error} = await supabase
+        .from('tasks')
+        .update({
+            title,
+            description: input.description?.trim() || null,
+            priority: input.priority,
+            due_date: input.due_date,
+            assignee_id: input.assignee_id
+        })
+        .eq('id', input.taskId)
+        .select()
+        .single()
+        
+    if(error){
+        throw new Error(error.message)
     }
 }

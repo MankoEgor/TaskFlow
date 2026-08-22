@@ -1,5 +1,6 @@
 import s from './BoardsPage.module.css'
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { useAuth } from '../../hooks/useAuth.ts';
 import { useBoards } from '../../hooks/useBoard.ts';
 import { useAcceptPendingInvites } from '../../hooks/useAcceptPendingInvites.ts';
@@ -32,7 +33,6 @@ function BoardsPage() {
 
     const [title, setTitle] = useState<string>('');
     const [isClicked, setIsClicked] = useState<boolean>(false);
-    const [localError, setLocalError] = useState<Error | null>(null);
 
     const heandleCreateBoards = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -44,12 +44,11 @@ function BoardsPage() {
         try {
             await createBoard({
                 title: title.trim(),
-                userId: user?.id
             })
             setTitle('');
             setIsClicked(false);
         } catch (err: unknown) {
-            setLocalError(toError(err, 'Failed to create board'));
+            toast.error(toError(err, 'Failed to create board').message);
         }
     }
 
@@ -57,7 +56,7 @@ function BoardsPage() {
         try {
             await deleteBoard(board_Id)
         } catch (err: unknown) {
-            setLocalError(toError(err, 'Failed to delete board'));
+            toast.error(toError(err, 'Failed to delete board').message);
         }
     }
 
@@ -66,7 +65,7 @@ function BoardsPage() {
         if(!user?.id) return;
 
         acceptedInvite().catch((error: unknown) => {
-            setLocalError(toError(error, 'Failed to accept pending invites'));
+            toast.error(toError(error, 'Failed to accept pending invites').message);
         });
 
     }, [user?.id, acceptedInvite])
@@ -120,7 +119,6 @@ function BoardsPage() {
                     ))}
                 </div>
             </main>
-            {localError && <ErrorModalWindow error={localError} onClose={() => setLocalError(null)} />}
         </div>
 
             

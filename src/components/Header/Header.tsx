@@ -1,12 +1,14 @@
 import { useAuth } from '../../hooks/useAuth';
 import { useProfile } from '../../hooks/useProfile';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 import s from './Header.module.css'
 import icon from '../../assets/Icon.svg'
 import logout from '../../assets/logout.svg'
 import ProfileIcon from '../shared/ProfileIcon/ProfileIcon';
 import ErrorModalWindow from '../shared/ErrorModalWindow/ErrorModalWindow';
+import { toError } from '../../utils/errors';
 
 
 
@@ -18,7 +20,11 @@ function Header(){
     const {profileInfo, error } = useProfile(user?.id);
 
     const handleSignOut = async () => {
-        await signOut();
+        try {
+            await signOut();
+        } catch (error: unknown) {
+            toast.error(toError(error, 'Failed to sign out').message);
+        }
     }
 
     if(error){

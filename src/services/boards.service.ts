@@ -52,65 +52,29 @@ export async function getBoardTitle(id: string) {
 
 
 
-export async function createNewBoard({title, userId}: createBoardInput): Promise<Board> {
-    
-    const { data: board, error: boardError } = await supabase
-        .from('boards')
-            .insert({
-            title,
-            owner_id: userId,
-        })
-        .select()
-        .single()
-
-
-    if(boardError){
-        throw new Error(boardError.message)
-    }
-
-
-    const {error: memberError} = await supabase
-        .from('board_members')
-        .insert({
-            board_id: board.id,
-            user_id: userId,
-            role: 'owner'
-        });
-
-    if(memberError){
-        throw new Error(memberError.message)
-    }
-
-
-    const {error: columnError} = await supabase
-        .from('columns')
-        .insert([{
-            board_id: board.id,
-            title: 'To Do',
-            position: 0
-        },
+export async function createNewBoard({
+    title
+}: createBoardInput): Promise<Board> {
+    const { data: board, error } = await supabase.rpc(
+        'create_board_with_defaults',
         {
-            board_id: board.id,
-            title: 'In Progress',
-            position: 1
-        },
-        {
-            board_id: board.id,
-            title: 'Done',
-            position: 2
-        }]
-    )
-                                        
-    if(columnError){
-        throw new Error(columnError.message)
+            p_title: title
+        }
+    );
+
+    if (error) {
+        throw new Error(error.message);
     }
 
-    return board;
+    if (!board) {
+        throw new Error('Failed to create board');
+    }
 
-}   
+    return board as Board;
+} 
 
 
-export async function deleteBoard(boardId: string): Promise<void>{
+export async function deleteBoard(boardId: string): Promise<void> {
     const {error} = await supabase.from('boards').delete().eq('id', boardId)
 
     if(error){

@@ -1,10 +1,12 @@
-import {useForm, useWatch } from 'react-hook-form';
+import { useId } from 'react';
+import {useForm, useWatch} from 'react-hook-form';
 
 import cross from '../../../assets/cross.svg'
 import s from './CreateTaskModalWimdow.module.css'
 
 import type { Profile } from '../../../types/members.type';
-import type { TaskPriority } from '../../../types/tasks.type';
+import type { TaskFormValues } from '../../../types/tasks.type';
+import { useDialogAccessibility } from '../../../hooks/useDialogAccessibility';
 
 
 
@@ -12,18 +14,9 @@ interface CreateBoardModalWindowProps {
     members: Profile[];
     onClose: () => void;
     isCreating: boolean;
-    onCreateTask: (values: CreateTaskFormValue) => Promise<void>;
+    onCreateTask: (values: TaskFormValues) => Promise<boolean>;
 
 }
-
-export type CreateTaskFormValue = {
-    title: string;
-    description: string;
-    priority: TaskPriority;
-    dueDate: string;
-    assigneeId: string;
-}
-
 
 function CreateTaskModalWindow({
     members,
@@ -42,7 +35,7 @@ function CreateTaskModalWindow({
             errors,
             isSubmitting,
         },
-    } = useForm<CreateTaskFormValue>({
+    } = useForm<TaskFormValues>({
         defaultValues: {
             title: '',
             description: '',
@@ -55,10 +48,15 @@ function CreateTaskModalWindow({
     const handleClose = () =>{
         reset();
         onClose();
-    } 
+    }
 
-    const onSubmit = async (value: CreateTaskFormValue) => {
-        await onCreateTask(value);
+    const titleId = useId();
+    const dialogRef = useDialogAccessibility<HTMLDivElement>(handleClose);
+
+    const onSubmit = async (value: TaskFormValues) => {
+        const wasCreated = await onCreateTask(value);
+
+        if (!wasCreated) return;
 
         reset();
         onClose();
@@ -78,15 +76,26 @@ function CreateTaskModalWindow({
             <div className={s.backdrop}>
                 <div className={s.content}>
 
-                    <div className={s.modal}>
+                    <div
+                        ref={dialogRef}
+                        className={s.modal}
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby={titleId}
+                        tabIndex={-1}>
 
                         <div className={s.header}>
                             <div className={s.headerText}>
-                                <h1 className={s.headerTitle}>Create New Task</h1>
+                                <h1 id={titleId} className={s.headerTitle}>Create New Task</h1>
                             </div>
-                            <div className={s.closeButton} onClick={handleClose}>
-                                <img src={cross} alt="Close" />
-                            </div>
+                            <button
+                                className={s.closeButton}
+                                type="button"
+                                title="Close"
+                                aria-label="Close create task dialog"
+                                onClick={handleClose}>
+                                <img src={cross} alt="" />
+                            </button>
                         </div>
 
                         <form className={s.form} onSubmit={handleSubmit(onSubmit)}>

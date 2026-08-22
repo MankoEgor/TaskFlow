@@ -2,25 +2,25 @@ import { useDroppable } from '@dnd-kit/react';
 import { useTask } from '../../../hooks/useTask';
 import { useAuth } from '../../../hooks/useAuth';
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import type { Task } from '../../../types/tasks.type';
+import type { Task, TaskFormValues } from '../../../types/tasks.type';
+import type { BoardMember } from '../../../types/members.type';
 import type { Column } from '../../../types/column.type';
 
 import TaskCard from '../TaskCard/TaskCard';
 import CreateTaskModalWindow from '../../shared/CreateTaskModalWindow/CreateTaskModalWimdow';
-import ErrorModalWindow from '../../shared/ErrorModalWindow/ErrorModalWindow';
 
 import s from './ColumnBoard.module.css'
 import addIcon from '../../../assets/addTask.svg'
 import deleteIcon from '../../../assets/delete.svg'
 import editIcon from '../../../assets/edit.svg'
 import CreateModalWindow from '../../shared/CreateModalWindow/CreateModalWindow';
-import { useBoardMembers } from '../../../hooks/useBoardMembers';
 import { toError } from '../../../utils/errors';
 
-import type { CreateTaskFormValue } from '../../shared/CreateTaskModalWindow/CreateTaskModalWimdow';
-
 interface ColumnBoardProps {
+    members: BoardMember[];
+    membersById: ReadonlyMap<string, BoardMember>;
     column: Column;
     tasks: Task[];
     canManageBoard: boolean;
@@ -36,15 +36,20 @@ function ColumnBoard({
     canManageBoard,
     deleteColumn,
     updateColumn,
-    isUpdated
+    isUpdated,
+    members,
+    membersById
 }: ColumnBoardProps){
 
     const {user} = useAuth();
-    const {createTask, isCreated, deleteTask, isDeleted} = useTask(column.board_id);
-
-    const { members } =  useBoardMembers(column.board_id)
-
-    const [localError, setLocalError] = useState<Error | null>(null);
+    const {
+        createTask,
+        isCreated,
+        deleteTask,
+        isDeleted,
+        updateTask,
+        isUpdating,
+    } = useTask(column.board_id);
 
     // states for updating column title
     const [updateColumnTitle, setUpdateColumnTitle] = useState<string>('');
@@ -65,19 +70,19 @@ function ColumnBoard({
             setUpdateColumnTitle('');
             setColumnIsUpdateClicked(false);
         } catch (err: unknown) {
-            setLocalError(toError(err, 'Failed to update column'));
+            toast.error(toError(err, 'Failed to update column').message);
         }
     }
 
     const [isClicked, setIsClicked] = useState<boolean>(false)
 
 
-    const handleCreateTask = async (values: CreateTaskFormValue) => {
+    const handleCreateTask = async (values: TaskFormValues) => {
 
-        if(!column.id) return;
-        if(!user) return;
-        if(!values.title) return;
-        if(!values.priority) return;
+        if(!column.id) return false;
+        if(!user) return false;
+        if(!values.title) return false;
+        if(!values.priority) return false;
 
         try {
             await createTask({
@@ -90,9 +95,10 @@ function ColumnBoard({
                 created_by: user.id,
             });
 
-            setIsClicked(false);
+            return true;
         } catch (err: unknown) {
-            setLocalError(toError(err, 'Failed to create task'));
+            toast.error(toError(err, 'Failed to create task').message);
+            return false;
         }
 
         
@@ -148,8 +154,16 @@ function ColumnBoard({
                         index={index}
                         deleteTask={deleteTask}
                         isDeleted={isDeleted}
-                        onError={setLocalError}
-                        />
+                        members={members}
+                        updateTask={updateTask}
+                        isUpdating={isUpdating}
+                        assignee={
+                            task.assignee_id 
+                                ? membersById.get(task.assignee_id) 
+                                : undefined
+                        }
+                        currentColumnId={column.id}
+                    />
                 ))}
 
                 {isDropTarget && tasks.length === 0 && <div className={s.dropDiv}>DROP IT HERE</div>}
@@ -161,8 +175,6 @@ function ColumnBoard({
                 <img className={s.buttonIcon} src={addIcon} alt="" />
                 <p className={s.buttonText}>Add Task</p>
             </button>
-
-            {localError && <ErrorModalWindow error={localError} onClose={() => setLocalError(null)}/>}
 
             {isClicked && <CreateTaskModalWindow
                                 members={members}

@@ -14,12 +14,30 @@ export type Task = {
 
 }
 
-export type CreateTaskInput = {
-  column_id: string;
-  title: string;
-  created_by: string;
-  description?: string | null;
-  priority: TaskPriority;
-  due_date?: string | null;
-  assignee_id?: string | null;
+type EditableTaskFields = Pick<
+  Task,
+  | 'title'
+  | 'description'
+  | 'priority'
+  | 'due_date'
+  | 'assignee_id' 
+>
+
+
+export type CreateTaskInput = EditableTaskFields & {
+    column_id: string;
+    created_by: string;
 };
+
+export type UpdateTaskInput = EditableTaskFields & {
+    taskId: string;
+};
+
+export type TaskFormValues = {
+    title: string;
+    description: string;
+    priority: TaskPriority;
+    dueDate: string;
+    assigneeId: string;
+};
+

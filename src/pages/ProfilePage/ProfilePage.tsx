@@ -1,7 +1,8 @@
 import { useAuth } from "../../hooks/useAuth";
 import { useProfile } from "../../hooks/useProfile";
-import { useState, useRef } from "react";
+import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 import Button from "../../components/shared/Button/Button";
 import backIcon from '../../assets/arrow_back.svg'
@@ -9,6 +10,7 @@ import backIcon from '../../assets/arrow_back.svg'
 import s from './ProfilePage.module.css';
 import ErrorModalWindow from "../../components/shared/ErrorModalWindow/ErrorModalWindow";
 import Loader from "../../components/shared/Loader/Loader";
+import { toError } from "../../utils/errors";
 
 function ProfilePage(){
 
@@ -25,24 +27,15 @@ function ProfilePage(){
         loading
     } = useProfile(user?.id);
 
-    const [error, setError] = useState<string>('');
-
     const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
 
         if(!file) return;
 
-        setError('');
-
         try{
             await uploadAvatar(file)
-        } catch(error) {
-            if(error instanceof Error){
-                setError(error.message);
-                return 
-            }
-
-            setError('Failed to upload avatar')
+        } catch(error: unknown) {
+            toast.error(toError(error, 'Failed to upload avatar').message);
         } finally {
             event.target.value = '';
         }
@@ -99,12 +92,6 @@ function ProfilePage(){
                     {profileInfo?.name ?? user?.email ?? 'Unknown user'}
                 </p>
             </div>
-
-            {error && (<ErrorModalWindow
-                            error={error}
-                            onClose={() => setError('')}
-                        />
-            )}
         </div>
         
     )

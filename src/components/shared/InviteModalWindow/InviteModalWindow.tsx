@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
+import { toast } from 'sonner';
 import { createBoardInvite} from '../../../services/boardInvites.service'
 import ModalInput from '../ModalInput/ModalInput';
+import { useDialogAccessibility } from '../../../hooks/useDialogAccessibility';
+import { toError } from '../../../utils/errors';
 
 
 import s from './InviteModalWindow.module.css'
@@ -17,15 +20,14 @@ interface InviteModalWindowProps {
 function InviteModalWindow({boardId, userId, boardTitle, setClose} : InviteModalWindowProps){
 
     const [email, setEmail] = useState<string>('');
-    const [error, setError] = useState<string>('');
-    const [successMessage, setSuccessMessage] = useState<string>('');
     const [isSubmiting, setIsSubmiting] = useState<boolean>(false);
+
+    const handleClose = () => setClose(false);
+    const titleId = useId();
+    const dialogRef = useDialogAccessibility<HTMLDivElement>(handleClose);
 
     const handleInvite = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-
-        setError('');
-        setSuccessMessage('');
 
         try{
             setIsSubmiting(true);
@@ -33,19 +35,10 @@ function InviteModalWindow({boardId, userId, boardTitle, setClose} : InviteModal
             await createBoardInvite(boardId, email, userId!);
 
             setEmail('');
-            setSuccessMessage('Invite created. User will get access after registration.')
-
+            toast.success('Invite sent successfully');
             setClose(false);
-
-
-
-        } catch (error) {
-            if(error instanceof Error){
-                setError(error.message);
-                return;
-            }
-
-            setError('Failed to create invite')
+        } catch (error: unknown) {
+            toast.error(toError(error, 'Failed to create invite').message);
         }  finally {
             setIsSubmiting(false)
         }   
@@ -56,14 +49,25 @@ function InviteModalWindow({boardId, userId, boardTitle, setClose} : InviteModal
         <div className={s.overlay}>
             <div className={s.backdrop}>
                 <div className={s.content}>
-                    <div className={s.modal}>
+                    <div
+                        ref={dialogRef}
+                        className={s.modal}
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby={titleId}
+                        tabIndex={-1}>
                         <div className={s.header}>
                             <div className={s.headerText}>
-                                <h1 className={s.headerTitle}>Add new member in {boardTitle} board</h1>
+                                <h1 id={titleId} className={s.headerTitle}>Add new member in {boardTitle} board</h1>
                             </div>
-                            <div className={s.closeButton} onClick={() => setClose(false)}>
-                                <img src={crossIcon} alt="Close" />
-                            </div>
+                            <button
+                                className={s.closeButton}
+                                type="button"
+                                title="Close"
+                                aria-label="Close invite dialog"
+                                onClick={handleClose}>
+                                <img src={crossIcon} alt="" />
+                            </button>
                         </div>
 
                         <form className={s.form} onSubmit={handleInvite}>
@@ -74,9 +78,6 @@ function InviteModalWindow({boardId, userId, boardTitle, setClose} : InviteModal
                                 setStateFunc={setEmail}
                                 />
 
-                            {successMessage && <p className={s.successMessage}>{successMessage}</p>} 
-                            {error && <p className={s.error}>{error}</p>}  
-
                             <div className={s.buttonDiv}>
                                 <button 
                                     className={s.createButton}
@@ -85,7 +86,7 @@ function InviteModalWindow({boardId, userId, boardTitle, setClose} : InviteModal
                                     {isSubmiting ? 'Sending...' : 'Send Invite'}
                                 </button>
                                 <button 
-                                    onClick={() => setClose(false)}
+                                    onClick={handleClose}
                                     className={s.cancelButton}
                                     disabled={isSubmiting}
                                     type='button'>

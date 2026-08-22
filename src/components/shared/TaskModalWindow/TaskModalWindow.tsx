@@ -1,0 +1,133 @@
+import { useId, useState } from "react";
+import { toast } from "sonner";
+
+import type { BoardMember } from "../../../types/members.type";
+import type {
+  Task,
+  TaskFormValues,
+  UpdateTaskInput,
+} from "../../../types/tasks.type";
+
+import { toError } from "../../../utils/errors";
+import { useDialogAccessibility } from "../../../hooks/useDialogAccessibility";
+
+import TaskDetails from "./TaskDetails/TaskDetails";
+import EditTaskForm from "./EditTaskForm/EditTaskForm";
+import TaskComments from "./TaskComments/TaskComments";
+
+import cross from "../../../assets/cross.svg";
+import editIcon from "../../../assets/edit.svg";
+
+import s from "./TaskModalWindow.module.css";
+
+interface TaskModalWindowProps {
+  task: Task;
+  members: BoardMember[];
+  assignee: BoardMember | undefined;
+  updateTask: (input: UpdateTaskInput) => Promise<void>;
+  isUpdating: boolean;
+  setClose: (value: boolean) => void;
+}
+
+function TaskModalWindow({
+  task,
+  members,
+  assignee,
+  updateTask,
+  isUpdating,
+  setClose,
+}: TaskModalWindowProps) {
+  const [editingMode, setEditingMode] = useState(false);
+
+  const handleClose = () => setClose(false);
+  const titleId = useId();
+  const dialogRef = useDialogAccessibility<HTMLDivElement>(handleClose);
+
+  const handleEdit = () => {
+    setEditingMode(true);
+  };
+
+  const onSubmit = async (values: TaskFormValues) => {
+    const normalizedValues = {
+      ...values,
+      title: values.title.trim(),
+      description: values.description.trim(),
+    };
+
+    try {
+      await updateTask({
+        taskId: task.id,
+        title: normalizedValues.title,
+        description: normalizedValues.description || null,
+        priority: normalizedValues.priority,
+        due_date: normalizedValues.dueDate || null,
+        assignee_id: normalizedValues.assigneeId || null,
+      });
+
+      setEditingMode(false);
+    } catch (updateError: unknown) {
+      toast.error(toError(updateError, "Failed to update task").message);
+    }
+  };
+
+  return (
+    <div className={s.overlay}>
+      <div className={s.backdrop}>
+        <div className={s.content}>
+          <div
+            ref={dialogRef}
+            className={s.modal}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={titleId}
+            tabIndex={-1}
+          >
+            <h2 id={titleId} className={s.visuallyHidden}>
+              Task: {task.title}
+            </h2>
+            <div className={s.modalActions}>
+              {!editingMode && (
+                <button
+                  className={s.iconButton}
+                  type="button"
+                  title="Edit task"
+                  aria-label="Edit task"
+                  onClick={handleEdit}
+                >
+                  <img src={editIcon} alt="" />
+                </button>
+              )}
+              <button
+                className={s.iconButton}
+                type="button"
+                title="Close"
+                aria-label="Close task"
+                onClick={handleClose}
+              >
+                <img src={cross} alt="" />
+              </button>
+            </div>
+
+            <div className={s.taskInfo}>
+              {editingMode ? (
+                <EditTaskForm
+                  task={task}
+                  members={members}
+                  isUpdating={isUpdating}
+                  onSubmit={onSubmit}
+                  onCancel={() => setEditingMode(false)}
+                />
+              ) : (
+                <TaskDetails task={task} assignee={assignee} />
+              )}
+
+              <TaskComments taskId={task.id} />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default TaskModalWindow;

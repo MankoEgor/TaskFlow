@@ -1,0 +1,77 @@
+.boardScroll {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 32px 36px;
+  scrollbar-gutter: stable;
+}
+
+.columnDiv {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+
+  width: max-content;
+  min-width: 100%;
+  padding-bottom: 8px;
+}
+
+.addButton{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: fit-content;
+    border: 1px #C3C6D0 dashed;
+    border-radius: 8px;
+    background: #F2F4F6;
+    width: 320px;
+    flex: 0 0 320px;
+    padding: 19px 24px;
+    gap: 8px;
+}
+
+.addButton:hover{
+  border: 1px #191C1E solid;
+  cursor: pointer;
+}
+
+.addButton:hover .addButtonText{
+  color: #191C1E;
+}
+
+.addButtonIcon{
+    width: 20px;
+    height: 18px;
+}
+
+.addButtonText{
+    font-size: 16px;
+    color: #73777F;
+    text-align: center;
+    align-items: center;
+    width: fit-content;
+}
+
+@media (max-width: 760px){
+
+  .boardScroll{
+    padding: 24px 20px;
+  }
+}
+
+@media (max-width: 560px){
+
+  .boardScroll{
+    padding: 20px 16px;
+  }
+
+  .columnDiv{
+    gap: 16px;
+  }
+
+  .addButton{
+    width: calc(100vw - 32px);
+    flex-basis: calc(100vw - 32px);
+  }
+}

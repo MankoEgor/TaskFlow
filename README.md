@@ -4,6 +4,19 @@ TaskFlow is a responsive Jira-like task management application built with React,
 
 Repository: [github.com/MankoEgor/TaskFlow](https://github.com/MankoEgor/TaskFlow)
 
+Live demo: [tasksfloows.netlify.app](https://tasksfloows.netlify.app/board)
+
+## Demo accounts
+
+The following accounts contain public test data and are intended for review:
+
+| Role | Email | Password |
+| --- | --- | --- |
+| Owner | `alex@taskflow.test` | `TaskFlow2026!` |
+| Member | `maria@taskflow.test` | `TaskFlow2026!` |
+
+The owner can manage board structure, invitations, and members. The member can work with tasks and comments but cannot perform owner-only operations.
+
 ## Implemented scope
 
 ### Level 1: MVP
@@ -13,13 +26,13 @@ Repository: [github.com/MankoEgor/TaskFlow](https://github.com/MankoEgor/TaskFlo
 - Board creation, listing, opening, and owner-only deletion.
 - Three default columns for every new board: `To Do`, `In Progress`, and `Done`.
 - Owner-only column creation, renaming, and deletion.
-- Task creation and deletion.
-- Drag-and-drop task movement between columns and reordering within a column.
-- Loading indicators, user-facing error dialogs, and responsive desktop/mobile layouts.
+- Task creation, editing, and deletion.
+- Drag-and-drop task movement between columns and reordering within a column, with optimistic updates and rollback on failure.
+- Loading indicators, non-blocking toast notifications, fatal error states, and responsive desktop/mobile layouts.
 
 ### Level 2: Full functionality
 
-- Task details: title, description, priority, deadline, and assignee.
+- Editable task details: title, description, priority, deadline, and assignee.
 - Assignee selection from board members.
 - Task comments with author, avatar, timestamp, creation, and author-only deletion.
 - Supabase Realtime updates for tasks, columns, and comments.
@@ -27,6 +40,7 @@ Repository: [github.com/MankoEgor/TaskFlow](https://github.com/MankoEgor/TaskFlo
 - `owner` and `member` roles enforced by UI rules and Supabase RLS policies.
 - Owner controls for invitations and removing board members.
 - User profile with a generated name and avatar upload through Supabase Storage.
+- Accessible modal dialogs with focus management, keyboard navigation, Escape handling, and focus restoration.
 
 ## Tech stack
 
@@ -37,6 +51,8 @@ Repository: [github.com/MankoEgor/TaskFlow](https://github.com/MankoEgor/TaskFlo
 - React Router for routing and protected pages
 - React Hook Form for form state and validation
 - dnd-kit for Kanban drag and drop
+- Sonner for non-blocking operation feedback
+- Vitest for unit testing Kanban ordering logic
 - CSS Modules for component styles
 
 ## Local setup
@@ -86,8 +102,13 @@ Open **Supabase Dashboard > SQL Editor** and execute the migration files in chro
 2. `supabase/migrations/20260810_add_board_member_delete_policy.sql`
 3. `supabase/migrations/20260810_enable_comments_realtime.sql`
 4. `supabase/migrations/20260812_enable_board_realtime.sql`
+5. `supabase/migrations/20260815_move_task_rpc.sql`
+6. `supabase/migrations/20260818_create_board_with_defaults.sql`
 
-The migrations create the database schema, profile trigger, RLS policies, invitation flow, avatar bucket policies, and Realtime publications.
+The migrations create the database schema, profile trigger, RLS policies, invitation flow, avatar bucket policies, Realtime publications, and transactional PostgreSQL functions.
+
+- `move_task` moves a task and normalizes positions in the source and target columns atomically.
+- `create_board_with_defaults` creates a board, its owner membership, and three default columns atomically.
 
 The current registration flow expects an authenticated session immediately after sign-up. In **Authentication > Sign In / Providers > Email**, disable email confirmation for the same behavior as the configured project.
 
@@ -106,6 +127,8 @@ Vite prints the local application URL in the terminal, usually `http://localhost
 | `npm run dev` | Start the Vite development server |
 | `npm run build` | Type-check and create a production build |
 | `npm run lint` | Run ESLint across the project |
+| `npm test` | Run the Vitest suite once |
+| `npm run test:watch` | Run Vitest in watch mode |
 | `npm run preview` | Preview the production build locally |
 
 ## Access model
@@ -113,7 +136,7 @@ Vite prints the local application URL in the terminal, usually `http://localhost
 | Action | Owner | Member |
 | --- | :---: | :---: |
 | View board and tasks | Yes | Yes |
-| Create, move, and delete tasks | Yes | Yes |
+| Create, edit, move, and delete tasks | Yes | Yes |
 | Add and delete own comments | Yes | Yes |
 | Manage columns | Yes | No |
 | Invite or remove members | Yes | No |
@@ -134,18 +157,19 @@ src/
   route/        Public and protected route configuration
   services/     Supabase queries and mutations
   types/        Application domain types
-  utils/        Error and date helpers
+  utils/        Error, date, and pure Kanban helpers with unit tests
 supabase/
   migrations/   Schema, RLS, Storage, and Realtime SQL
 ```
 
-The UI calls custom hooks, hooks coordinate TanStack Query, and service modules contain the Supabase requests. Realtime events invalidate the relevant query cache so the server remains the source of truth.
+The UI calls custom hooks, hooks coordinate TanStack Query, and service modules contain the Supabase requests. Realtime events invalidate the relevant query cache so the server remains the source of truth. Board creation and task movement use transactional RPC functions, while TanStack Query provides optimistic DnD updates and restores the previous cache state when a mutation fails.
 
 ## Production build and deployment
 
 Create and inspect a production build locally:
 
 ```bash
+npm test
 npm run lint
 npm run build
 npm run preview
@@ -155,7 +179,8 @@ The repository includes `netlify.toml` with the build command, output directory,
 
 ## Further improvements
 
-- Add automated tests for authentication, RLS-dependent flows, and drag-and-drop ordering.
-- Move multi-step board creation and task reordering into transactional Postgres functions.
+- Add integration tests for authentication, RLS-dependent flows, and Supabase mutations.
 - Add route-level code splitting to reduce the initial JavaScript bundle.
+- Narrow task Realtime subscriptions to the active board.
+- Extend keyboard and touch drag-and-drop support.
 - Add optional Level 3 features such as task filters, search, activity history, attachments, and dark mode.

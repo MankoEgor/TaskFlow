@@ -17,12 +17,14 @@ type UseKanbanDndParams = {
     columns: Column[];
     tasks: Task[];
     moveTask: (input: MoveTaskInput) => Promise<void>;
+    onError: (error: Error) => void;
 };
 
 export function useKanbanDnd({
     columns,
     tasks,
     moveTask,
+    onError,
 }: UseKanbanDndParams) {
     const groupedItems = useMemo(
         () => groupTasksByColumn(columns, tasks),
@@ -30,7 +32,6 @@ export function useKanbanDnd({
     );
 
     const [dragItems, setDragItems] = useState<KanbanItems | null>(null);
-    const [dndError, setDndError] = useState<Error | null>(null);
 
     const items = dragItems ?? groupedItems;
 
@@ -96,18 +97,16 @@ export function useKanbanDnd({
             try {
                 await moveTask(moveInput);
             } catch (error: unknown) {
-                setDndError(toError(error, 'Failed to move task'));
+                onError(toError(error, 'Failed to move task'));
             } finally {
                 setDragItems(null);
             }
         },
-        [dragItems, groupedItems, moveTask],
+        [dragItems, groupedItems, moveTask, onError],
     );
 
     return {
         items,
-        dndError,
-        clearDndError: () => setDndError(null),
         handleDragOver,
         handleDragEnd,
     };

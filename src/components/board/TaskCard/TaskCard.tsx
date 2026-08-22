@@ -5,6 +5,7 @@ import deleteIcon from '../../../assets/delete.svg'
 
 import s from './TaskCard.module.css';
 import { useState } from "react";
+import { toast } from "sonner";
 import TaskModalWindow from "../../shared/TaskModalWindow/TaskModalWindow";
 import { toError } from "../../../utils/errors";
 import ProfileIcon from "../../shared/ProfileIcon/ProfileIcon";
@@ -14,7 +15,6 @@ interface TaskCardProps {
     index: number;
     deleteTask: (taskId: string) => void;
     isDeleted: boolean;
-    onError?: (error: Error) => void;
     members: BoardMember[];
     updateTask: (input: UpdateTaskInput) => Promise<void>;
     isUpdating: boolean;
@@ -26,7 +26,6 @@ function TaskCard({
   task,
   index,
   deleteTask,
-  onError,
   members,
   updateTask,
   isUpdating,
@@ -63,7 +62,7 @@ function TaskCard({
                 try {
                   await deleteTask(task.id);
                 } catch (error: unknown) {
-                    onError?.(toError(error, 'Failed to delete task'));
+                    toast.error(toError(error, 'Failed to delete task').message);
                   }
                 }
               }>

@@ -1,7 +1,9 @@
 import { useId, useState } from 'react';
+import { toast } from 'sonner';
 import { createBoardInvite} from '../../../services/boardInvites.service'
 import ModalInput from '../ModalInput/ModalInput';
 import { useDialogAccessibility } from '../../../hooks/useDialogAccessibility';
+import { toError } from '../../../utils/errors';
 
 
 import s from './InviteModalWindow.module.css'
@@ -18,8 +20,6 @@ interface InviteModalWindowProps {
 function InviteModalWindow({boardId, userId, boardTitle, setClose} : InviteModalWindowProps){
 
     const [email, setEmail] = useState<string>('');
-    const [error, setError] = useState<string>('');
-    const [successMessage, setSuccessMessage] = useState<string>('');
     const [isSubmiting, setIsSubmiting] = useState<boolean>(false);
 
     const handleClose = () => setClose(false);
@@ -29,28 +29,16 @@ function InviteModalWindow({boardId, userId, boardTitle, setClose} : InviteModal
     const handleInvite = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        setError('');
-        setSuccessMessage('');
-
         try{
             setIsSubmiting(true);
             
             await createBoardInvite(boardId, email, userId!);
 
             setEmail('');
-            setSuccessMessage('Invite created. User will get access after registration.')
-
+            toast.success('Invite sent successfully');
             setClose(false);
-
-
-
-        } catch (error) {
-            if(error instanceof Error){
-                setError(error.message);
-                return;
-            }
-
-            setError('Failed to create invite')
+        } catch (error: unknown) {
+            toast.error(toError(error, 'Failed to create invite').message);
         }  finally {
             setIsSubmiting(false)
         }   
@@ -89,9 +77,6 @@ function InviteModalWindow({boardId, userId, boardTitle, setClose} : InviteModal
                                 placeholderText='test@gmail.com'
                                 setStateFunc={setEmail}
                                 />
-
-                            {successMessage && <p className={s.successMessage}>{successMessage}</p>} 
-                            {error && <p className={s.error}>{error}</p>}  
 
                             <div className={s.buttonDiv}>
                                 <button 

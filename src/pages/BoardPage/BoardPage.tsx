@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+import { toast } from "sonner";
 import { useColumn } from "../../hooks/useColumn";
 import { useBoardTask } from "../../hooks/useBoardTask";
 import { useTask } from "../../hooks/useTask";
@@ -49,9 +50,6 @@ function BoardPage(){
 
     const [title, setTitle] = useState<string>('');
     const [isClicked, setIsClicked] = useState<boolean>(false);
-    const [localError, setLocalError] = useState<Error | null>(null);
-    
-
     const [isInviteClicked, setIsInviteClicked] = useState<boolean>(false);
 
     const {tasks, error, isLoading} = useBoardTask(id);
@@ -69,17 +67,20 @@ function BoardPage(){
     } = useColumn(id);
 
 
+    const showOperationError = useCallback((operationError: Error) => {
+        toast.error(operationError.message);
+    }, []);
+
     const {
-    items,
-    dndError,
-    clearDndError,
-    handleDragOver,
-    handleDragEnd,
-} = useKanbanDnd({
-    columns,
-    tasks,
-    moveTask
-});
+        items,
+        handleDragOver,
+        handleDragEnd,
+    } = useKanbanDnd({
+        columns,
+        tasks,
+        moveTask,
+        onError: showOperationError,
+    });
 
 
     const handleCreateColumn = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -96,7 +97,7 @@ function BoardPage(){
             setTitle('');
             setIsClicked(false);
         } catch (err: unknown) {
-            setLocalError(toError(err, 'Failed to create column'));
+            showOperationError(toError(err, 'Failed to create column'));
         }
     }
 
@@ -110,7 +111,7 @@ function BoardPage(){
         try {
             await removeMember(memberId);
         } catch (err: unknown) {
-            setLocalError(toError(err, 'Failed to remove member'));
+            showOperationError(toError(err, 'Failed to remove member'));
         }
     }
 
@@ -119,16 +120,12 @@ function BoardPage(){
         try {
             await deleteColumn(columnId);
         } catch (err: unknown) {
-            setLocalError(toError(err, 'Failed to delete column'));
+            showOperationError(toError(err, 'Failed to delete column'));
         }
     }
 
     const handleUpdateColumnTitle = async (input: {columnId: string, title: string}) => {
-        try {
-            await updateColumnTitle(input);
-        } catch (err: unknown) {
-            setLocalError(toError(err, 'Failed to update column'));
-        }
+        await updateColumnTitle(input);
     }
 
     if(isLoading)
@@ -141,8 +138,6 @@ function BoardPage(){
 
    return (
         <>
-
-            {dndError && <ErrorModalWindow error={dndError} onClose={clearDndError} />}
 
             <BoardHeader
                 boardTitle={boardTitle}
@@ -183,8 +178,6 @@ function BoardPage(){
                                         boardId={id!}
                                         setClose={setIsInviteClicked}
                                         />}
-
-            {localError && <ErrorModalWindow error={localError} onClose={() => setLocalError(null)} />}
 
         </>
     );

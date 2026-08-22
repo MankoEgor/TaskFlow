@@ -2,6 +2,7 @@ import { useDroppable } from '@dnd-kit/react';
 import { useTask } from '../../../hooks/useTask';
 import { useAuth } from '../../../hooks/useAuth';
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import type { Task, TaskFormValues } from '../../../types/tasks.type';
 import type { BoardMember } from '../../../types/members.type';
@@ -9,7 +10,6 @@ import type { Column } from '../../../types/column.type';
 
 import TaskCard from '../TaskCard/TaskCard';
 import CreateTaskModalWindow from '../../shared/CreateTaskModalWindow/CreateTaskModalWimdow';
-import ErrorModalWindow from '../../shared/ErrorModalWindow/ErrorModalWindow';
 
 import s from './ColumnBoard.module.css'
 import addIcon from '../../../assets/addTask.svg'
@@ -51,8 +51,6 @@ function ColumnBoard({
         isUpdating,
     } = useTask(column.board_id);
 
-    const [localError, setLocalError] = useState<Error | null>(null);
-
     // states for updating column title
     const [updateColumnTitle, setUpdateColumnTitle] = useState<string>('');
     const [isColumnUpdateClicked, setColumnIsUpdateClicked] = useState<boolean>(false);
@@ -72,7 +70,7 @@ function ColumnBoard({
             setUpdateColumnTitle('');
             setColumnIsUpdateClicked(false);
         } catch (err: unknown) {
-            setLocalError(toError(err, 'Failed to update column'));
+            toast.error(toError(err, 'Failed to update column').message);
         }
     }
 
@@ -81,10 +79,10 @@ function ColumnBoard({
 
     const handleCreateTask = async (values: TaskFormValues) => {
 
-        if(!column.id) return;
-        if(!user) return;
-        if(!values.title) return;
-        if(!values.priority) return;
+        if(!column.id) return false;
+        if(!user) return false;
+        if(!values.title) return false;
+        if(!values.priority) return false;
 
         try {
             await createTask({
@@ -97,9 +95,10 @@ function ColumnBoard({
                 created_by: user.id,
             });
 
-            setIsClicked(false);
+            return true;
         } catch (err: unknown) {
-            setLocalError(toError(err, 'Failed to create task'));
+            toast.error(toError(err, 'Failed to create task').message);
+            return false;
         }
 
         
@@ -155,7 +154,6 @@ function ColumnBoard({
                         index={index}
                         deleteTask={deleteTask}
                         isDeleted={isDeleted}
-                        onError={setLocalError}
                         members={members}
                         updateTask={updateTask}
                         isUpdating={isUpdating}
@@ -177,8 +175,6 @@ function ColumnBoard({
                 <img className={s.buttonIcon} src={addIcon} alt="" />
                 <p className={s.buttonText}>Add Task</p>
             </button>
-
-            {localError && <ErrorModalWindow error={localError} onClose={() => setLocalError(null)}/>}
 
             {isClicked && <CreateTaskModalWindow
                                 members={members}

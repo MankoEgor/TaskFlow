@@ -1,4 +1,5 @@
 import { useId, useState } from "react";
+import { toast } from "sonner";
 
 import type { BoardMember } from "../../../types/members.type";
 import type {
@@ -10,7 +11,6 @@ import type {
 import { toError } from "../../../utils/errors";
 import { useDialogAccessibility } from "../../../hooks/useDialogAccessibility";
 
-import ErrorModalWindow from "../ErrorModalWindow/ErrorModalWindow";
 import TaskDetails from "./TaskDetails/TaskDetails";
 import EditTaskForm from "./EditTaskForm/EditTaskForm";
 import TaskComments from "./TaskComments/TaskComments";
@@ -38,7 +38,6 @@ function TaskModalWindow({
   setClose,
 }: TaskModalWindowProps) {
   const [editingMode, setEditingMode] = useState(false);
-  const [localError, setLocalError] = useState<Error | null>(null);
 
   const handleClose = () => setClose(false);
   const titleId = useId();
@@ -67,7 +66,7 @@ function TaskModalWindow({
 
       setEditingMode(false);
     } catch (updateError: unknown) {
-      setLocalError(toError(updateError, "Failed to update task"));
+      toast.error(toError(updateError, "Failed to update task").message);
     }
   };
 
@@ -122,15 +121,8 @@ function TaskModalWindow({
                 <TaskDetails task={task} assignee={assignee} />
               )}
 
-              <TaskComments taskId={task.id} onError={setLocalError} />
+              <TaskComments taskId={task.id} />
             </div>
-
-            {localError && (
-              <ErrorModalWindow
-                error={localError}
-                onClose={() => setLocalError(null)}
-              />
-            )}
           </div>
         </div>
       </div>

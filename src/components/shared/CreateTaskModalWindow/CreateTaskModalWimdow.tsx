@@ -14,7 +14,7 @@ interface CreateBoardModalWindowProps {
     members: Profile[];
     onClose: () => void;
     isCreating: boolean;
-    onCreateTask: (values: TaskFormValues) => Promise<void>;
+    onCreateTask: (values: TaskFormValues) => Promise<boolean>;
 
 }
 
@@ -54,7 +54,9 @@ function CreateTaskModalWindow({
     const dialogRef = useDialogAccessibility<HTMLDivElement>(handleClose);
 
     const onSubmit = async (value: TaskFormValues) => {
-        await onCreateTask(value);
+        const wasCreated = await onCreateTask(value);
+
+        if (!wasCreated) return;
 
         reset();
         onClose();
